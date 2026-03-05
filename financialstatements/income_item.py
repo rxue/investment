@@ -1,3 +1,4 @@
+import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
@@ -27,4 +28,10 @@ class DividendIncomeItem(IncomeItemInCent):
 
     @staticmethod
     def deducted_tax_per_transaction(transaction_detail: str) -> int:
-        raise NotImplementedError
+        tax_match = re.search(r"Lähdevero\s+\S+\s+%\s+([\d,]+)USD", transaction_detail)
+        rate_match = re.search(r"Val\.kurssi\s+([\d,]+)", transaction_detail)
+        if not tax_match or not rate_match:
+            raise ValueError("Could not parse tax or exchange rate from transaction detail")
+        tax_usd = float(tax_match.group(1).replace(",", "."))
+        exchange_rate = float(rate_match.group(1).replace(",", "."))
+        return int(tax_usd / exchange_rate * 100)
