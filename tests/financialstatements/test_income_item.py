@@ -1,3 +1,5 @@
+import pandas as pd
+
 from financialstatements.income_item import DividendIncomeItem
 
 TRANSACTION_DETAIL = (
@@ -9,5 +11,39 @@ TRANSACTION_DETAIL = (
 )
 
 
-def test_deducted_tax_per_transaction():
-    assert DividendIncomeItem.deducted_tax_per_transaction(TRANSACTION_DETAIL) == 307
+def test_withholding_tax_per_transaction():
+    assert DividendIncomeItem.withholding_tax_per_transaction(TRANSACTION_DETAIL) == 307
+
+
+def test_withholding_tax():
+    df = pd.DataFrame([{
+        "Kirjauspäivä": "27.02.2026",
+        "Arvopäivä": "27.02.2026",
+        "Määrä EUROA": "+17,39",
+        "Laji": 710,
+        "Selitys": "ARVOPAPERIT",
+        "Saaja/Maksaja": "OUTLIERX OY",
+        "Saajan tilinumero ja pankin BIC": " ",
+        "Viite": float("nan"),
+        "Viesti": TRANSACTION_DETAIL,
+        "Arkistointitunnus": "2602275OMH00001897",
+    }])
+    item = DividendIncomeItem(transactions=df)
+    assert item.withholding_tax() == 307
+
+
+def test_gross_value():
+    df = pd.DataFrame([{
+        "Kirjauspäivä": "27.02.2026",
+        "Arvopäivä": "27.02.2026",
+        "Määrä EUROA": "+17,39",
+        "Laji": 710,
+        "Selitys": "ARVOPAPERIT",
+        "Saaja/Maksaja": "OUTLIERX OY",
+        "Saajan tilinumero ja pankin BIC": " ",
+        "Viite": float("nan"),
+        "Viesti": TRANSACTION_DETAIL,
+        "Arkistointitunnus": "2602275OMH00001897",
+    }])
+    item = DividendIncomeItem(transactions=df)
+    assert item.gross_value() == 2046
