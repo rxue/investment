@@ -2,7 +2,7 @@ import pandas as pd
 
 from financialstatements.incomestatement.income_item import DividendIncome
 
-TRANSACTION_DETAIL = (
+TRANSACTION_DETAIL_USD = (
     " OP Säilytys Oy                     SIRIUSXM HOLDINGS                  "
     "US8299331004                       Osinkotuotto                       "
     "Osinko        0,27          USD/KplOmistettu määrä             90Kpl  "
@@ -25,11 +25,11 @@ def test_gross_value_per_transaction_cad():
 
 
 def test_gross_value_in_base_unit():
-    assert DividendIncome._gross_value_in_base_unit(TRANSACTION_DETAIL) == 24.30
+    assert DividendIncome._gross_value_in_base_unit(TRANSACTION_DETAIL_USD) == 24.30
 
 
 def test_withholding_tax_per_transaction():
-    assert DividendIncome.withholding_tax_per_transaction(TRANSACTION_DETAIL) == 307
+    assert DividendIncome.withholding_tax_per_transaction(TRANSACTION_DETAIL_USD) == 307
 
 
 def test_withholding_tax_per_transaction_cad():
@@ -46,7 +46,7 @@ def test_withholding_tax():
         "Saaja/Maksaja": "OUTLIERX OY",
         "Saajan tilinumero ja pankin BIC": " ",
         "Viite": float("nan"),
-        "Viesti": TRANSACTION_DETAIL,
+        "Viesti": TRANSACTION_DETAIL_USD,
         "Arkistointitunnus": "2602275OMH00001897",
     }])
     item = DividendIncome(transactions=df)
@@ -63,7 +63,7 @@ def test_gross_value():
         "Saaja/Maksaja": "OUTLIERX OY",
         "Saajan tilinumero ja pankin BIC": " ",
         "Viite": float("nan"),
-        "Viesti": TRANSACTION_DETAIL,
+        "Viesti": TRANSACTION_DETAIL_USD,
         "Arkistointitunnus": "2602275OMH00001897",
     }])
     item = DividendIncome(transactions=df)

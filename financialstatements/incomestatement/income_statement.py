@@ -9,7 +9,7 @@ from query.transaction_filters import find_dividend_payments, find_all_stock_tra
 
 @dataclass
 class IncomeStatementInCent:
-    dividend_income: int
+    gross_dividend_income: int
     trading_income: int
     service_expense: int
     other_expense: int
@@ -23,7 +23,7 @@ def generate_income_statement(df: pd.DataFrame) -> IncomeStatementInCent:
     all_expense_in_cents = abs(round(all_expenses_df["Määrä EUROA"].str.replace(",", ".").astype(float).sum() * 100))
     service_expense_cents = abs(round(find_service_charges(all_expenses_df)["Määrä EUROA"].str.replace(",", ".").astype(float).sum() * 100))
     return IncomeStatementInCent(
-        dividend_income=dividend_income.gross_value(),
+        gross_dividend_income=dividend_income.gross_value(),
         trading_income=trading_income.gross_value(),
         service_expense=service_expense_cents,
         other_expense=all_expense_in_cents - service_expense_cents,
