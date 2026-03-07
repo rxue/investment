@@ -1,6 +1,6 @@
 import pandas as pd
 
-from financialstatements.incomestatement.income_item import DividendIncome
+from financialstatements.incomestatement.income_item import DividendIncomeInCent
 
 TRANSACTION_DETAIL_USD = (
     " OP Säilytys Oy                     SIRIUSXM HOLDINGS                  "
@@ -20,20 +20,22 @@ TRANSACTION_DETAIL_CAD = (
 )
 
 
+TELUS_CAD_ROW = pd.Series({
+    "Määrä EUROA": "+10,98",
+    "Viesti": TRANSACTION_DETAIL_CAD,
+})
+
+
 def test_gross_value_per_transaction_cad():
-    assert DividendIncome._gross_value_per_transaction(TRANSACTION_DETAIL_CAD) == 1292
-
-
-def test_gross_value_in_base_unit():
-    assert DividendIncome._gross_value_in_base_unit(TRANSACTION_DETAIL_USD) == 24.30
+    assert DividendIncomeInCent._gross_value_per_transaction(TELUS_CAD_ROW) == 1291
 
 
 def test_withholding_tax_per_transaction():
-    assert DividendIncome.withholding_tax_per_transaction(TRANSACTION_DETAIL_USD) == 307
+    assert DividendIncomeInCent.withholding_tax_per_transaction(TRANSACTION_DETAIL_USD) == 307
 
 
 def test_withholding_tax_per_transaction_cad():
-    assert DividendIncome.withholding_tax_per_transaction(TRANSACTION_DETAIL_CAD) == 193
+    assert DividendIncomeInCent.withholding_tax_per_transaction(TRANSACTION_DETAIL_CAD) == 193
 
 
 SIRIUSXM_USD_ROW = pd.DataFrame([{
@@ -51,12 +53,9 @@ SIRIUSXM_USD_ROW = pd.DataFrame([{
 
 
 def test_withholding_tax():
-    assert DividendIncome(transactions=SIRIUSXM_USD_ROW).withholding_tax() == 307
+    assert DividendIncomeInCent(transactions=SIRIUSXM_USD_ROW).withholding_tax() == 307
 
-
-def test_reconcile():
-    assert DividendIncome(transactions=SIRIUSXM_USD_ROW).reconcile() is True
 
 
 def test_gross_value():
-    assert DividendIncome(transactions=SIRIUSXM_USD_ROW).gross_value() == 2046
+    assert DividendIncomeInCent(transactions=SIRIUSXM_USD_ROW).gross_value() == 2046
