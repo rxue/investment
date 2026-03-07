@@ -73,14 +73,7 @@ def reconcile(cash_infusion_df: pd.DataFrame, income_statement: "IncomeStatement
     from financialstatements.incomestatement.income_statement import IncomeStatementInCent
     from financialstatements.balance_sheet import BalanceSheetInCent
     cash_infused = round(cash_infusion_df["Määrä EUROA"].str.replace(",", ".").astype(float).sum() * 100)
-    net_income = (
-        income_statement.trading_income
-        + income_statement.gross_dividend_income
-        - income_statement.foreign_withholding_tax
-        - income_statement.service_expense
-        - income_statement.other_expense
-    )
-    return cash_infused + net_income == balance_sheet.cash + balance_sheet.financial_securities
+    return cash_infused + income_statement.net_income() == balance_sheet.cash + balance_sheet.financial_securities
 
 
 def get_period(df: pd.DataFrame) -> Period:

@@ -1,12 +1,34 @@
 #set page(paper: "a4")
 #set text(size: 12pt)
 
+*Company name: OutlierX Oy*
+
 = Income Statement
 
+#align(right)[Period: {period}]
+
+== Income
+
 #table(
-  columns: 2,
+  columns: (1fr, auto),
   align: (left, right),
   stroke: none,
-  table.header([*Item*], [*Amount*]),
-{rows}
+  {income_rows}
+)
+
+== Expenses
+
+#table(
+  columns: (1fr, auto),
+  align: (left, right),
+  stroke: none,
+  {expense_rows}
+)
+
+#table(
+  columns: (1fr, auto),
+  align: (left, right),
+  stroke: none,
+  table.hline(start: 1),
+  [*Net Income*], [*{net_income}*],
 )
