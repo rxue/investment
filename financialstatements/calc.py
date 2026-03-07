@@ -4,6 +4,12 @@ import pandas as pd
 
 
 @dataclass
+class Period:
+    start_date: str
+    end_date: str
+
+
+@dataclass
 class Lot:
     date: str
     type: str
@@ -75,6 +81,17 @@ def reconcile(cash_infusion_df: pd.DataFrame, income_statement: "IncomeStatement
         - income_statement.other_expense
     )
     return cash_infused + net_income == balance_sheet.cash + balance_sheet.financial_securities
+
+
+def get_period(df: pd.DataFrame) -> Period:
+    import calendar
+    dates = pd.to_datetime(df["Kirjauspäivä"], format="%d.%m.%Y")
+    first = dates.min()
+    last = dates.max()
+    start_date = first.replace(day=1).strftime("%Y-%m-%d")
+    last_day = calendar.monthrange(last.year, last.month)[1]
+    end_date = last.replace(day=last_day).strftime("%Y-%m-%d")
+    return Period(start_date=start_date, end_date=end_date)
 
 
 def profit_and_book_values_by_symbol(stock_tradings_by_symbol: dict[str, pd.DataFrame]) -> list[ProfitCalculationResult]:

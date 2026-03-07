@@ -26,11 +26,24 @@ def main():
     from financialstatements.csv_to_dataframe import read_csvs_to_dataframe
 
     parser = argparse.ArgumentParser(description="Generate financial statements from CSV files")
-    parser.add_argument("directory", help="Directory containing CSV files")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    dry_run_parser = subparsers.add_parser("dry-run", help="Print financial statements to stdout")
+    dry_run_parser.add_argument("--input-dir", required=True, help="Directory containing CSV files")
+
+    pdf_parser = subparsers.add_parser("pdf", help="Generate financial statements as PDF")
+    pdf_parser.add_argument("--input-dir", required=True, help="Directory containing CSV files")
+
     args = parser.parse_args()
 
-    df = read_csvs_to_dataframe(args.directory)
-    income_statement, balance_sheet = generate(df)
-    print(income_statement)
-    print(balance_sheet)
-    print("reconciled" if reconcile(find_cash_infusion(df), income_statement, balance_sheet) else "reconciliation failed")
+    if args.command == "dry-run":
+        df = read_csvs_to_dataframe(args.input_dir)
+        income_statement, balance_sheet = generate(df)
+        print(income_statement)
+        print(balance_sheet)
+        print("reconciled" if reconcile(find_cash_infusion(df), income_statement, balance_sheet) else "reconciliation failed")
+    elif args.command == "pdf":
+        from financialstatements.pdfgeneration.pdf_generator import income_statement_pdf
+        df = read_csvs_to_dataframe(args.input_dir)
+        income_statement, balance_sheet = generate(df)
+        income_statement_pdf(income_statement, "income_statement.pdf")

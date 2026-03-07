@@ -14,6 +14,9 @@ dependencies = [
 [tool.setuptools.packages.find]
 include = ["financialstatements*", "ai_tool*"]
 
+[tool.setuptools.package-data]
+"financialstatements.pdfgeneration" = ["*.typ"]
+
 [project.optional-dependencies]
 test = [
     "pytest",

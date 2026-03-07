@@ -35,4 +35,8 @@ Moreover, Gemini suggested when to use flat-layout:
 
 **So as to my current SIMPLE project, *flat-layout* suffices**
 
+## 20260307
+Plan of checksum:
+cash infusion + (dividend gross value - withholding tax) + trading income - expense = cash in account + sum of book value in remaining lots
+
 
