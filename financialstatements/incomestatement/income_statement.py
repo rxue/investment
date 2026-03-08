@@ -8,21 +8,28 @@ from financialstatements.transaction_filters import find_dividend_payments, find
 
 
 @dataclass
+class Expenses:
+    salaries_and_wages: int = 0
+    service_expense: int = 0
+    other_expense: int = 0
+    foreign_withholding_tax: int = 0
+
+
+@dataclass
 class IncomeStatementInCent:
     period: Period
     gross_dividend_income: int
     trading_income: int
-    service_expense: int
-    other_expense: int
-    foreign_withholding_tax: int
+    expenses: Expenses
 
     def net_income(self) -> int:
         return (
             self.gross_dividend_income
             + self.trading_income
-            - self.foreign_withholding_tax
-            - self.service_expense
-            - self.other_expense
+            - self.expenses.foreign_withholding_tax
+            - self.expenses.service_expense
+            - self.expenses.other_expense
+            - self.expenses.salaries_and_wages
         )
 
 
@@ -35,9 +42,11 @@ def generate_income_statement(period: Period, gross_trading_income: int, dividen
         period=period,
         gross_dividend_income=gross_dividend_income,
         trading_income=gross_trading_income,
-        service_expense=service_expense_cents,
-        other_expense=all_expense_in_cents - service_expense_cents,
-        foreign_withholding_tax=foreign_withholding_tax,
+        expenses=Expenses(
+            service_expense=service_expense_cents,
+            other_expense=all_expense_in_cents - service_expense_cents,
+            foreign_withholding_tax=foreign_withholding_tax,
+        ),
     )
 
 

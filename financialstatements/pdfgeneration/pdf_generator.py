@@ -25,9 +25,10 @@ def income_statement_pdf(income_statement: IncomeStatementInCent, output_path: s
         ("Trading Income", income_statement.trading_income),
     ])
     expense_rows = fmt_rows([
-        ("Foreign Withholding Tax", income_statement.foreign_withholding_tax),
-        ("Service Expense", income_statement.service_expense),
-        ("Other Expense", income_statement.other_expense),
+        ("Foreign Withholding Tax", income_statement.expenses.foreign_withholding_tax),
+        ("Salaries and Wages", income_statement.expenses.salaries_and_wages),
+        ("Service Expense", income_statement.expenses.service_expense),
+        ("Other Expense", income_statement.expenses.other_expense),
     ])
 
     period = income_statement.period
