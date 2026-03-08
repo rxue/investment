@@ -9,10 +9,10 @@ from financialstatements.transaction_filters import find_dividend_payments, find
 
 @dataclass
 class Expenses:
+    service_expense: int
+    other_expense: int
+    foreign_withholding_tax: int
     salaries_and_wages: int = 0
-    service_expense: int = 0
-    other_expense: int = 0
-    foreign_withholding_tax: int = 0
 
 
 @dataclass
