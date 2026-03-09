@@ -14,6 +14,14 @@ class Expenses:
     foreign_withholding_tax: int
     salaries_and_wages: int = 0
 
+    def total(self) -> int:
+        return (
+            self.service_expense
+            + self.other_expense
+            + self.foreign_withholding_tax
+            + self.salaries_and_wages
+        )
+
 
 @dataclass
 class IncomeStatementInCent:
