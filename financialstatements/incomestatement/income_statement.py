@@ -3,12 +3,12 @@ from dataclasses import dataclass
 import pandas as pd
 
 from financialstatements.incomestatement.income_item import DividendIncomeInCent
-from financialstatements.calc import Period, profit_and_book_values_by_symbol
+from financialstatements.calc import Period, calculate_profit_by_symbol
 from financialstatements.transaction_filters import find_dividend_payments, find_all_stock_tradings_by_symbol, find_service_charges, find_expenses
 
 
 @dataclass
-class Expenses:
+class ExpensesInCent:
     service_expense: int
     other_expense: int
     foreign_withholding_tax: int
@@ -28,7 +28,10 @@ class IncomeStatementInCent:
     period: Period
     gross_dividend_income: int
     trading_income: int
-    expenses: Expenses
+    expenses: ExpensesInCent
+
+    def total_gross_income(self) -> int:
+        return self.gross_dividend_income + self.trading_income
 
     def net_income(self) -> int:
         return (
@@ -50,7 +53,7 @@ def generate_income_statement(period: Period, gross_trading_income: int, dividen
         period=period,
         gross_dividend_income=gross_dividend_income,
         trading_income=gross_trading_income,
-        expenses=Expenses(
+        expenses=ExpensesInCent(
             service_expense=service_expense_cents,
             other_expense=all_expense_in_cents - service_expense_cents,
             foreign_withholding_tax=foreign_withholding_tax,
@@ -67,7 +70,7 @@ def main():
     args = parser.parse_args()
 
     df = read_csvs_to_dataframe(args.directory)
-    gross_trading_income = sum(r.profit_in_cent for r in profit_and_book_values_by_symbol(find_all_stock_tradings_by_symbol(df)))
+    gross_trading_income = sum(r.profit_in_cent for r in calculate_profit_by_symbol(find_all_stock_tradings_by_symbol(df)))
     dividend_income = DividendIncomeInCent(transactions=find_dividend_payments(df))
     from financialstatements.calc import get_period
     print(generate_income_statement(get_period(df), gross_trading_income, dividend_income, find_expenses(df)))

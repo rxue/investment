@@ -5,7 +5,7 @@ import pandas as pd
 from financialstatements.balance_sheet import BalanceSheetInCent
 from financialstatements.incomestatement.income_item import DividendIncomeInCent
 from financialstatements.incomestatement.income_statement import IncomeStatementInCent, generate_income_statement
-from financialstatements.calc import get_period, profit_and_book_values_by_symbol, reconcile
+from financialstatements.calc import get_period, calculate_profit_by_symbol, reconcile
 from financialstatements.transaction_filters import find_all_stock_tradings_by_symbol, find_dividend_payments, find_expenses, find_cash_infusion, transactions_before
 
 
@@ -19,7 +19,7 @@ def generate(df: pd.DataFrame, end_date: datetime.date | None) -> tuple[IncomeSt
 
     end_date = get_end_date(df, end_date)
     filtered_df = transactions_before(df, end_date)
-    profit_results = profit_and_book_values_by_symbol(find_all_stock_tradings_by_symbol(filtered_df))
+    profit_results = calculate_profit_by_symbol(find_all_stock_tradings_by_symbol(filtered_df))
     gross_trading_income = sum(r.profit_in_cent for r in profit_results)
     income_statement = generate_income_statement(get_period(filtered_df),
                                                  gross_trading_income,
@@ -59,6 +59,8 @@ def main():
     income_statement, balance_sheet = generate(df, end_date)
     if args.command == "dry-run":
         print(income_statement)
+        print(f"total gross income={income_statement.total_gross_income()}")
+        print(f"total expense={income_statement.expenses.total()}")
         print(balance_sheet)
         print("reconciled" if reconcile(find_cash_infusion(df), income_statement, balance_sheet) else "reconciliation failed")
     elif args.command == "pdf":
