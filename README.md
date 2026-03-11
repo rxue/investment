@@ -19,7 +19,9 @@ This is the script `extract_zips_from_directory.sh`
 2. activate venv with command `source .venv/bin/activate`
 3. install project with command `pip install e .`
 4. execution
-* dry-run with command: `python calculation dry-run <extracted_directory> --end-date <end_date>`
+* dry-run with command: `python calculation pdf --input-dir <input-directory> --company-name <company-name>`
+
+example: `python calculation pdf --input-dir "~/Documents/outlierx/tiliote/extracted" --company-name "xxx"`
 
 ## How to run tests
 1. install `pip install -e ".[test]"`
