@@ -21,7 +21,7 @@ This is the script `extract_zips_from_directory.sh`
 4. execution
 * dry-run with command: `python calculation pdf --input-dir <input-directory> --company-name <company-name>`
 
-example: `python calculation pdf --input-dir "~/Documents/outlierx/tiliote/extracted" --company-name "xxx"`
+example: `python accounting pdf --input-dir ~/Documents/outlierx/tiliote/extracted --company-name "xxx"`
 
 ## How to run tests
 1. install `pip install -e ".[test]"`

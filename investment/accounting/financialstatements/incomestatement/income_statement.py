@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from calculation.financialstatements.incomestatement.income_item import DividendIncomeInCent
-from calculation.financialstatements.transaction_filters import find_service_charges
-from calculation.util import Period
+from investment.accounting.financialstatements.incomestatement.income_item import DividendIncomeInCent
+from investment.accounting.financialstatements.transaction_filters import find_service_charges
+from investment.accounting.util import Period
 
 
 @dataclass

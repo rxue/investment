@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 
-from calculation.csv_to_dataframe import read_csvs_to_dataframe
+from investment.accounting.csv_to_dataframe import read_csvs_to_dataframe
 
 
 @pytest.fixture

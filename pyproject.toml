@@ -3,19 +3,20 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "accounting"
+name = "investment"
 version = "1.0.0"
 requires-python = ">=3.12.3"
 dependencies = [
     "pandas",
     "typst",
+    "requests"
 ]
 
 [tool.setuptools.packages.find]
-include = ["ai_tool*", "calculation*"]
+include = ["ai_tool*", "investment*"]
 
 [tool.setuptools.package-data]
-"calculation.financialstatements.pdfgeneration" = ["*.typ"]
+"investment.accounting.financialstatements.pdfgeneration" = ["*.typ"]
 
 [project.optional-dependencies]
 test = [

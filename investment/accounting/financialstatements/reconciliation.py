@@ -1,7 +1,7 @@
 import pandas as pd
 
-from calculation.financialstatements.balance_sheet import BalanceSheetInCent
-from calculation.financialstatements.incomestatement.income_statement import IncomeStatementInCent
+from investment.accounting.financialstatements.balance_sheet import BalanceSheetInCent
+from investment.accounting.financialstatements.incomestatement.income_statement import IncomeStatementInCent
 
 
 def reconcile(cash_infusion_df: pd.DataFrame, income_statement: IncomeStatementInCent, balance_sheet: BalanceSheetInCent) -> bool:

@@ -1,4 +1,4 @@
-from calculation.profit_calculation import Lot, calculate_trading_profit_in_fifo
+from investment.accounting.profit_calculation import Lot, calculate_trading_profit_in_fifo
 
 
 def test_stock_calculate_trading_profit_in_fifo_base():
