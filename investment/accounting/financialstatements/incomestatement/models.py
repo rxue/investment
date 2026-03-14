@@ -69,6 +69,9 @@ class DividendPayment(NamedTuple):
             exchange_rate=exchange_rate,
         )
 
+    def get_country_code(self):
+        return self.company.country_code
+
 class DividendIncome(NamedTuple):
     dividend_payments: list[DividendPayment]
 
@@ -121,6 +124,9 @@ class IncomeStatement(NamedTuple):
             - self.expenses.other_expense
             - self.expenses.salaries_and_wages
         )
+
+    def dividend_payments(self) -> list[DividendPayment]:
+        return self.dividend_income.dividend_payments
 
     def loss(self):
         return self.gross_dividend_income_in_cent + self.trading_income_in_cent - self.expenses.total()
