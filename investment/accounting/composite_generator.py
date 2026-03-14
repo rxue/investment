@@ -3,8 +3,8 @@ import datetime
 import pandas as pd
 
 from investment.accounting.financialstatements.balance_sheet import BalanceSheetInCent
-from investment.accounting.financialstatements.incomestatement.income_statement import IncomeStatementInCent, generate_income_statement
-from investment.accounting.financialstatements.incomestatement.models import DividendIncome
+from investment.accounting.financialstatements.incomestatement.income_statement import generate_income_statement
+from investment.accounting.financialstatements.incomestatement.models import DividendIncome, IncomeStatement
 from investment.accounting.financialstatements.reconciliation import reconcile
 from investment.accounting.models import Holding
 from investment.accounting.profit_calculation import calculate_profit_by_symbol
@@ -12,7 +12,7 @@ from investment.accounting.util import get_period
 from investment.accounting.transaction_filters import find_all_stock_tradings_by_symbol, find_dividend_payments, find_expenses, find_cash_infusion, transactions_before
 
 
-def generate(df: pd.DataFrame, end_date: datetime.date | None) -> tuple[IncomeStatementInCent, BalanceSheetInCent, list[Holding]]:
+def generate(df: pd.DataFrame, end_date: datetime.date | None) -> tuple[IncomeStatement, BalanceSheetInCent, list[Holding]]:
     def get_end_date(df: pd.DataFrame, end_date: datetime.date | None) -> datetime.date:
         if end_date is not None:
             return end_date

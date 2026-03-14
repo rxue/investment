@@ -2,7 +2,8 @@ from datetime import date
 
 import pandas as pd
 
-from investment.accounting.financialstatements.incomestatement.models import DividendPayment
+from investment.accounting.financialstatements.incomestatement.models import DividendPayment, PaymentCompany
+
 
 def test_from_transaction():
     transaction_message = (
@@ -16,7 +17,7 @@ def test_from_transaction():
     payment = DividendPayment.from_transaction(row)
 
     assert payment.value_date == date(2026, 3, 14)
-    assert payment.company_name == "SIRIUSXM HOLDINGS"
+    assert payment.company == PaymentCompany(name="SIRIUSXM HOLDINGS", country_code="US")
     assert payment.source_currency == "USD"
     assert payment.net_value_in_eur == 5.94
     assert payment.shares_owned == 90
@@ -37,7 +38,7 @@ def test_from_transaction_from_canada():
     payment = DividendPayment.from_transaction(transaction_row)
 
     assert payment.value_date == date(2026, 1, 12)
-    assert payment.company_name == "TELUS CORP"
+    assert payment.company == PaymentCompany(name="TELUS CORP", country_code="CA")
     assert payment.net_value_in_eur == 10.98
     assert payment.source_currency == "CAD"
     assert payment.shares_owned == 50

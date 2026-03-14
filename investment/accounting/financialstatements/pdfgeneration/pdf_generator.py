@@ -6,13 +6,13 @@ from importlib.resources import files
 import typst
 
 from investment.accounting.financialstatements.balance_sheet import BalanceSheetInCent
-from investment.accounting.financialstatements.incomestatement.income_statement import IncomeStatementInCent
+from investment.accounting.financialstatements.incomestatement.models import IncomeStatement
 
 _INCOME_STATEMENT_TEMPLATE = files("investment.accounting.financialstatements.pdfgeneration").joinpath("income_statement.typ")
 _BALANCE_SHEET_TEMPLATE = files("investment.accounting.financialstatements.pdfgeneration").joinpath("balance_sheet.typ")
 
 
-def income_statement_pdf(income_statement: IncomeStatementInCent, output_path: str, company_name: str = "") -> None:
+def income_statement_pdf(income_statement: IncomeStatement, output_path: str, company_name: str = "") -> None:
     def fmt_rows(items, negate=False):
         sign = "-" if negate else ""
         return "\n".join(
@@ -21,8 +21,8 @@ def income_statement_pdf(income_statement: IncomeStatementInCent, output_path: s
         )
 
     income_rows = fmt_rows([
-        ("Gross Dividend Income", income_statement.gross_dividend_income),
-        ("Trading Income", income_statement.trading_income),
+        ("Gross Dividend Income", income_statement.gross_dividend_income_in_cent),
+        ("Trading Income", income_statement.trading_income_in_cent),
     ])
     expense_rows = fmt_rows([
         ("Foreign Withholding Tax", income_statement.expenses.foreign_withholding_tax),

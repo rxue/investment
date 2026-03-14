@@ -4,10 +4,16 @@ from typing import NamedTuple
 
 import pandas as pd
 
+from investment.accounting.util import Period
+
+
+class PaymentCompany(NamedTuple):
+    name:str
+    country_code:str
 
 class DividendPayment(NamedTuple):
     value_date: date
-    company_name: str
+    company: PaymentCompany
     net_value_in_eur: float
     source_currency: str
     shares_owned: int
@@ -31,8 +37,9 @@ class DividendPayment(NamedTuple):
 
         message = row["Viesti"]
 
-        stock_match = re.search(r"OP Säilytys Oy\s+(.+?)\s{2,}[A-Z]{2}[A-Z0-9]{10}", message)
+        stock_match = re.search(r"OP Säilytys Oy\s+(.+?)\s{2,}([A-Z]{2})[A-Z0-9]{10}", message)
         company_name = stock_match.group(1).strip() if stock_match else ""
+        country_code = stock_match.group(2) if stock_match else ""
 
         div_match = re.search(r"Osinko\s+([\d,]+)\s+([A-Z]+)/Kpl", message)
         source_currency = div_match.group(2) if div_match else ""
@@ -53,7 +60,7 @@ class DividendPayment(NamedTuple):
         return cls(
             value_date=datetime.strptime(row["Arvopäivä"], "%d.%m.%Y").date(),
             net_value_in_eur=to_float(row["Määrä EUROA"]),
-            company_name=company_name,
+            company=PaymentCompany(name=company_name, country_code=country_code),
             source_currency=source_currency,
             shares_owned=shares_owned,
             dividend_per_share=dividend_per_share,
@@ -76,3 +83,44 @@ class DividendIncome(NamedTuple):
         return cls(
             [DividendPayment.from_transaction(row) for _, row in dividend_df.iterrows()]
         )
+
+
+class ExpensesInCent(NamedTuple):
+    service_expense: int
+    other_expense: int
+    foreign_withholding_tax: int
+    salaries_and_wages: int = 0
+
+    def total(self) -> int:
+        return (
+            self.service_expense
+            + self.other_expense
+            + self.foreign_withholding_tax
+            + self.salaries_and_wages
+        )
+
+
+class IncomeStatement(NamedTuple):
+    period: Period
+    dividend_income: DividendIncome
+    trading_income_in_cent: int
+    expenses: ExpensesInCent
+    @property
+    def gross_dividend_income_in_cent(self):
+        return self.dividend_income.gross_value_in_cent()
+
+    def total_gross_income(self) -> int:
+        return self.gross_dividend_income_in_cent + self.trading_income_in_cent
+
+    def net_income(self) -> int:
+        return (
+            self.gross_dividend_income_in_cent
+            + self.trading_income_in_cent
+            - self.expenses.foreign_withholding_tax
+            - self.expenses.service_expense
+            - self.expenses.other_expense
+            - self.expenses.salaries_and_wages
+        )
+
+    def loss(self):
+        return self.gross_dividend_income_in_cent + self.trading_income_in_cent - self.expenses.total()
