@@ -1,6 +1,8 @@
+#block(above: 4em)[*{company_name}*]
+
 #table(
   columns: (2fr, 1fr),
-  align: (left, left),
+  align: (left, right),
 [Country of source], [{country_of_source}],
   [Payment date of foreign tax], [{payment_date_of_foreign_tax}],
   [Name of tax that credit is claimed for], [{name_of_tax}],

@@ -2,10 +2,20 @@ from importlib.resources import files
 
 import typst
 
-from investment.tax_report.models import TaxPaidAbroadEntryDTO
+from investment.tax_report.models import SecurityAndBookEntrySharesDTO, TaxPaidAbroadEntryDTO
 
+_SECURITIES_AND_BOOK_ENTRY_SHARES_TEMPLATE = files("investment.tax_report.pdf_generation").joinpath("securities_and_book_entry_shares.typ")
 _TAX_PAID_ABROAD_ENTRY_TEMPLATE = files("investment.tax_report.pdf_generation").joinpath("tax_paid_abroad_entry.typ")
 _TAX_PAID_ABROAD_TEMPLATE = files("investment.tax_report.pdf_generation").joinpath("tax_paid_abroad.typ")
+
+
+def generate_ListOfSecuritesAndBookEntrySharesTable(entries: list[SecurityAndBookEntrySharesDTO], output_path: str) -> None:
+    rows = "\n".join(
+        f"  [{e.name_of_company_or_cooperative}], [{e.business_id}], [{e.share_quantity}], [{e.undepreciated_acquisition_cost}], [{e.comparison_value_per_unit}], [{e.comparison_value_in_total}],"
+        for e in entries
+    )
+    source = _SECURITIES_AND_BOOK_ENTRY_SHARES_TEMPLATE.read_text(encoding="utf-8").format(rows=rows)
+    typst.compile(source.encode(), output=output_path)
 
 
 def generate_tax_paid_abroad(entries: list[TaxPaidAbroadEntryDTO], output_path: str) -> None:
@@ -13,6 +23,7 @@ def generate_tax_paid_abroad(entries: list[TaxPaidAbroadEntryDTO], output_path: 
 
     tables = "\n\n".join(
         entry_template.format(
+            company_name=e.company_name,
             country_of_source=e.country_of_source,
             payment_date_of_foreign_tax=e.payment_date_of_foreign_tax,
             name_of_tax=e.name_of_tax,

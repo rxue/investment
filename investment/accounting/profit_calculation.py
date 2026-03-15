@@ -1,3 +1,5 @@
+import datetime
+
 import pandas as pd
 
 from investment.accounting.models import Lot, ProfitCalculationResult
@@ -50,9 +52,9 @@ def transfer_transactions_to_lots(df: pd.DataFrame) -> list[Lot]:
     return transactions
 
 
-def calculate_profit_by_symbol(stock_tradings_by_symbol: dict[str, pd.DataFrame]) -> list[ProfitCalculationResult]:
+def calculate_profit_by_symbol(symbol_to_df: dict) -> list[ProfitCalculationResult]:
     result = []
-    for symbol, symbol_df in stock_tradings_by_symbol.items():
+    for symbol, symbol_df in symbol_to_df.items():
         lots = transfer_transactions_to_lots(symbol_df)
         profit, remaining_lots = calculate_trading_profit_in_fifo(lots)
         result.append(ProfitCalculationResult(symbol=symbol, profit_in_cent=profit, remaining_lots=remaining_lots))

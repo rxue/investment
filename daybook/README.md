@@ -35,8 +35,17 @@ Moreover, Gemini suggested when to use flat-layout:
 
 **So as to my current SIMPLE project, *flat-layout* suffices**
 
-## 20260307
+# 20260307
 Plan of checksum:
 cash infusion + (dividend gross value - withholding tax) + trading income - expense = cash in account + sum of book value in remaining lots
 
+# 20260315
+## AI Prompt
+add to tax_report/pdf_generation/pdf_generator.py a function called generate_ListOfSecuritesAndBookEntrySharesTable(), it takes list[SecurityAndBookEntrySharesDTO] as the 1st argument and output_path as the second argument. The implementation generation List of Securities And Book Entry Shares table into a pdf file in the given output path, the table has the following columns
+* name of company or cooperative
+* Business Id
+* Share quantity
+* Undepreciated acquisition cost for purposes of income tax
+* Comparison value per unit
+* Comparison value in total
 

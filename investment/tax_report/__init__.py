@@ -1,1 +1,1 @@
-from investment.tax_report.cli import main
+from investment.tax_report.generator import main

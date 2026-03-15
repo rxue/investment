@@ -1,6 +1,9 @@
 from typing import NamedTuple
+from datetime import date, timedelta
 
 from investment.accounting.financialstatements.incomestatement.models import DividendPayment
+from investment.accounting.models import Holding
+from investment.market_quote.repository import find_closing_price_by_symbol, find_company_by_op_symbol
 
 
 class Country(NamedTuple):
@@ -9,7 +12,38 @@ class Country(NamedTuple):
     income_tax_name:str
     tax_withholding_rate: int = 15
 
+class SecurityAndBookEntrySharesDTO(NamedTuple):
+    name_of_company_or_cooperative:str
+    business_id:str
+    share_quantity:str
+    undepreciated_acquisition_cost:str
+    comparison_value_per_unit:str
+    comparison_value_in_total:str
+
+    @classmethod
+    def to_SecurityAndBookEntrySharesDTO(cls, holding: Holding, d: date) -> "SecurityAndBookEntrySharesDTO":
+        def get_work_date(d: date) -> date:
+            while d.weekday() > 4:
+                d -= timedelta(days=1)
+            return d
+
+        def _to_euro_value(val: float) -> str:
+            return f"{val:.2f} €"
+
+        company = find_company_by_op_symbol(holding.symbol)
+        price = find_closing_price_by_symbol(company, get_work_date(d))
+        comparison_value_per_unit = round(price.price_in_eur() * 0.7, 2)
+        return cls(
+            name_of_company_or_cooperative=company.short_name,
+            business_id="",
+            share_quantity=str(holding.share_amount),
+            undepreciated_acquisition_cost=_to_euro_value(holding.book_value),
+            comparison_value_per_unit=_to_euro_value(comparison_value_per_unit),
+            comparison_value_in_total=_to_euro_value(comparison_value_per_unit * holding.share_amount),
+        )
+
 class TaxPaidAbroadEntryDTO(NamedTuple):
+    company_name: str
     country_of_source: str
     payment_date_of_foreign_tax: str
     name_of_tax: str
@@ -25,10 +59,11 @@ class TaxPaidAbroadEntryDTO(NamedTuple):
     does_tax_treaty_require_tax_sparing_credit: str
 
     @classmethod
-    def from_dividend_payment(cls, payment: DividendPayment, country: Country) -> "TaxPaidAbroadEntryDTO":
+    def to_TaxPaidAbroadEntryDTO(cls, payment: DividendPayment, country: Country) -> "TaxPaidAbroadEntryDTO":
         def _to_euro_value(val: float) -> str:
-            return f"{val:.2f} EUR"
+            return f"{val:.2f} €"
         return cls(
+            company_name=payment.company.name,
             country_of_source=country.name,
             payment_date_of_foreign_tax=payment.value_date.strftime("%d.%m.%Y"),
             name_of_tax=country.income_tax_name,
