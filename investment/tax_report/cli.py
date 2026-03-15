@@ -4,6 +4,7 @@ import datetime
 from investment.accounting.composite_generator import generate
 from investment.accounting.csv_to_dataframe import read_csvs_to_dataframe
 from investment.tax_report.generator import generate_tax_paid_abroad_list, generate_SecurityHoldingsAsAsset
+from investment.tax_report.pdf_generation.generator import generate_tax_paid_abroad
 from investment.tax_report.securites_included_in_financial_assets import SecurityHoldingAsAsset
 
 def main():
@@ -26,6 +27,4 @@ def main():
 
     tax_paid_abroad_entry_dtos = generate_tax_paid_abroad_list(income_statement.dividend_payments())
     print("Tax Paid Abroad")
-    for tax in tax_paid_abroad_entry_dtos:
-        print(tax)
-        print()
+    generate_tax_paid_abroad(tax_paid_abroad_entry_dtos, "tax_paid_abroad.pdf")

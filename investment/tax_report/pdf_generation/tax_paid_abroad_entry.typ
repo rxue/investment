@@ -1,0 +1,16 @@
+#table(
+  columns: (2fr, 1fr),
+  align: (left, left),
+[Country of source], [{country_of_source}],
+  [Payment date of foreign tax], [{payment_date_of_foreign_tax}],
+  [Name of tax that credit is claimed for], [{name_of_tax}],
+  [Type of income], [{type_of_income}],
+  [Withholding rate according to tax treaty], [{withholding_rate_according_to_tax_treaty}],
+  [Conversion rate for currency], [{conversion_rate_for_currency}],
+  [Gross income from abroad], [{gross_income_from_abroad}],
+  [Expenses relating to the income], [{expenses_relating_to_income}],
+  [Amount of tax paid abroad], [{amount_of_tax_paid_abroad}],
+  [Amount of tax that credit is claimed for], [{amount_of_tax_that_credit_is_claimed_for}],
+  [Tax that credit is claimed for], [{tax_that_credit_is_claimed_for}],
+  [Does the tax treaty require tax sparing credit?], [{does_tax_treaty_require_tax_sparing_credit}],
+)

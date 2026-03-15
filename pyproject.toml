@@ -17,6 +17,7 @@ include = ["ai_tool*", "investment*"]
 
 [tool.setuptools.package-data]
 "investment.accounting.financialstatements.pdfgeneration" = ["*.typ"]
+"investment.tax_report.pdf_generation" = ["*.typ"]
 
 [project.optional-dependencies]
 test = [
