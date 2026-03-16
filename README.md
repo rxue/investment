@@ -3,7 +3,7 @@ This project generates *financial statements* and forms needed in *tax report* o
 
 ## Demo
 
-[![Demo](https://img.youtube.com/vi/NzRyE-s3JDY/0.jpg)](https://www.youtube.com/watch?v=NzRyE-s3JDY) (outdated, updated soon)
+[![Demo](https://img.youtube.com/vi/dmA0IM8xf74/0.jpg)](https://www.youtube.com/watch?v=dmA0IM8xf74)
 
 # Pre-requisite
 1. `cd` to this project directory
