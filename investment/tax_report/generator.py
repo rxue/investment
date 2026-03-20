@@ -31,17 +31,19 @@ def main():
     config = ConfigData.get_config(args.config)
     generate_pdf = args.command == "pdf"
 
-    Path(config.output_dir).mkdir(parents=True, exist_ok=True)
+    output_dir = config.output_dir
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
 
     df = read_csvs_to_dataframe(config.input_dir)
     end_date = config.accounting_period.end
     income_statement, balance_sheet, holdings = accounting.generator.generate(df, end_date=end_date)
 
     if generate_pdf:
-        from investment.tax_report.pdf import generator
-
         form8a_pdf_input_list = formgen.to_form8a_pdf_input(holdings, config.form8a_compulsory_fields())
-        fill_form8a_pdf(form8a_pdf_input_list[0], "output/filled_form8a.pdf")
+        idx = 0
+        for pdf_input in form8a_pdf_input_list:
+            fill_form8a_pdf(pdf_input, output_dir + "/filled_form8a_securities_and_book_entry_shares_" + str(idx) + ".pdf")
+            idx = idx + 1
         tax_paid_abroad_entry_dtos = generate_TaxPaidAbroadEntryDTOs(income_statement.dividend_payments())
         print("Tax Paid Abroad")
         #pdf_generator.generate_tax_paid_abroad(tax_paid_abroad_entry_dtos, f"{config.output_dir}/tax_paid_abroad.pdf")

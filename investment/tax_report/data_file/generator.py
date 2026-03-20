@@ -68,6 +68,7 @@ def to_form8a_pdf_input(holdings:list[Holding], compulsory_fields: Form8ACompuls
         current_pdf_input[comparison_value_code + suffix] = comparison_value_m.euros
         current_pdf_input["s" + comparison_value_code + suffix] = comparison_value_m.cents
         if counter % 2 == 0:
+            counter = 0
             pdf_input_batch.append(current_pdf_input)
             current_pdf_input = compulsory_fields_input.copy()
         counter = counter + 1
