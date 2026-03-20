@@ -1,10 +1,20 @@
+from dataclasses import dataclass, field
 from typing import NamedTuple
-from datetime import date, timedelta
+from datetime import date, datetime
+import yaml
 
 from investment.accounting.financialstatements.incomestatement.models import DividendPayment
-from investment.accounting.models import Holding
-from investment.market_quote.repository import find_closing_price_by_symbol, find_company_by_op_symbol
 
+
+class Period(NamedTuple):
+    start:date
+    end:date
+    def start_date_string(self):
+        return self.start.strftime("%d%m%Y")
+    def end_date_string(self):
+        return self.end.strftime("%d%m%Y")
+    def to_form8a_string(self):
+        return f"{self.start_date_string()}-{self.end_date_string()}"
 
 class Country(NamedTuple):
     isin_code:str
@@ -12,36 +22,46 @@ class Country(NamedTuple):
     income_tax_name:str
     tax_withholding_rate: int = 15
 
-class SecurityAndBookEntrySharesDTO(NamedTuple):
-    name_of_company_or_cooperative:str
-    business_id:str
-    share_quantity:str
-    undepreciated_acquisition_cost:str
-    comparison_value_per_unit:str
-    comparison_value_in_total:str
+@dataclass(frozen=True)
+class Form8ACompulsoryFields:
+    service_provider_id: str
+    software_name: str
+    software_id: str
+    business_id: str
+    accounting_period: Period
+    timestamp: str = field(default_factory=lambda: datetime.now().strftime("%Y%m%d%H%M%S"))
 
-    @classmethod
-    def to_SecurityAndBookEntrySharesDTO(cls, holding: Holding, d: date) -> "SecurityAndBookEntrySharesDTO":
-        def get_work_date(d: date) -> date:
-            while d.weekday() > 4:
-                d -= timedelta(days=1)
-            return d
 
-        def _to_euro_value(val: float) -> str:
-            return f"{val:.2f} €"
+class ConfigData(NamedTuple):
+    company_name: str
+    company_id: str
+    software_name: str
+    service_provider_id: str
+    accounting_period: Period
+    input_dir: str
+    output_dir: str
 
-        company = find_company_by_op_symbol(holding.symbol)
-        price = find_closing_price_by_symbol(company, get_work_date(d))
-        comparison_value_per_unit = round(price.price_in_eur() * 0.7, 2)
-        return cls(
-            name_of_company_or_cooperative=company.short_name,
-            business_id="",
-            share_quantity=str(holding.share_amount),
-            undepreciated_acquisition_cost=_to_euro_value(holding.book_value),
-            comparison_value_per_unit=_to_euro_value(comparison_value_per_unit),
-            comparison_value_in_total=_to_euro_value(comparison_value_per_unit * holding.share_amount),
+    def form8a_compulsory_fields(self) -> Form8ACompulsoryFields:
+        return Form8ACompulsoryFields(
+            service_provider_id=self.service_provider_id,
+            software_name=self.software_name,
+            software_id="",
+            business_id=self.company_id,
+            accounting_period=self.accounting_period,
         )
-
+    @classmethod
+    def get_config(cls, config_yaml_path: str) -> "ConfigData":
+        with open(config_yaml_path) as f:
+            cfg = yaml.safe_load(f)
+        return cls(
+            company_name=cfg["company"]["name"],
+            company_id=cfg["company"]["business_id"],
+            software_name=cfg["software"],
+            service_provider_id=cfg["service_provider_id"],
+            accounting_period=Period(*[date.fromisoformat(d) for d in cfg["account_period"].split(":")]),
+            input_dir=cfg["input_dir"],
+            output_dir=cfg["output_dir"],
+        )
 class TaxPaidAbroadEntryDTO(NamedTuple):
     company_name: str
     country_of_source: str
@@ -78,3 +98,12 @@ class TaxPaidAbroadEntryDTO(NamedTuple):
             tax_that_credit_is_claimed_for="Final tax",
             does_tax_treaty_require_tax_sparing_credit="No",
         )
+
+class Money(NamedTuple):
+    euros: str
+    cents: str
+
+    @classmethod
+    def new(cls, value: float) -> "Money":
+        total_cents = round(value * 100)
+        return cls(euros=str(total_cents // 100), cents=str(total_cents % 100))

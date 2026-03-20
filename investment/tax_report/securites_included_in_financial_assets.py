@@ -36,7 +36,7 @@ def to_SecurityHoldingAsAsset(holding: Holding, date: date) -> SecurityHoldingAs
     price = find_closing_price_by_symbol(company, get_work_date(date))
     return SecurityHoldingAsAsset(
         company_name=company.short_name,
-        number_of_shares=holding.share_amount,
+        number_of_shares=holding.quantity,
         cost=holding.book_value,
         closing_price_per_unit=price.price_in_eur()
     )

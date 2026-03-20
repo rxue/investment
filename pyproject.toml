@@ -4,12 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "investment"
-version = "1.0.0"
+version = "1.0-beta"
 requires-python = ">=3.12.3"
 dependencies = [
     "pandas",
     "typst",
-    "requests"
+    "requests",
+    "PyPDF2",
+    "PyYAML"
 ]
 
 [tool.setuptools.packages.find]
@@ -17,7 +19,7 @@ include = ["ai_tool*", "investment*"]
 
 [tool.setuptools.package-data]
 "investment.accounting.financialstatements.pdfgeneration" = ["*.typ"]
-"investment.tax_report.pdf_generation" = ["*.typ"]
+"investment.tax_report.pdf" = ["*.typ"]
 
 [project.optional-dependencies]
 test = [
