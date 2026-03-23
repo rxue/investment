@@ -29,17 +29,24 @@ type_text() {
 }
 
 intro() {
-    type_text "${BOLD}" "=== Financial Statements Generator ==="
+    type_text "${BOLD}" "=== Financial Statements and Tax Forms Generator ==="
     echo
-    type_text "${CYAN}" "This program generates financial statements and forms needed when reporting tax based on"
-    type_text "${CYAN}" "bank statement CSV files from a given directory:"
-    type_text "${CYAN}" "* module investment.accounting produces two documents: an Income Statement and a Balance Sheet."
-    type_text "${CYAN}" "* module investment.tax_report produces two forms at the moment:"
-    type_text "${CYAN}" " - List of Securities and Book Entry Shares (Form 8A)"
-    type_text "${CYAN}" " - Tax Paid Abroad (in Form 70)"
+    type_text "${CYAN}" "This program generates financial statements and tax forms from bank statement CSV files."
+    echo
+    type_text "${CYAN}" "Two modules are available:"
+    type_text "${CYAN}" "* investment.accounting -- generates financial statements only:"
+    type_text "${CYAN}" "    - Income Statement"
+    type_text "${CYAN}" "    - Balance Sheet"
+    type_text "${CYAN}" "* investment.tax_report -- generates the following forms needed in tax report:"
+    type_text "${CYAN}" "    - List of Securities and Book Entry Shares (Form 8A)"
+    type_text "${CYAN}" "    - Tax Paid Abroad (Form 70)"
     echo
     type_text "${CYAN}" "Example input data directory: ~/Documents/company_data/tiliote/extracted/"
     ls ~/Documents/company_data/tiliote/extracted/
+    echo
+    sleep 2
+    type_text "${CYAN}" "Example config.yml:"
+    cat config.yml
 }
 
 generate_financial_statements() {
@@ -51,11 +58,12 @@ generate_financial_statements() {
 }
 
 generate_tax_reports() {
-    type_text "${BOLD}" "--- Generate Tax Reports (NOTE! this is getting closing prices from internet, thus takes time) ---"
+    type_text "${BOLD}" "--- Generate Tax Reports (Income Statement, Balance Sheet, Form 8A, Form 70) ---"
+    type_text "${CYAN}" "NOTE: fetches closing prices from the internet, so this takes a moment"
     echo
-    type_text "${CYAN}" "command: python -m investment.tax_report tax-reports-pdf --input-dir <dir> --end-date <YYYY-MM-DD> --output-dir <dir>"
+    type_text "${CYAN}" "command: python -m investment.tax_report pdf config.yml"
     echo
-    (sleep 0.3 && echo 'python -m investment.tax_report tax-reports-pdf --input-dir ~/Documents/company_data/tiliote/extracted/ --end-date 2026-02-28 --output-dir output' | xclip -selection clipboard && xdotool key ctrl+shift+v) &
+    (sleep 0.3 && echo 'python -m investment.tax_report pdf config.yml' | xclip -selection clipboard && xdotool key ctrl+shift+v) &
 }
 
 show_sample_data() {
@@ -75,9 +83,14 @@ display_output() {
         EVINCE_PID=$!
         sleep 2
 
-        # Focus the evince window and scroll once
+        # Focus the evince window and scroll through 2/3 of the pages
         xdotool search --sync --pid $EVINCE_PID windowfocus
-        xdotool click --repeat 20 5
+        total_pages=$(pdfinfo "$f" | awk '/^Pages:/ {print $2}')
+        pages_to_show=$(( (total_pages * 2 + 2) / 3 ))
+        for ((p = 0; p < pages_to_show; p++)); do
+            xdotool key Next
+            sleep 1
+        done
 
         sleep 1
         kill $EVINCE_PID 2>/dev/null

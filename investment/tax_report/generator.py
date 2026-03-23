@@ -23,8 +23,6 @@ def main():
     income_statement, balance_sheet, holdings = accounting.generator.generate(df, end_date=end_date)
 
     if generate_pdf:
-        income_statement_pdf(income_statement, f"{output_dir}/income_statement.pdf", config.company_name)
-        balance_sheet_pdf(balance_sheet, f"{output_dir}/balance_sheet.pdf", config.company_name)
         generate_pdf_forms(config.form8a_pdf_gen_config(), holdings, True)
         generate_pdf_forms(config.form70_pdf_gen_config(), income_statement.dividend_payments(), True)
     print("Required forms in tax report generated")
