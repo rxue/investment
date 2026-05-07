@@ -23,6 +23,12 @@ dependencies = [
 [tool.setuptools.packages.find]
 include = ["ai_tool*", "investment*"]
 
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
 [tool.setuptools.package-data]
 "investment.accounting.financialstatements.pdfgeneration" = ["*.typ"]
 "investment.tax_report.pdf" = ["*.typ"]
@@ -30,6 +36,9 @@ include = ["ai_tool*", "investment*"]
 [project.optional-dependencies]
 test = [
     "pytest",
+]
+dev = [
+    "ruff",
 ]
 ai_tool = [
     "openai",

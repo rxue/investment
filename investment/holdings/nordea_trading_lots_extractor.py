@@ -4,7 +4,7 @@ from datetime import datetime
 
 import pdfplumber
 
-from investment.holdings.model import NordeaTradingLot
+from investment.holdings.models import NordeaTradingLot
 from investment.holdings.return_calculation import ReturnBreakdown
 
 _TRANSACTION_RE = re.compile(

@@ -1,8 +1,8 @@
 import sys
-import pandas as pd
-from investment.holdings.holdings_extractor import extract_from
-from investment.holdings.holdings_snapshot import HoldingsSnapshot
+from investment.holdings.models import Bank
 from investment.holdings.nordea_trading_lots_extractor import extract
+from investment.holdings.op.calculation import generate_holdings as generate_op_holdings
+from investment.holdings.nordea.calculation import generate_holdings as generate_nordea_holdings
 from investment.holdings.return_calculation import calculate_total_return
 
 
@@ -19,7 +19,7 @@ if len(sys.argv) < 2 or sys.argv[1] not in COMMANDS:
     sys.exit(1)
 
 command = sys.argv[1]
-
+'''
 if command == EXTRACT_HOLDINGS:
     if len(sys.argv) != 3:
         print(f"Usage: python -m investment.holdings extract_nordea_excel <excel_file>")
@@ -27,8 +27,8 @@ if command == EXTRACT_HOLDINGS:
     holdings = extract_from(sys.argv[2])
     for h in holdings:
         print(h)
-
-elif command == EXTRACT_RETURN_BREAKDOWN:
+'''
+if command == EXTRACT_RETURN_BREAKDOWN:
     if len(sys.argv) != 3:
         print(f"Usage: python -m investment.holdings {EXTRACT_RETURN_BREAKDOWN} <pdf_file>")
         sys.exit(1)
@@ -42,9 +42,23 @@ elif command == TOTAL_RETURN:
     print(calculate_total_return(sys.argv[2]))
 
 elif command == GENERATE_HOLDINGS_SNAPSHOT:
-    if len(sys.argv) != 3:
-        print(f"Usage: python -m investment.holdings generate_holdings_snapshot <excel_file>")
+    if len(sys.argv) != 4:
+        print(f"Usage: python -m investment.holdings generate_holdings_snapshot <bank> <excel_file>")
         sys.exit(1)
+    bank = Bank[sys.argv[2].upper()]
+    if bank == Bank.OP:
+        csv_dir = sys.argv[3]
+        holdings_snapshot, _ = generate_op_holdings(csv_dir)
+        print(holdings_snapshot.to_dataframe())
+    elif bank == Bank.NORDEA:
+        excel_path = sys.argv[3]
+        holdings_snapshot, companies_failed_to_get_quotes = generate_nordea_holdings(excel_path)
+        print(holdings_snapshot.to_dataframe())
+        if len(companies_failed_to_get_quotes) > 0:
+            print("The following companies fail to get quote")
+            print(companies_failed_to_get_quotes)
+
+'''    
     snapshot, companies_failed_to_get_price = HoldingsSnapshot.generate(sys.argv[2])
     print("Bank: ", snapshot.bank)
     holdings_snapshot_df = snapshot.to_dataframe()
@@ -54,3 +68,4 @@ elif command == GENERATE_HOLDINGS_SNAPSHOT:
     print(holdings_snapshot_df)
     for c in companies_failed_to_get_price:
         print(f"{c} failed to get price")
+'''

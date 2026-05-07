@@ -1,6 +1,6 @@
 from datetime import date
 
-from investment.holdings.calculation.lots_matching import Action, Lot, fifo_lots_matching, RealizedLots
+from investment.holdings.calculation.lots_matching import Action, Lot, RealizedLots, fifo_lots_matching
 
 
 def test_fifo_one_lot_removed():

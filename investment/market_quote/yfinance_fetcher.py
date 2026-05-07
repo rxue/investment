@@ -4,6 +4,7 @@ from zoneinfo import ZoneInfo
 
 import yfinance as yf
 
+
 class Quote(NamedTuple):
     price:float
     currency:str
@@ -14,11 +15,18 @@ class Quote(NamedTuple):
     roe:float
     def daily_change_rate(self)->float:
         return self.daily_change / (self.price-self.daily_change)
+    def daily_change_rate_value(self)->str:
+        return f"{self.daily_change_rate()*100:.2f}%"
     def timestamp_repr(self) -> str:
         return self.timestamp.strftime("%Y-%m-%d %H:%M %Z")
 
 def get_latest_quote(symbol: str) -> Quote | None:
-    info = yf.Ticker(symbol).info
+    try:
+        info = yf.Ticker(symbol).info
+    except Exception as e:
+        return None
+    if len(info) <= 1:
+        return None
     price = info.get("currentPrice")
     currency = info.get("currency")
     dividend_yield = info.get("dividendYield")

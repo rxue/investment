@@ -3,15 +3,15 @@ from typing import NamedTuple
 
 import pandas as pd
 
-from investment.holdings.models.holdings import HoldingSnapshot
+from investment.holdings.models.holdings import HoldingWithQuote
 from investment.holdings.holdings_extractor import extract_from
 from investment.holdings.company.repository import find_yahoo_symbols_by_name
-from investment.holdings.market_quote.yfinance_fetcher import get_latest_quote
+from investment.market_quote.yfinance_fetcher import get_latest_quote
 
 
 class HoldingsSnapshot(NamedTuple):
     bank: str
-    holdings: list[HoldingSnapshot]
+    holdings: list[HoldingWithQuote]
 
     @staticmethod
     def generate(holdings_excel_path: str) -> tuple["HoldingsSnapshot", list[str]]:
@@ -29,7 +29,7 @@ class HoldingsSnapshot(NamedTuple):
             if quote is None:
                 failed.append(holding.company_name)
                 continue
-            snapshots.append(HoldingSnapshot(
+            snapshots.append(HoldingWithQuote(
                 holding=holding,
                 quote=quote,
             ))
