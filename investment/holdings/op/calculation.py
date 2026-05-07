@@ -1,7 +1,5 @@
 import re
-import sys
 from datetime import datetime
-from pathlib import Path
 
 import pandas as pd
 
@@ -21,7 +19,7 @@ class OPTrading(Trading):
             value_in_cent=self.trade_price
             )
 
-def to_trading(row: pd.Series) -> Trading:
+def _to_trading(row: pd.Series) -> Trading:
     match = re.match(r"^\s*([OM]):(.+?)\s*/(\d+)", row["Viesti"])
     action = match.group(1)
     ticker = match.group(2).strip()
@@ -36,13 +34,13 @@ def to_trading(row: pd.Series) -> Trading:
         trade_price=trade_price,
     )
 
-def generate_holdings(csv_directory:str) -> tuple[HoldingsSnapshot, list[str]]:
+def extract_holdings_from_transaction_csvs(csv_directory: str) -> tuple[list[Holding], list[str]]:
     transactions = extract_csv(path=csv_directory, sep=";", encoding="latin-1")
     tradings_df:pd.DataFrame = find_tradings(transactions)
     def to_lots_by_company_symbol(tradings: pd.DataFrame) -> dict[str, list[Lot]]:
         result: dict[str, list[Lot]] = {}
         for _, row in tradings.iterrows():
-            trading = to_trading(row)
+            trading = _to_trading(row)
             result.setdefault(trading.company_identifier, []).append(trading.to_lot())
         return result
     lots_matching_result_by_company_symbol = {
@@ -65,18 +63,4 @@ def generate_holdings(csv_directory:str) -> tuple[HoldingsSnapshot, list[str]]:
             missing_company_symbols.append(symbol)
         else:
             holdings.append(holding)
-    return HoldingsSnapshot(Bank.OP, [h.with_quote() for h in holdings]), missing_company_symbols
-
-
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print(f"Usage: {Path(sys.argv[0]).name} <directory>")
-        sys.exit(1)
-
-    directory = sys.argv[1]
-    holdings_snapshot, missing_company_symbols = generate_holdings(sys.argv[1])
-    print(holdings_snapshot.bank)
-    print(holdings_snapshot.to_dataframe())
-    if len(missing_company_symbols) > 0:
-        print(missing_company_symbols)
+    return holdings, missing_company_symbols

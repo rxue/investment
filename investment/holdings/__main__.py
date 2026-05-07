@@ -1,8 +1,8 @@
 import sys
-from investment.holdings.models import Bank
+from investment.holdings.models import Bank, HoldingsSnapshot, Holding
 from investment.holdings.nordea_trading_lots_extractor import extract
-from investment.holdings.op.calculation import generate_holdings as generate_op_holdings
-from investment.holdings.nordea.calculation import generate_holdings as generate_nordea_holdings
+from investment.holdings.op.calculation import extract_holdings_from_transaction_csvs
+from investment.holdings.nordea.calculation import extract_nordea_holdings_from_excel
 from investment.holdings.return_calculation import calculate_total_return
 
 
@@ -42,30 +42,20 @@ elif command == TOTAL_RETURN:
     print(calculate_total_return(sys.argv[2]))
 
 elif command == GENERATE_HOLDINGS_SNAPSHOT:
+    def generate_and_print_snapshot(holdings:list[Holding], companies_failed_get_holding:list[str]):
+        holdings_snapshot, companies_failed_to_get_quote = HoldingsSnapshot.generate_snapshot(holdings)
+        companies_failed_to_get_quote.extend(companies_failed_get_holding)
+        print(holdings_snapshot.to_dataframe())
+        if len(companies_failed_to_get_quote) > 0:
+            print("The following companies fail to get quote")
+            print(companies_failed_to_get_quote)
     if len(sys.argv) != 4:
         print(f"Usage: python -m investment.holdings generate_holdings_snapshot <bank> <excel_file>")
         sys.exit(1)
     bank = Bank[sys.argv[2].upper()]
     if bank == Bank.OP:
         csv_dir = sys.argv[3]
-        holdings_snapshot, _ = generate_op_holdings(csv_dir)
-        print(holdings_snapshot.to_dataframe())
+        generate_and_print_snapshot(*extract_holdings_from_transaction_csvs(csv_dir))
     elif bank == Bank.NORDEA:
         excel_path = sys.argv[3]
-        holdings_snapshot, companies_failed_to_get_quotes = generate_nordea_holdings(excel_path)
-        print(holdings_snapshot.to_dataframe())
-        if len(companies_failed_to_get_quotes) > 0:
-            print("The following companies fail to get quote")
-            print(companies_failed_to_get_quotes)
-
-'''    
-    snapshot, companies_failed_to_get_price = HoldingsSnapshot.generate(sys.argv[2])
-    print("Bank: ", snapshot.bank)
-    holdings_snapshot_df = snapshot.to_dataframe()
-    holdings_snapshot_df["daily_change"] = holdings_snapshot_df["daily_change"].map(lambda x: f"{x*100:+.2f}%")
-    holdings_snapshot_df["dividend_yield"] = holdings_snapshot_df["dividend_yield"].map(lambda x: f"{x:.2f}%" if not pd.isna(x) else "N/A")
-    holdings_snapshot_df["roe"] = holdings_snapshot_df["roe"].map(lambda x: f"{x*100:.2f}%" if not pd.isna(x) else "N/A")
-    print(holdings_snapshot_df)
-    for c in companies_failed_to_get_price:
-        print(f"{c} failed to get price")
-'''
+        generate_and_print_snapshot(*extract_nordea_holdings_from_excel(excel_path))

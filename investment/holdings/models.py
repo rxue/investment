@@ -43,6 +43,7 @@ class HoldingWithQuote(NamedTuple):
 class HoldingsSnapshot(NamedTuple):
     bank:Bank
     holding_with_quote_list:list[HoldingWithQuote]
+
     def to_dataframe(self) -> pd.DataFrame:
         self.holding_with_quote_list.sort(key=lambda s: s.quote.daily_change_rate(), reverse=True)
         return pd.DataFrame([
@@ -54,11 +55,23 @@ class HoldingsSnapshot(NamedTuple):
                 "daily_change": h.quote.daily_change_rate_value(),
                 "dividend_yield": h.quote.dividend_yield,
                 "pe": h.quote.pe,
-                "roe": h.quote.roe,
+                "roe": h.quote.roe_value(),
                 "timestamp": h.quote.timestamp_repr(),
             }
             for h in self.holding_with_quote_list
         ])
+
+    @staticmethod
+    def generate_snapshot(holdings:list[Holding]) -> tuple[HoldingsSnapshot, list[str]]:
+        companies_missing_quote = []
+        holdings_with_quote = []
+        for h in holdings:
+            holding_with_quote = h.with_quote()
+            if holding_with_quote is None:
+                companies_missing_quote.append(h.company.name)
+            else:
+                holdings_with_quote.append(holding_with_quote)
+        return HoldingsSnapshot(Bank.NORDEA, holdings_with_quote), companies_missing_quote
 
 Type = Literal["GAIN", "LOSS"]
 
