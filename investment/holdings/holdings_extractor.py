@@ -1,7 +1,3 @@
-from pathlib import Path
-
-import pandas as pd
-
 from investment.holdings.models import Holding
 from investment.holdings.util import extract_csv
 

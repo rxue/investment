@@ -9,7 +9,8 @@ from datetime import date
 import pandas as pd
 
 from investment.company import Company
-from investment.market_quote.yfinance_fetcher import Quote
+from investment.market_quote.models import Quote
+
 
 class Bank(Enum):
     NORDEA = auto()
@@ -50,8 +51,8 @@ class HoldingsSnapshot(NamedTuple):
             {
                 "company": h.holding.company.name,
                 "amount": h.holding.amount,
-                "price": h.quote.price,
-                "currency": h.quote.currency,
+                "price": h.quote.price_value(),
+                "Price in EUR": h.quote.price_value_in_euro(),
                 "daily_change": h.quote.daily_change_rate_value(),
                 "dividend_yield": h.quote.dividend_yield,
                 "pe": h.quote.pe,

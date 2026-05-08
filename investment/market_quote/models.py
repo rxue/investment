@@ -1,15 +1,41 @@
+import math
+from datetime import datetime
 from typing import NamedTuple
-from zoneinfo import ZoneInfo
 
-
-class Company(NamedTuple):
-    short_name: str
-    yahoo_symbol: str
-    time_zone: ZoneInfo
-    currency: str
+def _decimal_to_percentage(decimal_val: float) -> str:
+    return f"{decimal_val * 100:.2f}%"
 
 class Price(NamedTuple):
-    price: float
+    currency: str
+    value: float
     fx_rate: float | None = None
+    def price_value(self) -> str:
+        return f"{self.value:<10}{self.currency}"
     def price_in_eur(self)->float:
-        return self.price/self.fx_rate
+        result = self.value/self.fx_rate
+        if self.currency == "GBP":
+            return result/100
+        return result
+
+class Quote(NamedTuple):
+    price:Price
+    dividend_yield:float
+    daily_change:float
+    timestamp:datetime
+    pe:int
+    roe:float
+
+    def price_value(self) -> str:
+        return self.price.price_value()
+    def price_value_in_euro(self) -> str:
+        return f"{self.price.price_in_eur():.2f}"
+    def daily_change_rate(self)->float:
+        return self.daily_change / (self.price.value-self.daily_change)
+    def daily_change_rate_value(self)->str:
+        return _decimal_to_percentage(self.daily_change_rate())
+    def roe_value(self) -> str:
+        if self.roe is None or math.isnan(self.roe):
+            return "-"
+        return _decimal_to_percentage(self.roe)
+    def timestamp_repr(self) -> str:
+        return self.timestamp.strftime("%Y-%m-%d %H:%M %Z")

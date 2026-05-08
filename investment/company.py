@@ -2,7 +2,7 @@ import csv
 from pathlib import Path
 from typing import NamedTuple
 
-from investment.market_quote.yfinance_fetcher import Quote, get_latest_quote
+from investment.market_quote.fetcher import Quote, get_latest_quote
 
 
 class Company(NamedTuple):
