@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Literal
+from typing import Literal, Any
 
 from dataclasses import dataclass
 from enum import Enum, auto
@@ -25,10 +25,16 @@ class Trading:
     amount:int
     trade_price:float
 
+class Field(Enum):
+    COST = ("cost", float)
+    def __init__(self, label: str, type_: type):
+        self.label = label
+        self.type_ = type_
 
 class Holding(NamedTuple):
     company:Company
     amount:int
+    optional_fields:dict[Field,Any] = {}
     def with_quote(self)-> HoldingWithQuote | None:
         quote = self.company.get_latest_quote()
         if quote is None:
@@ -40,27 +46,37 @@ class Holding(NamedTuple):
 class HoldingWithQuote(NamedTuple):
     holding: Holding
     quote: Quote
+    def market_value_in_euro_cent(self) -> float:
+        return self.quote.price_in_euro_cent()*self.holding.amount
+    def market_value_in_euro(self) -> float:
+        return self.market_value_in_euro_cent() / 100
 
 class HoldingsSnapshot(NamedTuple):
     bank:Bank
     holding_with_quote_list:list[HoldingWithQuote]
+    def total_market_value_in_euro_cent(self) -> int:
+        return sum([h.market_value_in_euro_cent() for h in self.holding_with_quote_list])
 
     def to_dataframe(self) -> pd.DataFrame:
         self.holding_with_quote_list.sort(key=lambda s: s.quote.daily_change_rate(), reverse=True)
-        return pd.DataFrame([
-            {
-                "company": h.holding.company.name,
-                "amount": h.holding.amount,
-                "price": h.quote.price_value(),
-                "Price in EUR": h.quote.price_value_in_euro(),
-                "daily_change": h.quote.daily_change_rate_value(),
-                "dividend_yield": h.quote.dividend_yield,
-                "pe": h.quote.pe,
-                "roe": h.quote.roe_value(),
-                "timestamp": h.quote.timestamp_repr(),
+        def to_dict(holding_with_quote:HoldingWithQuote) -> dict[str,Any]:
+            result = {
+                "company": holding_with_quote.holding.company.name,
+                "amount": holding_with_quote.holding.amount,
+                "price": holding_with_quote.quote.price_value(),
+                "Price in EUR": holding_with_quote.quote.price_value_in_euro(),
+                "daily_change": holding_with_quote.quote.daily_change_rate_value(),
+                "market_value_in_euro": holding_with_quote.market_value_in_euro(),
+                "stake_by_market_value": f"{holding_with_quote.market_value_in_euro_cent() / self.total_market_value_in_euro_cent() * 100:.2f}%",
+                "dividend_yield": holding_with_quote.quote.dividend_yield,
+                "pe": holding_with_quote.quote.pe,
+                "roe": holding_with_quote.quote.roe_value(),
+                "timestamp": holding_with_quote.quote.timestamp_repr(),
             }
-            for h in self.holding_with_quote_list
-        ])
+            for f, val in holding_with_quote.holding.optional_fields.items():
+                result[f.label] = val
+            return result
+        return pd.DataFrame([to_dict(h) for h in self.holding_with_quote_list])
 
     @staticmethod
     def generate_snapshot(holdings:list[Holding]) -> tuple[HoldingsSnapshot, list[str]]:

@@ -1,7 +1,7 @@
 import sys
 from investment.holdings.models import Bank, HoldingsSnapshot, Holding
 from investment.holdings.nordea_trading_lots_extractor import extract
-from investment.holdings.op.calculation import extract_holdings_from_transaction_csvs
+from investment.holdings.op.calculation import extract_holdings_from_op_transaction_csvs
 from investment.holdings.nordea.calculation import extract_nordea_holdings_from_excel
 from investment.holdings.return_calculation import calculate_total_return
 
@@ -49,13 +49,17 @@ elif command == GENERATE_HOLDINGS_SNAPSHOT:
         if len(companies_failed_to_get_quote) > 0:
             print("The following companies fail to get quote")
             print(companies_failed_to_get_quote)
-    if len(sys.argv) != 4:
+    if len(sys.argv) < 4:
         print(f"Usage: python -m investment.holdings generate_holdings_snapshot <bank> <excel_file>")
         sys.exit(1)
+    elif len(sys.argv) == 5:
+        optional_fields = sys.argv[4].split(",")
+    else:
+        optional_fields = []
     bank = Bank[sys.argv[2].upper()]
     if bank == Bank.OP:
         csv_dir = sys.argv[3]
-        generate_and_print_snapshot(*extract_holdings_from_transaction_csvs(csv_dir))
+        generate_and_print_snapshot(*extract_holdings_from_op_transaction_csvs(csv_dir, optional_fields))
     elif bank == Bank.NORDEA:
         excel_path = sys.argv[3]
-        generate_and_print_snapshot(*extract_nordea_holdings_from_excel(excel_path))
+        generate_and_print_snapshot(*extract_nordea_holdings_from_excel(excel_path, optional_fields))

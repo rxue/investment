@@ -27,6 +27,8 @@ class Quote(NamedTuple):
 
     def price_value(self) -> str:
         return self.price.price_value()
+    def price_in_euro_cent(self) -> int:
+        return int(self.price.price_in_eur()*100)
     def price_value_in_euro(self) -> str:
         return f"{self.price.price_in_eur():.2f}"
     def daily_change_rate(self)->float:

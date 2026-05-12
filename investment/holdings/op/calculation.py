@@ -5,7 +5,7 @@ import pandas as pd
 
 from investment.company import find_company_by
 from investment.holdings.calculation.lots_matching import Action, Lot, Result, fifo_lots_matching
-from investment.holdings.models import Trading, Holding, HoldingWithQuote, HoldingsSnapshot, Bank
+from investment.holdings.models import Trading, Holding, Field
 from investment.holdings.op.repository import find_tradings
 from investment.holdings.util import extract_csv
 
@@ -16,7 +16,7 @@ class OPTrading(Trading):
             date=self.date,
             action=Action.BUY if self.action == "O" else Action.SELL,
             share_amount=self.amount,
-            value_in_cent=self.trade_price
+            value_in_cent=self.trade_price*100
             )
 
 def _to_trading(row: pd.Series) -> Trading:
@@ -34,7 +34,7 @@ def _to_trading(row: pd.Series) -> Trading:
         trade_price=trade_price,
     )
 
-def extract_holdings_from_transaction_csvs(csv_directory: str) -> tuple[list[Holding], list[str]]:
+def extract_holdings_from_op_transaction_csvs(csv_directory: str, optional_fields:list[str]) -> tuple[list[Holding], list[str]]:
     transactions = extract_csv(path=csv_directory, sep=";", encoding="latin-1")
     tradings_df:pd.DataFrame = find_tradings(transactions)
     def to_lots_by_company_symbol(tradings: pd.DataFrame) -> dict[str, list[Lot]]:
@@ -50,9 +50,14 @@ def extract_holdings_from_transaction_csvs(csv_directory: str) -> tuple[list[Hol
     def to_holding(company_symbol:str,lots_matching_result:Result) -> Holding | None:
         company = find_company_by(company_symbol)
         if company is not None:
+            filled_optional_fields = {}
+            for field_val in optional_fields:
+                if field_val.upper() == Field.COST.label.upper():
+                    filled_optional_fields[Field.COST] = result.holding_cost_in_cent()/100
             return Holding(
                 company=company,
-                amount=sum(lot.share_amount for lot in lots_matching_result.remaining_lots))
+                amount=sum(lot.share_amount for lot in lots_matching_result.unrealized_lots),
+                optional_fields=filled_optional_fields)
         print(f"did not find company name for symbol: {company_symbol}")
         return None
     holdings = []

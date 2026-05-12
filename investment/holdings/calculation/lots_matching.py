@@ -18,10 +18,12 @@ class RealizedLots(NamedTuple):
         return sum([lot.value_in_cent if lot.action == Action.BUY else -lot.value_in_cent for lot in self.lots])
 
 class Result(NamedTuple):
-    realized_lots_list:list[RealizedLots]
-    remaining_lots:list[Lot]
-    def unrealized_holding(self):
-        sum([lot.share_amount for lot in self.remaining_lots])
+    realized_lots:list[RealizedLots]
+    unrealized_lots:list[Lot]
+    def unrealized_holding(self) -> int:
+        sum([lot.share_amount for lot in self.unrealized_lots])
+    def holding_cost_in_cent(self) -> int:
+        return sum(lot.value_in_cent for lot in self.unrealized_lots)
 
 def fifo_lots_matching(tradings:list[Lot]) -> Result:
     remaining_lots: list[Lot] = []

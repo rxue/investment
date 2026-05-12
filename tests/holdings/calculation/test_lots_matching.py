@@ -10,5 +10,5 @@ def test_fifo_one_lot_removed():
 
     result = fifo_lots_matching([buy1, buy2, sell])
 
-    assert result.realized_lots_list == [RealizedLots([sell, buy1])]
-    assert result.remaining_lots == [buy2]
+    assert result.realized_lots == [RealizedLots([sell, buy1])]
+    assert result.unrealized_lots == [buy2]

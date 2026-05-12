@@ -5,7 +5,7 @@ from investment.company import find_company_by
 from investment.holdings.models import Holding
 
 
-def extract_nordea_holdings_from_excel(file_path: str) -> tuple[list[Holding], list[str]]:
+def extract_nordea_holdings_from_excel(file_path: str, optional_fields:list[str]) -> tuple[list[Holding], list[str]]:
     #if Path(file_path).name.startswith("nordea"):
     #    return extract_from_nordnet_csv(file_path)
     df = pd.read_excel(file_path, header=1)
