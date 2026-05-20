@@ -7,4 +7,6 @@ An ADR has a separate ISIN from its original stock
 
 ## SEPA
 Single Euro Payment Area
+# TWR calculation
+## Tutorial: https://www.youtube.com/watch?v=E0SCtO0hyGM
 
