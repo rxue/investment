@@ -1,0 +1,504 @@
+company_name,ticker_symbol,stock_exchange_symbol
+3M,MMM,NYSE
+A. O. Smith,AOS,NYSE
+Abbott Laboratories,ABT,NYSE
+AbbVie,ABBV,NYSE
+Accenture,ACN,NYSE
+Adobe Inc.,ADBE,NASDAQ
+Advanced Micro Devices,AMD,NASDAQ
+AES Corporation,AES,NYSE
+Aflac,AFL,NYSE
+Agilent Technologies,A,NYSE
+Air Products,APD,NYSE
+Airbnb,ABNB,NASDAQ
+Akamai Technologies,AKAM,NASDAQ
+Albemarle Corporation,ALB,NYSE
+Alexandria Real Estate Equities,ARE,NYSE
+Align Technology,ALGN,NASDAQ
+Allegion,ALLE,NYSE
+Alliant Energy,LNT,NASDAQ
+Allstate,ALL,NYSE
+Alphabet Inc. (Class A),GOOGL,NASDAQ
+Alphabet Inc. (Class C),GOOG,NASDAQ
+Altria,MO,NYSE
+Amazon,AMZN,NASDAQ
+Amcor,AMCR,NYSE
+Ameren,AEE,NYSE
+American Electric Power,AEP,NASDAQ
+American Express,AXP,NYSE
+American International Group,AIG,NYSE
+American Tower,AMT,NYSE
+American Water Works,AWK,NYSE
+Ameriprise Financial,AMP,NYSE
+Ametek,AME,NYSE
+Amgen,AMGN,NASDAQ
+Amphenol,APH,NYSE
+Analog Devices,ADI,NASDAQ
+Aon plc,AON,NYSE
+APA Corporation,APA,NASDAQ
+Apollo Global Management,APO,NYSE
+Apple Inc.,AAPL,NASDAQ
+Applied Materials,AMAT,NASDAQ
+AppLovin,APP,NASDAQ
+Aptiv,APTV,NYSE
+Arch Capital Group,ACGL,NASDAQ
+Archer Daniels Midland,ADM,NYSE
+Ares Management,ARES,NYSE
+Arista Networks,ANET,NYSE
+Arthur J. Gallagher & Co.,AJG,NYSE
+Assurant,AIZ,NYSE
+AT&T,T,NYSE
+Atmos Energy,ATO,NYSE
+Autodesk,ADSK,NASDAQ
+Automatic Data Processing,ADP,NASDAQ
+AutoZone,AZO,NYSE
+AvalonBay Communities,AVB,NYSE
+Avery Dennison,AVY,NYSE
+Axon Enterprise,AXON,NASDAQ
+Baker Hughes,BKR,NASDAQ
+Ball Corporation,BALL,NYSE
+Bank of America,BAC,NYSE
+Baxter International,BAX,NYSE
+Becton Dickinson,BDX,NYSE
+Berkshire Hathaway,BRK.B,NYSE
+Best Buy,BBY,NYSE
+Bio-Techne,TECH,NASDAQ
+Biogen,BIIB,NASDAQ
+BlackRock,BLK,NYSE
+Blackstone Inc.,BX,NYSE
+"Block, Inc.",XYZ,NYSE
+BNY Mellon,BK,NYSE
+Boeing,BA,NYSE
+Booking Holdings,BKNG,NASDAQ
+Boston Scientific,BSX,NYSE
+Bristol Myers Squibb,BMY,NYSE
+Broadcom,AVGO,NASDAQ
+Broadridge Financial Solutions,BR,NYSE
+Brown & Brown,BRO,NYSE
+Brown–Forman,BF.B,NYSE
+Builders FirstSource,BLDR,NYSE
+Bunge Global,BG,NYSE
+"BXP, Inc.",BXP,NYSE
+C.H. Robinson,CHRW,NASDAQ
+Cadence Design Systems,CDNS,NASDAQ
+Camden Property Trust,CPT,NYSE
+Campbell's Company (The),CPB,NASDAQ
+Capital One,COF,NYSE
+Cardinal Health,CAH,NYSE
+Carnival,CCL,NYSE
+Carrier Global,CARR,NYSE
+Carvana,CVNA,NYSE
+Casey's,CASY,NASDAQ
+Caterpillar Inc.,CAT,NYSE
+Cboe Global Markets,CBOE,NYSE
+CBRE Group,CBRE,NYSE
+CDW Corporation,CDW,NASDAQ
+Cencora,COR,NYSE
+Centene Corporation,CNC,NYSE
+CenterPoint Energy,CNP,NYSE
+CF Industries,CF,NYSE
+Charles River Laboratories,CRL,NYSE
+Charles Schwab Corporation,SCHW,NYSE
+Charter Communications,CHTR,NASDAQ
+Chevron Corporation,CVX,NYSE
+Chipotle Mexican Grill,CMG,NYSE
+Chubb Limited,CB,NYSE
+Church & Dwight,CHD,NYSE
+Ciena,CIEN,NYSE
+Cigna,CI,NYSE
+Cincinnati Financial,CINF,NASDAQ
+Cintas,CTAS,NASDAQ
+Cisco,CSCO,NASDAQ
+Citigroup,C,NYSE
+Citizens Financial Group,CFG,NYSE
+Clorox,CLX,NYSE
+CME Group,CME,NASDAQ
+CMS Energy,CMS,NYSE
+Coca-Cola Company (The),KO,NYSE
+Cognizant,CTSH,NASDAQ
+Coherent Corp.,COHR,NYSE
+Coinbase,COIN,NASDAQ
+Colgate-Palmolive,CL,NYSE
+Comcast,CMCSA,NASDAQ
+Comfort Systems USA,FIX,NYSE
+Conagra Brands,CAG,NYSE
+ConocoPhillips,COP,NYSE
+Consolidated Edison,ED,NYSE
+Constellation Brands,STZ,NYSE
+Constellation Energy,CEG,NASDAQ
+Cooper Companies (The),COO,NASDAQ
+Copart,CPRT,NASDAQ
+Corning Inc.,GLW,NYSE
+Corpay,CPAY,NYSE
+Corteva,CTVA,NYSE
+CoStar Group,CSGP,NASDAQ
+Costco,COST,NASDAQ
+Coterra,CTRA,NYSE
+CRH plc,CRH,NYSE
+CrowdStrike,CRWD,NASDAQ
+Crown Castle,CCI,NYSE
+CSX Corporation,CSX,NASDAQ
+Cummins,CMI,NYSE
+CVS Health,CVS,NYSE
+Danaher Corporation,DHR,NYSE
+Darden Restaurants,DRI,NYSE
+Datadog,DDOG,NASDAQ
+DaVita,DVA,NYSE
+Deckers Brands,DECK,NYSE
+Deere & Company,DE,NYSE
+Dell Technologies,DELL,NYSE
+Delta Air Lines,DAL,NYSE
+Devon Energy,DVN,NYSE
+Dexcom,DXCM,NASDAQ
+Diamondback Energy,FANG,NASDAQ
+Digital Realty,DLR,NYSE
+Dollar General,DG,NYSE
+Dollar Tree,DLTR,NASDAQ
+Dominion Energy,D,NYSE
+Domino's,DPZ,NASDAQ
+DoorDash,DASH,NASDAQ
+Dover Corporation,DOV,NYSE
+Dow Inc.,DOW,NYSE
+D. R. Horton,DHI,NYSE
+DTE Energy,DTE,NYSE
+Duke Energy,DUK,NYSE
+DuPont,DD,NYSE
+Eaton Corporation,ETN,NYSE
+eBay Inc.,EBAY,NASDAQ
+EchoStar,SATS,NASDAQ
+Ecolab,ECL,NYSE
+Edison International,EIX,NYSE
+Edwards Lifesciences,EW,NYSE
+Electronic Arts,EA,NASDAQ
+Elevance Health,ELV,NYSE
+Emcor,EME,NYSE
+Emerson Electric,EMR,NYSE
+Entergy,ETR,NYSE
+EOG Resources,EOG,NYSE
+EPAM Systems,EPAM,NYSE
+EQT Corporation,EQT,NYSE
+Equifax,EFX,NYSE
+Equinix,EQIX,NASDAQ
+Equity Residential,EQR,NYSE
+Erie Indemnity,ERIE,NASDAQ
+Essex Property Trust,ESS,NYSE
+Estée Lauder Companies (The),EL,NYSE
+Everest Group,EG,NYSE
+Evergy,EVRG,NASDAQ
+Eversource Energy,ES,NYSE
+Exelon,EXC,NASDAQ
+Expand Energy,EXE,NASDAQ
+Expedia Group,EXPE,NASDAQ
+Expeditors International,EXPD,NYSE
+Extra Space Storage,EXR,NYSE
+ExxonMobil,XOM,NYSE
+"F5, Inc.",FFIV,NASDAQ
+FactSet,FDS,NYSE
+Fair Isaac,FICO,NYSE
+Fastenal,FAST,NASDAQ
+Federal Realty Investment Trust,FRT,NYSE
+FedEx,FDX,NYSE
+Fidelity National Information Services,FIS,NYSE
+Fifth Third Bancorp,FITB,NASDAQ
+First Solar,FSLR,NASDAQ
+FirstEnergy,FE,NYSE
+Fiserv,FISV,NASDAQ
+Ford Motor Company,F,NYSE
+Fortinet,FTNT,NASDAQ
+Fortive,FTV,NYSE
+Fox Corporation (Class A),FOXA,NASDAQ
+Fox Corporation (Class B),FOX,NASDAQ
+Franklin Resources,BEN,NYSE
+Freeport-McMoRan,FCX,NYSE
+Garmin,GRMN,NYSE
+Gartner,IT,NYSE
+GE Aerospace,GE,NYSE
+GE HealthCare,GEHC,NASDAQ
+GE Vernova,GEV,NYSE
+Gen Digital,GEN,NASDAQ
+Generac,GNRC,NYSE
+General Dynamics,GD,NYSE
+General Mills,GIS,NYSE
+General Motors,GM,NYSE
+Genuine Parts Company,GPC,NYSE
+Gilead Sciences,GILD,NASDAQ
+Global Payments,GPN,NYSE
+Globe Life,GL,NYSE
+GoDaddy,GDDY,NYSE
+Goldman Sachs,GS,NYSE
+Halliburton,HAL,NYSE
+Hartford (The),HIG,NYSE
+Hasbro,HAS,NASDAQ
+HCA Healthcare,HCA,NYSE
+Healthpeak Properties,DOC,NYSE
+Henry Schein,HSIC,NASDAQ
+Hershey Company (The),HSY,NYSE
+Hewlett Packard Enterprise,HPE,NYSE
+Hilton Worldwide,HLT,NYSE
+Home Depot (The),HD,NYSE
+Honeywell,HON,NASDAQ
+Hormel Foods,HRL,NYSE
+Host Hotels & Resorts,HST,NASDAQ
+Howmet Aerospace,HWM,NYSE
+HP Inc.,HPQ,NYSE
+Hubbell Incorporated,HUBB,NYSE
+Humana,HUM,NYSE
+Huntington Bancshares,HBAN,NASDAQ
+Huntington Ingalls Industries,HII,NYSE
+IBM,IBM,NYSE
+IDEX Corporation,IEX,NYSE
+Idexx Laboratories,IDXX,NASDAQ
+Illinois Tool Works,ITW,NYSE
+Incyte,INCY,NASDAQ
+Ingersoll Rand,IR,NYSE
+Insulet Corporation,PODD,NASDAQ
+Intel,INTC,NASDAQ
+Interactive Brokers,IBKR,NASDAQ
+Intercontinental Exchange,ICE,NYSE
+International Flavors & Fragrances,IFF,NYSE
+International Paper,IP,NYSE
+Intuit,INTU,NASDAQ
+Intuitive Surgical,ISRG,NASDAQ
+Invesco,IVZ,NYSE
+Invitation Homes,INVH,NYSE
+IQVIA,IQV,NYSE
+Iron Mountain,IRM,NYSE
+J.B. Hunt,JBHT,NASDAQ
+Jabil,JBL,NYSE
+Jack Henry & Associates,JKHY,NASDAQ
+Jacobs Solutions,J,NYSE
+Johnson & Johnson,JNJ,NYSE
+Johnson Controls,JCI,NYSE
+JPMorgan Chase,JPM,NYSE
+Kenvue,KVUE,NYSE
+Keurig Dr Pepper,KDP,NASDAQ
+KeyCorp,KEY,NYSE
+Keysight Technologies,KEYS,NYSE
+Kimberly-Clark,KMB,NASDAQ
+Kimco Realty,KIM,NYSE
+Kinder Morgan,KMI,NYSE
+KKR & Co.,KKR,NYSE
+KLA Corporation,KLAC,NASDAQ
+Kraft Heinz,KHC,NASDAQ
+Kroger,KR,NYSE
+L3Harris,LHX,NYSE
+Labcorp,LH,NYSE
+Lam Research,LRCX,NASDAQ
+Las Vegas Sands,LVS,NYSE
+Leidos,LDOS,NYSE
+Lennar,LEN,NYSE
+Lennox International,LII,NYSE
+Lilly (Eli),LLY,NYSE
+Linde plc,LIN,NASDAQ
+Live Nation Entertainment,LYV,NYSE
+Lockheed Martin,LMT,NYSE
+Loews Corporation,L,NYSE
+Lowe's,LOW,NYSE
+Lululemon Athletica,LULU,NASDAQ
+Lumentum,LITE,NASDAQ
+LyondellBasell,LYB,NYSE
+M&T Bank,MTB,NYSE
+Marathon Petroleum,MPC,NYSE
+Marriott International,MAR,NASDAQ
+Marsh McLennan,MRSH,NYSE
+Martin Marietta Materials,MLM,NYSE
+Masco,MAS,NYSE
+Mastercard,MA,NYSE
+McCormick & Company,MKC,NYSE
+McDonald's,MCD,NYSE
+McKesson Corporation,MCK,NYSE
+Medtronic,MDT,NYSE
+Merck & Co.,MRK,NYSE
+Meta Platforms,META,NASDAQ
+MetLife,MET,NYSE
+Mettler Toledo,MTD,NYSE
+MGM Resorts,MGM,NYSE
+Microchip Technology,MCHP,NASDAQ
+Micron Technology,MU,NASDAQ
+Microsoft,MSFT,NASDAQ
+Mid-America Apartment Communities,MAA,NYSE
+Moderna,MRNA,NASDAQ
+Molson Coors Beverage Company,TAP,NYSE
+Mondelez International,MDLZ,NASDAQ
+Monolithic Power Systems,MPWR,NASDAQ
+Monster Beverage,MNST,NASDAQ
+Moody's Corporation,MCO,NYSE
+Morgan Stanley,MS,NYSE
+Mosaic Company (The),MOS,NYSE
+Motorola Solutions,MSI,NYSE
+MSCI Inc.,MSCI,NYSE
+"Nasdaq, Inc.",NDAQ,NASDAQ
+NetApp,NTAP,NASDAQ
+Netflix,NFLX,NASDAQ
+Newmont,NEM,NYSE
+News Corp (Class A),NWSA,NASDAQ
+News Corp (Class B),NWS,NASDAQ
+NextEra Energy,NEE,NYSE
+"Nike, Inc.",NKE,NYSE
+NiSource,NI,NYSE
+Nordson Corporation,NDSN,NASDAQ
+Norfolk Southern,NSC,NYSE
+Northern Trust,NTRS,NASDAQ
+Northrop Grumman,NOC,NYSE
+Norwegian Cruise Line Holdings,NCLH,NYSE
+NRG Energy,NRG,NYSE
+Nucor,NUE,NYSE
+Nvidia,NVDA,NASDAQ
+"NVR, Inc.",NVR,NYSE
+NXP Semiconductors,NXPI,NASDAQ
+O’Reilly Automotive,ORLY,NASDAQ
+Occidental Petroleum,OXY,NYSE
+Old Dominion,ODFL,NASDAQ
+Omnicom Group,OMC,NYSE
+ON Semiconductor,ON,NASDAQ
+Oneok,OKE,NYSE
+Oracle Corporation,ORCL,NYSE
+Otis Worldwide,OTIS,NYSE
+Paccar,PCAR,NASDAQ
+Packaging Corporation of America,PKG,NYSE
+Palantir Technologies,PLTR,NASDAQ
+Palo Alto Networks,PANW,NASDAQ
+Paramount Skydance Corporation,PSKY,NASDAQ
+Parker Hannifin,PH,NYSE
+Paychex,PAYX,NASDAQ
+PayPal,PYPL,NASDAQ
+Pentair,PNR,NYSE
+PepsiCo,PEP,NASDAQ
+Pfizer,PFE,NYSE
+PG&E Corporation,PCG,NYSE
+Philip Morris International,PM,NYSE
+Phillips 66,PSX,NYSE
+Pinnacle West Capital,PNW,NYSE
+PNC Financial Services,PNC,NYSE
+Pool Corporation,POOL,NASDAQ
+PPG Industries,PPG,NYSE
+PPL Corporation,PPL,NYSE
+Principal Financial Group,PFG,NASDAQ
+Procter & Gamble,PG,NYSE
+Progressive Corporation,PGR,NYSE
+Prologis,PLD,NYSE
+Prudential Financial,PRU,NYSE
+Public Service Enterprise Group,PEG,NYSE
+PTC Inc.,PTC,NASDAQ
+Public Storage,PSA,NYSE
+PulteGroup,PHM,NYSE
+Quanta Services,PWR,NYSE
+Qualcomm,QCOM,NASDAQ
+Quest Diagnostics,DGX,NYSE
+Qnity Electronics,Q,NYSE
+Ralph Lauren Corporation,RL,NYSE
+Raymond James Financial,RJF,NYSE
+RTX Corporation,RTX,NYSE
+Realty Income,O,NYSE
+Regency Centers,REG,NASDAQ
+Regeneron Pharmaceuticals,REGN,NASDAQ
+Regions Financial Corporation,RF,NYSE
+Republic Services,RSG,NYSE
+ResMed,RMD,NYSE
+Revvity,RVTY,NYSE
+Robinhood Markets,HOOD,NASDAQ
+Rockwell Automation,ROK,NYSE
+"Rollins, Inc.",ROL,NYSE
+Roper Technologies,ROP,NASDAQ
+Ross Stores,ROST,NASDAQ
+Royal Caribbean Group,RCL,NYSE
+S&P Global,SPGI,NYSE
+Salesforce,CRM,NYSE
+Sandisk,SNDK,NASDAQ
+SBA Communications,SBAC,NASDAQ
+Schlumberger,SLB,NYSE
+Seagate Technology,STX,NASDAQ
+Sempra,SRE,NYSE
+ServiceNow,NOW,NYSE
+Sherwin-Williams,SHW,NYSE
+Simon Property Group,SPG,NYSE
+Skyworks Solutions,SWKS,NASDAQ
+J.M. Smucker Company (The),SJM,NYSE
+Smurfit Westrock,SW,NYSE
+Snap-on,SNA,NYSE
+Solventum,SOLV,NYSE
+Southern Company,SO,NYSE
+Southwest Airlines,LUV,NYSE
+Stanley Black & Decker,SWK,NYSE
+Starbucks,SBUX,NASDAQ
+State Street Corporation,STT,NYSE
+Steel Dynamics,STLD,NASDAQ
+Steris,STE,NYSE
+Stryker Corporation,SYK,NYSE
+Supermicro,SMCI,NASDAQ
+Synchrony Financial,SYF,NYSE
+Synopsys,SNPS,NASDAQ
+Sysco,SYY,NYSE
+T-Mobile US,TMUS,NASDAQ
+T. Rowe Price,TROW,NASDAQ
+Take-Two Interactive,TTWO,NASDAQ
+"Tapestry, Inc.",TPR,NYSE
+Targa Resources,TRGP,NYSE
+Target Corporation,TGT,NYSE
+TE Connectivity,TEL,NYSE
+Teledyne Technologies,TDY,NYSE
+Teradyne,TER,NASDAQ
+"Tesla, Inc.",TSLA,NASDAQ
+Texas Instruments,TXN,NASDAQ
+Texas Pacific Land Corporation,TPL,NYSE
+Textron,TXT,NYSE
+Thermo Fisher Scientific,TMO,NYSE
+TJX Companies,TJX,NYSE
+TKO Group Holdings,TKO,NYSE
+Trade Desk (The),TTD,NASDAQ
+Tractor Supply,TSCO,NASDAQ
+Trane Technologies,TT,NYSE
+TransDigm Group,TDG,NYSE
+Travelers Companies (The),TRV,NYSE
+Trimble Inc.,TRMB,NASDAQ
+Truist Financial,TFC,NYSE
+Tyler Technologies,TYL,NYSE
+Tyson Foods,TSN,NYSE
+U.S. Bancorp,USB,NYSE
+Uber,UBER,NYSE
+"UDR, Inc.",UDR,NYSE
+Ulta Beauty,ULTA,NASDAQ
+Union Pacific Corporation,UNP,NYSE
+United Airlines Holdings,UAL,NASDAQ
+United Parcel Service,UPS,NYSE
+United Rentals,URI,NYSE
+UnitedHealth Group,UNH,NYSE
+Universal Health Services,UHS,NYSE
+Valero Energy,VLO,NYSE
+Ventas,VTR,NYSE
+Veralto,VLTO,NYSE
+Verisign,VRSN,NASDAQ
+Verisk Analytics,VRSK,NASDAQ
+Verizon,VZ,NYSE
+Vertex Pharmaceuticals,VRTX,NASDAQ
+Vertiv,VRT,NYSE
+Viatris,VTRS,NASDAQ
+Vici Properties,VICI,NYSE
+Visa Inc.,V,NYSE
+Vistra Corp.,VST,NYSE
+Vulcan Materials Company,VMC,NYSE
+W. R. Berkley Corporation,WRB,NYSE
+W. W. Grainger,GWW,NYSE
+Wabtec,WAB,NYSE
+Walmart,WMT,NASDAQ
+Walt Disney Company (The),DIS,NYSE
+Warner Bros. Discovery,WBD,NASDAQ
+Waste Management,WM,NYSE
+Waters Corporation,WAT,NYSE
+WEC Energy Group,WEC,NYSE
+Wells Fargo,WFC,NYSE
+Welltower,WELL,NYSE
+West Pharmaceutical Services,WST,NYSE
+Western Digital,WDC,NASDAQ
+Weyerhaeuser,WY,NYSE
+"Williams-Sonoma, Inc.",WSM,NYSE
+Williams Companies,WMB,NYSE
+Willis Towers Watson,WTW,NASDAQ
+"Workday, Inc.",WDAY,NASDAQ
+Wynn Resorts,WYNN,NASDAQ
+Xcel Energy,XEL,NASDAQ
+Xylem Inc.,XYL,NYSE
+Yum! Brands,YUM,NYSE
+Zebra Technologies,ZBRA,NASDAQ
+Zimmer Biomet,ZBH,NYSE
+Zoetis,ZTS,NYSE

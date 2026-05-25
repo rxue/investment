@@ -1,4 +1,7 @@
 import sys
+
+import pandas as pd
+
 from investment.holdings.models import Bank, HoldingsSnapshot, Holding
 from investment.holdings.nordea_trading_lots_extractor import extract
 from investment.holdings.op.calculation import extract_holdings_from_op_transaction_csvs
@@ -45,6 +48,8 @@ elif command == GENERATE_HOLDINGS_SNAPSHOT:
     def generate_and_print_snapshot(holdings:list[Holding], companies_failed_get_holding:list[str]):
         holdings_snapshot, companies_failed_to_get_quote = HoldingsSnapshot.generate_snapshot(holdings)
         companies_failed_to_get_quote.extend(companies_failed_get_holding)
+        pd.set_option('display.max_columns', 12)
+        pd.set_option('display.width', 205)
         print(holdings_snapshot.to_dataframe())
         if len(companies_failed_to_get_quote) > 0:
             print("The following companies fail to get quote")

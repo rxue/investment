@@ -1,12 +1,12 @@
 from dateutil.utils import today
-
+from datetime import date
 from investment.market_quote import yfinance_fetcher
 from investment.market_quote.ecb_fetcher import fetch_fx_rate_to_euro
 from investment.market_quote.models import Quote, Price
 
 
 def get_latest_quote(symbol: str) -> Quote | None:
-    yfinance_quote = yfinance_fetcher.get_latest_quote(symbol)
+    yfinance_quote = yfinance_fetcher.get_quote(symbol)
     if yfinance_quote is None:
         return None
     currency = yfinance_quote.currency
@@ -19,3 +19,6 @@ def get_latest_quote(symbol: str) -> Quote | None:
         pe=yfinance_quote.pe,
         roe=yfinance_quote.roe,
     )
+
+def get_price_in_euro(symbol:str, date:date) -> float:
+    yfinance_quote = yfinance_fetcher.get_quote(symbol)

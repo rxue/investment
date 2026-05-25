@@ -1,9 +1,23 @@
 import math
-from datetime import datetime
+from datetime import datetime,date
 from typing import NamedTuple
+
+from investment.market_quote.ecb_fetcher import fetch_fx_rate_to_euro
+
 
 def _decimal_to_percentage(decimal_val: float) -> str:
     return f"{decimal_val * 100:.2f}%"
+
+class ClosePrice(NamedTuple):
+    date:date
+    currency: str
+    value: float
+    def in_euro(self)->float:
+        _, fx_rate = fetch_fx_rate_to_euro(self.currency, self.date)
+        result = self.value/fx_rate
+        if self.currency == "GBP":
+            return result/100
+        return result
 
 class Price(NamedTuple):
     currency: str
@@ -17,6 +31,7 @@ class Price(NamedTuple):
             return result/100
         return result
 
+
 class Quote(NamedTuple):
     price:Price
     dividend_yield:float
@@ -25,10 +40,12 @@ class Quote(NamedTuple):
     pe:int
     roe:float
 
-    def price_value(self) -> str:
-        return self.price.price_value()
+    def price_in_euro(self) -> float:
+        return self.price.price_in_eur()
     def price_in_euro_cent(self) -> int:
         return int(self.price.price_in_eur()*100)
+    def price_value(self) -> str:
+        return self.price.price_value()
     def price_value_in_euro(self) -> str:
         return f"{self.price.price_in_eur():.2f}"
     def daily_change_rate(self)->float:

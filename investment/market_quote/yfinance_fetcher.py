@@ -6,7 +6,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 import yfinance as yf
 
-from investment.market_quote.models import Quote
+from investment.market_quote.models import Quote, ClosePrice
 
 
 class YFinanceQuote(NamedTuple):
@@ -19,7 +19,7 @@ class YFinanceQuote(NamedTuple):
     pe:int
     roe:float
 
-def get_close_price(symbol: str, date: date) -> tuple[float, date] | None:
+def get_close_price(symbol: str, date: date) -> ClosePrice | None:
     try:
         ticker = yf.Ticker(symbol)
         hist = ticker.history(
@@ -29,7 +29,8 @@ def get_close_price(symbol: str, date: date) -> tuple[float, date] | None:
         if hist.empty:
             return None
         row = hist.iloc[-1]
-        return float(row["Close"]), row.name.date()
+        currency = ticker.info.get("currency")
+        return ClosePrice(date=row.name.date(), currency=currency.upper(), value=float(row["Close"]))
     except Exception:
         return None
 
@@ -67,7 +68,7 @@ def get_quote(symbol: str, date: date | None = None) -> YFinanceQuote | None:
             currency = info.get("currency")
             if currency is None:
                 return None
-            result = YFinanceQuote(company_symbol=symbol,
+            return YFinanceQuote(company_symbol=symbol,
                                  price=float(row["Close"]),
                                  currency=currency.upper(),
                                  dividend_yield=info.get("dividendYield"),
@@ -75,7 +76,6 @@ def get_quote(symbol: str, date: date | None = None) -> YFinanceQuote | None:
                                  timestamp=row.name.to_pydatetime(),
                                  pe=int(round(pe)) if (pe := info.get("trailingPE")) is not None else None,
                                  roe=info.get("returnOnEquity"))
-            return result
     except Exception:
         return None
 

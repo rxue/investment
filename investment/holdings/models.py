@@ -27,6 +27,7 @@ class Trading:
 
 class Field(Enum):
     COST = ("cost", float)
+    ROE = ("roe", float)
     def __init__(self, label: str, type_: type):
         self.label = label
         self.type_ = type_

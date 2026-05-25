@@ -10,7 +10,6 @@ def fetch_fx_rate_to_euro(base_currency: str, date: date) -> tuple[date, float]:
     url = f"https://data-api.ecb.europa.eu/service/data/EXR/D.{base_currency}.EUR.SP00.A"
     today = date.today()
     if date < today:
-        print(f"date: {date}, today: {today}")
         date_str = date.strftime("%Y-%m-%d")
         response = requests.get(url, params={
             "startPeriod": date_str,

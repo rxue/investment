@@ -1,10 +1,11 @@
 import re
-from datetime import date, datetime
+from datetime import date
 from typing import NamedTuple
 
 import pandas as pd
 
 from investment.accounting.util import Period
+from investment.util import to_date
 
 
 class PaymentCompany(NamedTuple):
@@ -57,7 +58,7 @@ class DividendPayment(NamedTuple):
         exchange_rate = to_float(rate_match.group(1)) if rate_match else 0.0
 
         return cls(
-            value_date=datetime.strptime(row["Arvopäivä"], "%d.%m.%Y").date(),
+            value_date=to_date(row["Arvopäivä"]),
             net_value_in_eur=to_float(row["Määrä EUROA"]),
             company=PaymentCompany(name=company_name, country_code=country_code),
             source_currency=source_currency,

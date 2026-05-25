@@ -52,10 +52,19 @@ add to tax_report/pdf_generation/pdf_generator.py a function called generate_Lis
 # Python learning tips
 ## 20260317
 In Python, the name of a *module*, i.e. a Python file, is rarely named with verb. This is logic when taking the functions inside the module into consideration. Functions inside a Python module is named with verb by nature, so if the module is also named with verb, it is against intuition
+# 20260430
+Google Finance is not a good source to get the stock quotes. The daily change rate on the Google Finance page is parsed from Javascript, but the *pycurl* by nature is not parsing Javascript
 ## 20260507
 Install dependency for *dev*: pip install -e ".[dev]"
 ## 20260508
 [*Forward Reference*](https://peps.python.org/pep-0563/#forward-references)
 
-# 20260430
-Google Finance is not a good source to get the stock quotes. The daily change rate on the Google Finance page is parsed from Javascript, but the *pycurl* by nature is not parsing Javascript
+# Algorithm of TWR calculation for stock portfolio
+## 1. Divide transactions into *sub-periods*, which are divided by the external in/out of cashflow
+## 2. Calculate the R - return of sub-period
+* a sub-period needs to know the start date of the next sub-period to calculate the *market value* of the holdings on that day, since the *market value* is part of the *ending value*of the sub-period
+* but as to the last sub-period, at this moment the date of the holdings' *market value* is using the end date of the sub-period
+* In order to calculate the holdings of a sub-period, the *holdings at the end of the previous period* is needed
+
+
+

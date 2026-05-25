@@ -33,16 +33,17 @@ def _to_trading(row: pd.Series) -> Trading:
         amount=quantity,
         trade_price=trade_price,
     )
+def to_lots_by_company_symbol(tradings: pd.DataFrame) -> dict[str, list[Lot]]:
+    result: dict[str, list[Lot]] = {}
+    for _, row in tradings.iterrows():
+        trading = _to_trading(row)
+        result.setdefault(trading.company_identifier, []).append(trading.to_lot())
+    return result
 
 def extract_holdings_from_op_transaction_csvs(csv_directory: str, optional_fields:list[str]) -> tuple[list[Holding], list[str]]:
     transactions = extract_csv(path=csv_directory, sep=";", encoding="latin-1")
     tradings_df:pd.DataFrame = find_tradings(transactions)
-    def to_lots_by_company_symbol(tradings: pd.DataFrame) -> dict[str, list[Lot]]:
-        result: dict[str, list[Lot]] = {}
-        for _, row in tradings.iterrows():
-            trading = _to_trading(row)
-            result.setdefault(trading.company_identifier, []).append(trading.to_lot())
-        return result
+
     lots_matching_result_by_company_symbol = {
         company_symbol: fifo_lots_matching(input_lots)
         for company_symbol, input_lots in to_lots_by_company_symbol(tradings_df).items()

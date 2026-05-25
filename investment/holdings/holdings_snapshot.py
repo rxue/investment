@@ -6,7 +6,7 @@ import pandas as pd
 from investment.holdings.models.holdings import HoldingWithQuote
 from investment.holdings.holdings_extractor import extract_from
 from investment.holdings.company.repository import find_yahoo_symbols_by_name
-from investment.market_quote.yfinance_fetcher import get_latest_quote
+from investment.market_quote.yfinance_fetcher import get_quote
 
 
 class HoldingsSnapshot(NamedTuple):
@@ -25,7 +25,7 @@ class HoldingsSnapshot(NamedTuple):
             if yahoo_symbol is None:
                 failed.append(holding.company_name)
                 continue
-            quote = get_latest_quote(yahoo_symbol)
+            quote = get_quote(yahoo_symbol)
             if quote is None:
                 failed.append(holding.company_name)
                 continue
