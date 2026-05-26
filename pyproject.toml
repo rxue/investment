@@ -26,6 +26,11 @@ dependencies = [
 [tool.setuptools.packages.find]
 include = ["ai_tool*", "investment*"]
 
+[tool.pytest.ini_options]
+markers = [
+    "integration: tests that hit real filesystems or external services",
+]
+
 [tool.ruff]
 line-length = 120
 

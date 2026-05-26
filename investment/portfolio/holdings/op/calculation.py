@@ -4,10 +4,10 @@ from datetime import datetime
 import pandas as pd
 
 from investment.company import find_company_by
-from investment.holdings.calculation.lots_matching import Action, Lot, Result, fifo_lots_matching
-from investment.holdings.models import Trading, Holding, Field
-from investment.holdings.op.repository import find_tradings
-from investment.holdings.util import extract_csv
+from investment.portfolio.lots_matching import Action, Lot, fifo_lots_matching
+from investment.portfolio.holdings.models import Trading, Holding, Field
+from investment.portfolio.holdings.util import extract_csv
+from investment.portfolio.transaction_filters import find_all_tradings
 
 
 class OPTrading(Trading):
@@ -42,7 +42,7 @@ def to_lots_by_company_symbol(tradings: pd.DataFrame) -> dict[str, list[Lot]]:
 
 def extract_holdings_from_op_transaction_csvs(csv_directory: str, optional_fields:list[str]) -> tuple[list[Holding], list[str]]:
     transactions = extract_csv(path=csv_directory, sep=";", encoding="latin-1")
-    tradings_df:pd.DataFrame = find_tradings(transactions)
+    tradings_df:pd.DataFrame = find_all_tradings(transactions)
 
     lots_matching_result_by_company_symbol = {
         company_symbol: fifo_lots_matching(input_lots)

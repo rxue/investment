@@ -1,4 +1,4 @@
-from investment.holdings.models import NordeaTradingLot
+from investment.portfolio.holdings.models import NordeaTradingLot
 
 
 class ReturnBreakdown:
@@ -35,7 +35,7 @@ class ReturnCalculator:
 
 def calculate_total_return(input_dir: str) -> float:
     import os
-    from investment.holdings.nordea_trading_lots_extractor import extract
+    from investment.portfolio.holdings.nordea_trading_lots_extractor import extract
     breakdowns = []
     for filename in sorted(os.listdir(input_dir)):
         if filename.endswith('.pdf'):

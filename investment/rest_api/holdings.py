@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from investment.holdings.models import HoldingsSnapshot
-from investment.holdings.op.calculation import extract_holdings_from_op_transaction_csvs
+from investment.portfolio.holdings.models import HoldingsSnapshot
+from investment.portfolio.holdings.op.calculation import extract_holdings_from_op_transaction_csvs
 
 router = APIRouter()
 

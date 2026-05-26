@@ -7,7 +7,7 @@ import pandas as pd
 
 from investment.company import find_company_by
 from investment.market_quote import yfinance_fetcher
-from investment.portfolio.lots_matching import Trading, Lot, Action, fifo_lots_matching
+from investment.portfolio.lots_matching import Trading, Lot, Action, fifo_lots_matching, to_lots_by_company_symbol
 from investment.portfolio.transaction_filters import find_all_tradings
 from investment.portfolio.util import make_df
 from investment.text_io import extract_csv
@@ -43,32 +43,7 @@ class SubPeriodReturnCalculator:
     def start_date(self):
         return to_date(self.transactions.iloc[0]["Arvopäivä"])
     def calculate_return(self) -> SubPeriodReturn:
-        def to_lots_by_company_symbol(tradings: pd.DataFrame) -> dict[str, list[Lot]]:
-            def _to_trading(row: pd.Series) -> Trading:
-                match = re.match(r"^\s*([OM]):(.+?)\s*/(\d+)", row["Viesti"])
-                action = match.group(1)
-                ticker = match.group(2).strip()
-                quantity = int(match.group(3))
-                trade_date = datetime.strptime(row["Kirjauspäivä"], "%d.%m.%Y").date()
-                trade_price = abs(row["Määrä EUROA"])
-                return Trading(
-                    company_identifier=ticker,
-                    action=action,
-                    date=trade_date,
-                    amount=quantity,
-                    trade_price=trade_price,
-                )
 
-            def to_lot(t: Trading) -> Lot:
-                return Lot(date=t.date,
-                           action=Action.BUY if t.action == "O" else Action.SELL,
-                           share_amount=t.amount,
-                           value_in_cent=int(t.trade_price * 100))
-            result: dict[str, list[Lot]] = {}
-            for _, row in tradings.iterrows():
-                trading = _to_trading(row)
-                result.setdefault(trading.company_identifier, []).append(to_lot(trading))
-            return result
         trading_transactions_df = find_all_tradings(self.transactions)
         previous_holdings_map = self.previous_ending_net_asset.holdings_map if self.previous_ending_net_asset is not None else {}
         company_symbol_to_unrealized_lots:dict[str,list[Lot]]= dict(previous_holdings_map)
@@ -120,6 +95,7 @@ def time_weighted_return_by_period(transactions: pd.DataFrame) -> list[SubPeriod
     previous_subperiod_return = None
     transactions_by_period = divide_transactions_by_period(transactions)
     for i, sub_period_df in enumerate(transactions_by_period):
+        print(f"sub-period: \n{sub_period_df}")
         if i == len(transactions_by_period) -1:
             end_date = to_date(sub_period_df.iloc[-1]["Arvopäivä"])
         else:

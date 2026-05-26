@@ -2,7 +2,7 @@ from datetime import date
 
 import pandas as pd
 
-from investment.holdings.op.calculation import OPTrading, _to_trading
+from investment.portfolio.holdings.op.calculation import OPTrading, _to_trading
 
 
 def make_row(viesti: str, selitys: str, maara: str, kirjauspaiva: str) -> pd.Series:

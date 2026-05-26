@@ -2,7 +2,7 @@
 import pandas as pd
 
 from investment.company import find_company_by
-from investment.holdings.models import Holding
+from investment.portfolio.holdings.models import Holding
 
 
 def extract_nordea_holdings_from_excel(file_path: str, optional_fields:list[str]) -> tuple[list[Holding], list[str]]:

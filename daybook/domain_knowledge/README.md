@@ -12,4 +12,4 @@ Single Euro Payment Area
 ## Core of TWR calculation in investment portfolio (20260525)
 The purpose of TWR calculation in investment portfolio is to calculte the **return on investment**. In relation to this, there is a typical corner case:
 * At the beginning, if there are multiple *deposits/withdrawal* but without any tradings, the *returns* of sub-periods divided by those *deposits/withdrawals* are 0
-
+* NOTE! For the sake of simplicity, the charge of the bank account is ignored. This might be different from the professional portfolio return calculation

@@ -4,8 +4,8 @@ from datetime import datetime
 
 import pdfplumber
 
-from investment.holdings.models import NordeaTradingLot
-from investment.holdings.return_calculation import ReturnBreakdown
+from investment.portfolio.holdings.models import NordeaTradingLot
+from investment.portfolio.holdings.return_calculation import ReturnBreakdown
 
 _TRANSACTION_RE = re.compile(
     r'(' + 'Withdrawal|Deposit' + r')\s+(\d{2}\.\d{2}\.\d{2})\s+(\d+)\s+([\d,]+)\s+([\d,]+)'
