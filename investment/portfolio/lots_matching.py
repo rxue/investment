@@ -1,6 +1,6 @@
 from enum import Enum, auto
 import re
-from typing import NamedTuple
+from typing import NamedTuple, Tuple
 from datetime import date, datetime
 
 import pandas as pd
@@ -55,16 +55,15 @@ class RealizedLots(NamedTuple):
     lots: list[Lot]
     def realized_gain(self):
         return sum([lot.value_in_cent if lot.action == Action.BUY else -lot.value_in_cent for lot in self.lots])
+class UnrealizedLots(NamedTuple):
+    lots: list[Lot]
+    def holding(self) -> int:
+        return sum(lot.share_amount for lot in self.lots)
 
-class LotsMatchingResult(NamedTuple):
-    realized_lots:list[RealizedLots]
-    unrealized_lots:list[Lot]
-    def unrealized_holding(self) -> int:
-        sum([lot.share_amount for lot in self.unrealized_lots])
     def holding_cost_in_cent(self) -> int:
-        return sum(lot.value_in_cent for lot in self.unrealized_lots)
+        return sum(lot.value_in_cent for lot in self.lots)
 
-def fifo_lots_matching(tradings:list[Lot], existing_unrealized_lots:list[Lot]=[]) -> LotsMatchingResult:
+def fifo_lots_matching(tradings:list[Lot], existing_unrealized_lots:list[Lot]=[]) -> Tuple[RealizedLots,UnrealizedLots]:
     remaining_lots: list[Lot] = list(existing_unrealized_lots)
     def dequeue(buy_trading:Lot) -> RealizedLots:
         head_lot = remaining_lots[0]
@@ -82,4 +81,4 @@ def fifo_lots_matching(tradings:list[Lot], existing_unrealized_lots:list[Lot]=[]
         else:
             realized_lots_list.append(dequeue(tr))
 
-    return LotsMatchingResult(realized_lots_list, remaining_lots)
+    return RealizedLots(realized_lots_list), UnrealizedLots(remaining_lots)

@@ -9,7 +9,7 @@ from datetime import date
 import pandas as pd
 
 from investment.company import Company
-from investment.market_quote.models import Quote
+from investment.market_quote.yfinance_fetcher import get_latest_quote, YFinanceQuote
 
 
 class Bank(Enum):
@@ -37,7 +37,7 @@ class Holding(NamedTuple):
     amount:int
     optional_fields:dict[Field,Any] = {}
     def with_quote(self)-> HoldingWithQuote | None:
-        quote = self.company.get_latest_quote()
+        quote = get_latest_quote(self.company.yahoo_symbol)
         if quote is None:
             return None
         return HoldingWithQuote(
@@ -46,9 +46,9 @@ class Holding(NamedTuple):
 
 class HoldingWithQuote(NamedTuple):
     holding: Holding
-    quote: Quote
+    quote: YFinanceQuote
     def market_value_in_euro_cent(self) -> float:
-        return self.quote.price_in_euro_cent()*self.holding.amount
+        return self.quote.price_in_euro_cent() * self.holding.amount
     def market_value_in_euro(self) -> float:
         return self.market_value_in_euro_cent() / 100
 
@@ -59,12 +59,12 @@ class HoldingsSnapshot(NamedTuple):
         return sum([h.market_value_in_euro_cent() for h in self.holding_with_quote_list])
 
     def to_dataframe(self) -> pd.DataFrame:
-        self.holding_with_quote_list.sort(key=lambda s: s.quote.daily_change_rate(), reverse=True)
+        self.holding_with_quote_list.sort(key=lambda s: s.quote.daily_change, reverse=True)
         def to_dict(holding_with_quote:HoldingWithQuote) -> dict[str,Any]:
             result = {
                 "company": holding_with_quote.holding.company.name,
                 "amount": holding_with_quote.holding.amount,
-                "price": holding_with_quote.quote.price_value(),
+                "price": holding_with_quote.quote.price,
                 "Price in EUR": holding_with_quote.quote.price_value_in_euro(),
                 "daily_change": holding_with_quote.quote.daily_change_rate_value(),
                 "market_value_in_euro": holding_with_quote.market_value_in_euro(),

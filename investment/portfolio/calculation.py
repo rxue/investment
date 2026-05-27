@@ -48,7 +48,8 @@ class SubPeriodReturnCalculator:
         previous_holdings_map = self.previous_ending_net_asset.holdings_map if self.previous_ending_net_asset is not None else {}
         company_symbol_to_unrealized_lots:dict[str,list[Lot]]= dict(previous_holdings_map)
         for company_symbol, tradings in to_lots_by_company_symbol(trading_transactions_df).items():
-            company_symbol_to_unrealized_lots[company_symbol] = fifo_lots_matching(tradings, previous_holdings_map.get(company_symbol, [])).unrealized_lots
+            _, unrealized_lots = fifo_lots_matching(tradings, previous_holdings_map.get(company_symbol, []))
+            company_symbol_to_unrealized_lots[company_symbol] = unrealized_lots.lots
         previous_ending_cash_in_cent = 0 if self.previous_ending_net_asset is None else self.previous_ending_net_asset.cash_in_cent
         beginning_net_asset = NetAsset(
             date=to_date(self.transactions.iloc[0]["Arvopäivä"]),
@@ -95,7 +96,6 @@ def time_weighted_return_by_period(transactions: pd.DataFrame) -> list[SubPeriod
     previous_subperiod_return = None
     transactions_by_period = divide_transactions_by_period(transactions)
     for i, sub_period_df in enumerate(transactions_by_period):
-        print(f"sub-period: \n{sub_period_df}")
         if i == len(transactions_by_period) -1:
             end_date = to_date(sub_period_df.iloc[-1]["Arvopäivä"])
         else:
