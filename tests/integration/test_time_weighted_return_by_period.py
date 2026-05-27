@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from investment.portfolio.calculation import time_weighted_return_by_period, NetAsset, SubPeriodReturn
+from investment.portfolio.twr import time_weighted_return_by_period, NetAsset, SubPeriodReturn
 from investment.portfolio.lots_matching import Action, Lot
 from investment.text_io import extract_csv
 

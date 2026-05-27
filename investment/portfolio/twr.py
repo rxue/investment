@@ -1,4 +1,3 @@
-import sys, re
 from datetime import date, datetime
 from statistics import geometric_mean
 from typing import NamedTuple
@@ -10,7 +9,6 @@ from investment.market_quote import yfinance_fetcher
 from investment.portfolio.lots_matching import Lot, fifo_lots_matching, to_lots_by_company_symbol
 from investment.portfolio.transaction_filters import find_all_tradings
 from investment.portfolio.util import make_df
-from investment.text_io import extract_csv
 from investment.util import to_date
 
 class NetAsset(NamedTuple):
@@ -26,12 +24,15 @@ class NetAsset(NamedTuple):
         return market_value
     def total_value_in_cent(self):
         return self._equity_market_value_in_cent() + self.cash_in_cent
+    def has_holdings(self):
+        return len(self.holdings_map) > 0
 
 class SubPeriodReturn(NamedTuple):
     beginning_net_asset:NetAsset
     ending_net_asset:NetAsset
     def value(self) -> float:
-        print(f"ending net asset value: {self.ending_net_asset.total_value_in_cent()/100}")
+        if (not self.beginning_net_asset.has_holdings()) and (not self.ending_net_asset.has_holdings()):
+            return 0
         return (self.ending_net_asset.total_value_in_cent() - self.beginning_net_asset.total_value_in_cent())/self.beginning_net_asset.total_value_in_cent()
 
 
@@ -65,13 +66,13 @@ class SubPeriodReturnCalculator:
 
 
 
-def is_withdrawal(row: pd.Series) -> bool:
+def _is_withdrawal(row: pd.Series) -> bool:
     return row["Selitys"] == "TILISIIRTO" and row["Määrä EUROA"] < 0 and not row["Viesti"].strip().startswith("O:")
-def is_deposit(row: pd.Series) -> bool:
+def _is_deposit(row: pd.Series) -> bool:
     return row["Laji"] == 710 and row["Selitys"].strip() == "TILISIIRTO"
 
 def is_external_cashflow(row: pd.Series) -> bool:
-    return is_withdrawal(row) or is_deposit(row)
+    return _is_withdrawal(row) or _is_deposit(row)
 
 def divide_transactions_by_period(data: pd.DataFrame) -> list[pd.DataFrame]:
     result = []
@@ -113,10 +114,4 @@ def twr(transactions: pd.DataFrame) -> float:
     n = len(growth_factors)
     return geometric_mean(growth_factors) ** n - 1
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python -m investment.portfolio.calculation <csv_dir>")
-        sys.exit(1)
-    df = extract_csv(path=sys.argv[1], sep=";", encoding="latin-1")
-    print(f"time-weighted return: {twr(df)}")
 

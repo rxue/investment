@@ -1,6 +1,6 @@
 import pandas as pd
 
-from investment.portfolio.calculation import is_withdrawal, is_deposit, divide_transactions_by_period
+from investment.portfolio.twr import _is_withdrawal, _is_deposit, divide_transactions_by_period
 from investment.portfolio.util import make_df
 
 
@@ -10,35 +10,35 @@ def make_row(value_date:str | None = None, *, maara:str, laji:int, selitys:str, 
 
 def test_withdrawal_returns_true():
     row = make_row(laji=700, maara="-500,00", selitys="TILISIIRTO", viesti="some message")
-    assert is_withdrawal(row) is True
+    assert _is_withdrawal(row) is True
 
 def test_withdrawal_internal_payment():
     row = make_row(laji=730, maara="-1,04", selitys="PALVELUMAKSU", viesti="PALVELUMAKSUT")
-    assert is_withdrawal(row) is False
-    assert is_deposit(row) is False
+    assert _is_withdrawal(row) is False
+    assert _is_deposit(row) is False
 
 def test_withdrawal_positive_amount_returns_false():
     row = make_row(laji=700, maara="500,00", selitys="TILISIIRTO", viesti="some message")
-    assert is_withdrawal(row) is False
+    assert _is_withdrawal(row) is False
 
 def test_withdrawal_without_message():
     row = make_row(laji=700, maara="-15,49", selitys="TILISIIRTO", viesti="")
-    assert is_withdrawal(row) is True
-    assert is_deposit(row) is False
+    assert _is_withdrawal(row) is True
+    assert _is_deposit(row) is False
 
 def test_withdrawal_strips_whitespace_before_O_check():
     row = make_row(laji=700, maara="-500,00", selitys="NOSTO", viesti="  O:NOVO B /20")
-    assert is_withdrawal(row) is False
+    assert _is_withdrawal(row) is False
 
 def test_deposit():
     row = make_row(laji=710, maara="7000", selitys="TILISIIRTO", viesti="SEPA MAKSU ...")
-    assert is_deposit(row) is True
-    assert is_withdrawal(row) is False
+    assert _is_deposit(row) is True
+    assert _is_withdrawal(row) is False
 
 def test_deposit_dividend_payment_is_considered_as_inflow_from_external():
     row = make_row(laji=710, maara="13,07", selitys="ARVOPAPERIT", viesti="OP Säilytys Oy")
-    assert is_deposit(row) is False
-    assert is_withdrawal(row) is False
+    assert _is_deposit(row) is False
+    assert _is_withdrawal(row) is False
 
 def test_construct_subperiods_one():
     df = make_df(make_row(value_date="21.7.2025", laji=710, maara="7000", selitys="TILISIIRTO", viesti="SEPA-MAKSU"),
