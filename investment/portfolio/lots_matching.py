@@ -1,6 +1,6 @@
 from enum import Enum, auto
 import re
-from typing import NamedTuple, Tuple
+from typing import NamedTuple, Tuple, List
 from datetime import date, datetime
 
 import pandas as pd
@@ -16,39 +16,23 @@ class Lot(NamedTuple):
     share_amount: int
     value_in_cent: int
 
-class Trading(NamedTuple):
-    company_identifier:str  # any string identifying the company, e.g. company name in Nordea trading lots, ticker symbol in OP
-    action:str
-    date:date
-    amount:int
-    trade_price:float
+def _to_lot(row: pd.Series) -> tuple[str,Lot]:
+    match = re.match(r"^\s*([OM]):(.+?)\s*/(\d+)", row["Viesti"])
+    action = match.group(1)
+    ticker = match.group(2).strip()
+    quantity = int(match.group(3))
+    trading_date = datetime.strptime(row["Kirjauspäivä"], "%d.%m.%Y").date()
+    trade_price = abs(row["Määrä EUROA"])
+    return ticker, Lot(date=trading_date,
+               action=Action.BUY if action == "O" else Action.SELL,
+               share_amount=quantity,
+               value_in_cent=int(trade_price * 100))
 
-def to_lots_by_company_symbol(tradings: pd.DataFrame) -> dict[str, list[Lot]]:
-    def _to_trading(row: pd.Series) -> Trading:
-        match = re.match(r"^\s*([OM]):(.+?)\s*/(\d+)", row["Viesti"])
-        action = match.group(1)
-        ticker = match.group(2).strip()
-        quantity = int(match.group(3))
-        trade_date = datetime.strptime(row["Kirjauspäivä"], "%d.%m.%Y").date()
-        trade_price = abs(row["Määrä EUROA"])
-        return Trading(
-            company_identifier=ticker,
-            action=action,
-            date=trade_date,
-            amount=quantity,
-            trade_price=trade_price,
-        )
-
-    def to_lot(t: Trading) -> Lot:
-        return Lot(date=t.date,
-                   action=Action.BUY if t.action == "O" else Action.SELL,
-                   share_amount=t.amount,
-                   value_in_cent=int(t.trade_price * 100))
-
+def to_lots_by_company_symbol(tradings_df: pd.DataFrame) -> dict[str, list[Lot]]:
     result: dict[str, list[Lot]] = {}
-    for _, row in tradings.iterrows():
-        trading = _to_trading(row)
-        result.setdefault(trading.company_identifier, []).append(to_lot(trading))
+    for _, row in tradings_df.iterrows():
+        company_identifier, lots = _to_lot(row)
+        result.setdefault(company_identifier, []).append(lots)
     return result
 
 class RealizedLots(NamedTuple):
@@ -63,7 +47,7 @@ class UnrealizedLots(NamedTuple):
     def holding_cost_in_cent(self) -> int:
         return sum(lot.value_in_cent for lot in self.lots)
 
-def fifo_lots_matching(tradings:list[Lot], existing_unrealized_lots:list[Lot]=[]) -> Tuple[RealizedLots,UnrealizedLots]:
+def fifo_lots_matching(tradings:list[Lot], existing_unrealized_lots:list[Lot]=[]) -> Tuple[List[RealizedLots],UnrealizedLots]:
     remaining_lots: list[Lot] = list(existing_unrealized_lots)
     def dequeue(buy_trading:Lot) -> RealizedLots:
         head_lot = remaining_lots[0]
@@ -81,4 +65,4 @@ def fifo_lots_matching(tradings:list[Lot], existing_unrealized_lots:list[Lot]=[]
         else:
             realized_lots_list.append(dequeue(tr))
 
-    return RealizedLots(realized_lots_list), UnrealizedLots(remaining_lots)
+    return realized_lots_list, UnrealizedLots(remaining_lots)

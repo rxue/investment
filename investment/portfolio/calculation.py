@@ -7,7 +7,7 @@ import pandas as pd
 
 from investment.company import find_company_by
 from investment.market_quote import yfinance_fetcher
-from investment.portfolio.lots_matching import Trading, Lot, Action, fifo_lots_matching, to_lots_by_company_symbol
+from investment.portfolio.lots_matching import Lot, fifo_lots_matching, to_lots_by_company_symbol
 from investment.portfolio.transaction_filters import find_all_tradings
 from investment.portfolio.util import make_df
 from investment.text_io import extract_csv
