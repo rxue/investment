@@ -1,4 +1,5 @@
 import sys
+import time
 
 import pandas as pd
 
@@ -12,9 +13,9 @@ from investment.portfolio.holdings.return_calculation import calculate_total_ret
 EXTRACT_HOLDINGS = "extract_from_nordea_excel"
 EXTRACT_RETURN_BREAKDOWN = "extract_return_breakdown_from_nordea_pdf"
 TOTAL_RETURN = "total_return"
-GENERATE_HOLDINGS_SNAPSHOT = "generate_holdings_snapshot"
+SNAPSHOT = "snapshot"
 
-COMMANDS = [EXTRACT_HOLDINGS, EXTRACT_RETURN_BREAKDOWN, TOTAL_RETURN, GENERATE_HOLDINGS_SNAPSHOT]
+COMMANDS = [EXTRACT_HOLDINGS, EXTRACT_RETURN_BREAKDOWN, TOTAL_RETURN, SNAPSHOT]
 
 if len(sys.argv) < 2 or sys.argv[1] not in COMMANDS:
     print(f"Usage: python -m investment.portfolio.holdings <command> [args]")
@@ -44,7 +45,7 @@ elif command == TOTAL_RETURN:
         sys.exit(1)
     print(calculate_total_return(sys.argv[2]))
 
-elif command == GENERATE_HOLDINGS_SNAPSHOT:
+elif command == SNAPSHOT:
     def generate_and_print_snapshot(holdings:list[Holding], companies_failed_get_holding:list[str]):
         holdings_snapshot, companies_failed_to_get_quote = HoldingsSnapshot.generate_snapshot(holdings)
         companies_failed_to_get_quote.extend(companies_failed_get_holding)
@@ -61,6 +62,7 @@ elif command == GENERATE_HOLDINGS_SNAPSHOT:
         optional_fields = sys.argv[4].split(",")
     else:
         optional_fields = []
+    start = time.time()
     bank = Bank[sys.argv[2].upper()]
     if bank == Bank.OP:
         csv_dir = sys.argv[3]
@@ -68,3 +70,4 @@ elif command == GENERATE_HOLDINGS_SNAPSHOT:
     elif bank == Bank.NORDEA:
         excel_path = sys.argv[3]
         generate_and_print_snapshot(*extract_nordea_holdings_from_excel(excel_path, optional_fields))
+    print(f"execution time: {time.time() - start:.2f}s")

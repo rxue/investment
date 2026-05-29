@@ -40,8 +40,8 @@ class HoldingsSnapshot(NamedTuple):
     def to_dataframe(self) -> pd.DataFrame:
         return pd.DataFrame([
             {
-                "company": s.holding.company_name,
-                "amount": s.holding.amount,
+                "company": s.to_position.company_name,
+                "amount": s.to_position.amount,
                 "price": s.quote.price,
                 "currency": s.quote.currency,
                 "daily_change": s.quote.daily_change_rate(),

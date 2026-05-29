@@ -6,7 +6,7 @@ import pandas as pd
 
 from investment.company import find_company_by
 from investment.market_quote import yfinance_fetcher
-from investment.portfolio.lots_matching import Lot, fifo_lots_matching, to_lots_by_company_symbol
+from investment.portfolio.lots_matching import match_lots_in_fifo, to_lots_by_company_symbol, BuyLot
 from investment.portfolio.transaction_filters import find_all_tradings
 from investment.portfolio.util import make_df
 from investment.util import to_date
@@ -14,7 +14,7 @@ from investment.util import to_date
 class NetAsset(NamedTuple):
     date:date
     cash_in_cent:int
-    holdings_map:dict[str,list[Lot]]
+    holdings_map:dict[str,list[BuyLot]]
     def _equity_market_value_in_cent(self) -> int:
         market_value = 0
         for company_symbol, unrealized_lots in self.holdings_map.items():
@@ -47,10 +47,10 @@ class SubPeriodReturnCalculator:
 
         trading_transactions_df = find_all_tradings(self.transactions)
         previous_holdings_map = self.previous_ending_net_asset.holdings_map if self.previous_ending_net_asset is not None else {}
-        company_symbol_to_unrealized_lots:dict[str,list[Lot]]= dict(previous_holdings_map)
+        company_symbol_to_unrealized_lots:dict[str,list[BuyLot]]= dict(previous_holdings_map)
         for company_symbol, tradings in to_lots_by_company_symbol(trading_transactions_df).items():
-            _, unrealized_lots = fifo_lots_matching(tradings, previous_holdings_map.get(company_symbol, []))
-            company_symbol_to_unrealized_lots[company_symbol] = unrealized_lots.lots
+            _, remaining_lots = match_lots_in_fifo(tradings, previous_holdings_map.get(company_symbol, []))
+            company_symbol_to_unrealized_lots[company_symbol] = remaining_lots
         previous_ending_cash_in_cent = 0 if self.previous_ending_net_asset is None else self.previous_ending_net_asset.cash_in_cent
         beginning_net_asset = NetAsset(
             date=to_date(self.transactions.iloc[0]["Arvopäivä"]),

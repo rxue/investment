@@ -1,5 +1,5 @@
 from investment.portfolio.holdings.models import Holding
-from investment.portfolio.holdings.util import extract_csv
+from investment.text_io import extract_csv
 
 
 def extract_from_nordnet_csv(file_path: str) -> list[Holding]:
