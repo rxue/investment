@@ -49,8 +49,8 @@ class SubPeriodReturnCalculator:
         previous_holdings_map = self.previous_ending_net_asset.holdings_map if self.previous_ending_net_asset is not None else {}
         company_symbol_to_unrealized_lots:dict[str,list[BuyLot]]= dict(previous_holdings_map)
         for company_symbol, tradings in to_lots_by_company_symbol(trading_transactions_df).items():
-            _, remaining_lots = match_lots_in_fifo(tradings, previous_holdings_map.get(company_symbol, []))
-            company_symbol_to_unrealized_lots[company_symbol] = remaining_lots
+            _, unrealized = match_lots_in_fifo(tradings, previous_holdings_map.get(company_symbol, []))
+            company_symbol_to_unrealized_lots[company_symbol] = unrealized.buy_lots
         previous_ending_cash_in_cent = 0 if self.previous_ending_net_asset is None else self.previous_ending_net_asset.cash_in_cent
         beginning_net_asset = NetAsset(
             date=to_date(self.transactions.iloc[0]["Arvopäivä"]),

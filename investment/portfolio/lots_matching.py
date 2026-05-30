@@ -49,21 +49,26 @@ def to_lots_by_company_symbol(tradings_df: pd.DataFrame) -> dict[str, list[Lot]]
         result.setdefault(company_identifier, []).append(lots)
     return result
 
-class RealizedLotsGroup(NamedTuple):
-    sell_lot:SellLot
+class Realized(NamedTuple):
+    class LotsGroup(NamedTuple):
+        sell_lot: SellLot
+        buy_lots: list[BuyLot]
+        def realized_gain(self):
+            return sum([lot.value_in_cent if lot.action == Action.BUY else -lot.value_in_cent for lot in self.lots])
+    lots_groups: list[LotsGroup]
+
+
+
+class Unrealized(NamedTuple):
     buy_lots: list[BuyLot]
-    def realized_gain(self):
-        return sum([lot.value_in_cent if lot.action == Action.BUY else -lot.value_in_cent for lot in self.lots])
-
-
 
 class MatchingResult(NamedTuple):
-    realized_lists_groups:list[RealizedLotsGroup]
-    remaining_lots:list[BuyLot]
+    realized: Realized
+    unrealized: Unrealized
 
 def match_lots_in_fifo(tradings:list[Lot], existing_unrealized_lots:list[BuyLot]=[]) -> MatchingResult:
     remaining_lots: list[BuyLot] = list(existing_unrealized_lots)
-    def dequeue(sell_lot: SellLot) -> RealizedLotsGroup:
+    def dequeue(sell_lot: SellLot) -> Realized.LotsGroup:
         buy_lots = []
         amount_to_dequeue = sell_lot.share_amount
         while amount_to_dequeue > 0:
@@ -71,12 +76,12 @@ def match_lots_in_fifo(tradings:list[Lot], existing_unrealized_lots:list[BuyLot]
             if head_lot.share_amount <= amount_to_dequeue:
                 amount_to_dequeue -= head_lot.share_amount
                 buy_lots.append(remaining_lots.pop(0))
-        return RealizedLotsGroup(sell_lot=sell_lot, buy_lots=buy_lots)
-    realized_lots_list = []
+        return Realized.LotsGroup(sell_lot=sell_lot, buy_lots=buy_lots)
+    realized_lots_group_list = []
     for tr in tradings:
         if tr.action() == Action.BUY:
             remaining_lots.append(tr)
         else:
-            realized_lots_list.append(dequeue(tr))
+            realized_lots_group_list.append(dequeue(tr))
 
-    return MatchingResult(realized_lots_list, remaining_lots)
+    return MatchingResult(Realized(realized_lots_group_list), Unrealized(remaining_lots))

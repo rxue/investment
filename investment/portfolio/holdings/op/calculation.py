@@ -12,7 +12,7 @@ def extract_holdings_from_op_transaction_csvs(csv_directory: str, optional_field
     tradings_df:pd.DataFrame = find_all_tradings(transactions)
 
     lots_matching_result_by_company_symbol = {
-        company_symbol: match_lots_in_fifo(input_lots).remaining_lots
+        company_symbol: match_lots_in_fifo(input_lots).unrealized.buy_lots
         for company_symbol, input_lots in to_lots_by_company_symbol(tradings_df).items()
     }
     def to_holding(company_symbol:str, unrealized_lots:list[BuyLot]) -> Holding | None:
@@ -21,7 +21,7 @@ def extract_holdings_from_op_transaction_csvs(csv_directory: str, optional_field
             filled_optional_fields = {}
             for field_val in optional_fields:
                 if field_val.upper() == Field.COST.label.upper():
-                    filled_optional_fields[Field.COST] = unrealized_lots.holding_cost_in_cent() / 100
+                    filled_optional_fields[Field.COST] = sum(l.value_in_cent for l in unrealized_lots) / 100
             return Holding(
                 company=company,
                 amount=sum(lot.share_amount for lot in unrealized_lots),

@@ -3,8 +3,8 @@ from datetime import date
 
 import pandas as pd
 
-from investment.portfolio.lots_matching import match_lots_in_fifo, Action, RealizedLotsGroup, _to_lot, \
-    BuyLot, SellLot
+from investment.portfolio.lots_matching import match_lots_in_fifo, Realized, _to_lot, \
+    BuyLot, SellLot, Unrealized
 
 
 def make_row(viesti: str, selitys: str, maara: str, kirjauspaiva: str) -> pd.Series:
@@ -38,7 +38,7 @@ def test_fifo_one_lot_removed():
     buy2 = BuyLot(date=date(2026, 1, 13), share_amount=20, value_in_cent=57468)
     sell = SellLot(date=date(2026, 1, 14), share_amount=20, value_in_cent=61200)
 
-    realized_lots, unrealized_lots = match_lots_in_fifo([buy1, buy2, sell])
+    realized, unrealized = match_lots_in_fifo([buy1, buy2, sell])
 
-    assert realized_lots == [RealizedLotsGroup(sell, [buy1])]
-    assert unrealized_lots == [buy2]
+    assert realized == Realized([Realized.LotsGroup(sell, [buy1])])
+    assert unrealized == Unrealized([buy2])
