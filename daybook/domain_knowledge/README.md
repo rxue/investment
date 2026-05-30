@@ -1,9 +1,15 @@
 # Glossory
+## ADR - American Depositary Receipt
+An ADR has a separate ISIN from its original stock
+
+## Capital Gain
+* Gain from the tradings, i.e. BUY/SELL, on the owning stocks, so *dividend* payment does not belong to capital gain
+* It is before the tax
+
+
 ## ISIN
 A stock in different stock exchange might have the same ISIN
 
-## ADR - American Depositary Receipt
-An ADR has a separate ISIN from its original stock
 
 ## SEPA
 Single Euro Payment Area
