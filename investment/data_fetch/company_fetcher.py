@@ -1,12 +1,9 @@
 import csv
 from pathlib import Path
-from typing import NamedTuple
 
-class Company(NamedTuple):
-    yahoo_symbol:str
-    name:str
+from investment.data_fetch.models import Company
 
-_CSV_PATH = Path(__file__).parents[1] / "data" / "companies.csv"
+_CSV_PATH = Path(__file__).parents[2] / "data" / "companies.csv"
 
 def _fill_companies_cache() -> dict[str, Company]:
     result = {}
@@ -23,3 +20,8 @@ companies_cache:Company = _fill_companies_cache()
 
 def find_company_by(symbol:str) -> Company | None:
     return companies_cache.get(symbol)
+
+
+def find_yahoo_symbol(company_symbol:str) -> str | None:
+    company = companies_cache.get(company_symbol)
+    return company.yahoo_symbol if company is not None else None

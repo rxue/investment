@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from investment.market_quote.ecb_fetcher import fetch_fx_rate_to_euro
+from investment.data_fetch.ecb_fetcher import fetch_fx_rate_to_euro
 
 
 def test__fetch_fx_rate_to_euro__eur_is_1():

@@ -2,11 +2,12 @@ import sys
 from datetime import date, datetime
 from dateutil.utils import today
 
-from investment.market_quote.yfinance_fetcher import get_quotes, get_index_quote, get_close_price
-from investment.market_quote.ecb_fetcher import fetch_fx_rate_to_euro
+from investment.data_fetch.models import CompanyFact
+from investment.data_fetch.yfinance_fetcher import get_index_quote, get_close_price, find_latest_quote_facts
+from investment.data_fetch.ecb_fetcher import fetch_fx_rate_to_euro
 
 if len(sys.argv) < 2:
-    print("Usage: python -m investment.market_quote <command> [args]")
+    print("Usage: python -m investment.data_fetch <command> [args]")
     print("Commands: fx_rate <currency>, <symbol>")
     sys.exit(1)
 
@@ -14,7 +15,7 @@ command = sys.argv[1]
 
 if command == "fx_rate":
     if len(sys.argv) > 4:
-        print("Usage: python -m investment.market_quote fx_rate <target_currency>")
+        print("Usage: python -m investment.data_fetch fx_rate <target_currency>")
         sys.exit(1)
     if len(sys.argv) > 3:
         date = datetime.strptime(sys.argv[3], "%Y-%m-%d").date()
@@ -29,15 +30,11 @@ elif command == "equity":
         for symbol in symbols.split(","):
             result = get_close_price(symbol, close_date)
             print(result)
-    else:
-        symbols = sys.argv[2]
-        close_date = datetime.strptime(sys.argv[3], "%Y-%m-%d").date() if len(sys.argv) > 3 else None
-        start = datetime.now()
-        result = get_quotes(*symbols.split(","), multithreads=True, date=close_date)
-        elapsed = datetime.now() - start
-        for r in result:
-            print(r)
-        print(f"Execution time: {elapsed}")
+elif command == "company":
+    yf_company_symbol = sys.argv[2]
+    facts = sys.argv[3].split(",")
+    company_facts = find_latest_quote_facts(yf_company_symbol, *[CompanyFact[fact] for fact in facts])
+    print(f"{company_facts}")
 
 elif command == "index":
     symbol = sys.argv[2]

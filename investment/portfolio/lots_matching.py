@@ -5,6 +5,8 @@ from datetime import date, datetime
 
 import pandas as pd
 
+from investment.portfolio.transaction_filters import find_all_tradings
+
 
 class Action(Enum):
     BUY = auto()
@@ -42,25 +44,36 @@ def _to_lot(row: pd.Series) -> tuple[str,Lot]:
     lot = BuyLot(**lot_args) if action == "O" else SellLot(**lot_args)
     return ticker, lot
 
-def to_lots_by_company_symbol(tradings_df: pd.DataFrame) -> dict[str, list[Lot]]:
-    result: dict[str, list[Lot]] = {}
-    for _, row in tradings_df.iterrows():
-        company_identifier, lots = _to_lot(row)
-        result.setdefault(company_identifier, []).append(lots)
-    return result
+def get_trading_lots_by_company_symbol(transactions_df: pd.DataFrame) -> dict[str,list[Lot]]:
+    def to_lots_by_company_symbol(tradings_df: pd.DataFrame) -> dict[str, list[Lot]]:
+        result: dict[str, list[Lot]] = {}
+        for _, row in tradings_df.iterrows():
+            company_identifier, lots = _to_lot(row)
+            result.setdefault(company_identifier, []).append(lots)
+        return result
+    tradings_df = find_all_tradings(transactions_df)
+    return to_lots_by_company_symbol(tradings_df)
 
 class Realized(NamedTuple):
     class LotsGroup(NamedTuple):
         sell_lot: SellLot
         buy_lots: list[BuyLot]
-        def realized_gain(self):
-            return sum([lot.value_in_cent if lot.action == Action.BUY else -lot.value_in_cent for lot in self.lots])
+        def realized_gain_in_cent(self):
+            return self.sell_lot.value_in_cent - sum([lot.value_in_cent if lot.action == Action.BUY else -lot.value_in_cent for lot in self.buy_lots])
+        def is_on_or_after(self, date:date):
+            return self.sell_lot.date >= date
     lots_groups: list[LotsGroup]
+    def capital_gain(self, start_date:date):
+        return sum(g.realized_gain_in_cent() if g.is_on_or_after(start_date) else 0 for g in self.lots_groups)
 
 
 
 class Unrealized(NamedTuple):
     buy_lots: list[BuyLot]
+    def position(self):
+        return sum(lot.share_amount for lot in self.buy_lots)
+    def cost(self) -> float:
+        return sum(lot.value_in_cent for lot in self.buy_lots) / 100
 
 class MatchingResult(NamedTuple):
     realized: Realized
@@ -85,3 +98,20 @@ def match_lots_in_fifo(tradings:list[Lot], existing_unrealized_lots:list[BuyLot]
             realized_lots_group_list.append(dequeue(tr))
 
     return MatchingResult(Realized(realized_lots_group_list), Unrealized(remaining_lots))
+
+def group_match_lots_in_fifo(transactions_df:pd.DataFrame, existing_unrealized_lots_map:dict[str,list[BuyLot]]={}) -> dict[str,MatchingResult]:
+    def to_lots_by_company_symbol(tradings_df: pd.DataFrame) -> dict[str, list[Lot]]:
+        result: dict[str, list[Lot]] = {}
+        for _, row in tradings_df.iterrows():
+            company_identifier, lots = _to_lot(row)
+            result.setdefault(company_identifier, []).append(lots)
+        return result
+    tradings_df = find_all_tradings(transactions_df)
+    matching_result_map = {}
+    for company_symbol, lots in to_lots_by_company_symbol(tradings_df).items():
+        existing_lots = existing_unrealized_lots_map.get(company_symbol)
+        matching_result_map[company_symbol] = match_lots_in_fifo(lots, [] if existing_lots is None else existing_lots)
+    for company_symbol, lots in existing_unrealized_lots_map.items():
+        if matching_result_map.get(company_symbol) is None:
+            matching_result_map[company_symbol] = MatchingResult(realized=Realized([]), unrealized=Unrealized(lots))
+    return matching_result_map

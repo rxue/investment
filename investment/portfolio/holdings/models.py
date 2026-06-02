@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Literal, Any
+from typing import Literal, Any, Protocol
 
 from dataclasses import dataclass
 from enum import Enum, auto
@@ -8,8 +8,7 @@ from datetime import date
 
 import pandas as pd
 
-from investment.company import Company
-from investment.market_quote.yfinance_fetcher import get_latest_quote, YFinanceQuote
+from investment.data_fetch.models import Company, QuoteFact
 
 
 class Bank(Enum):
@@ -25,71 +24,42 @@ class Trading:
     amount:int
     trade_price:float
 
-class Field(Enum):
-    COST = ("cost", float)
-    ROE = ("roe", float)
-    def __init__(self, label: str, type_: type):
-        self.label = label
-        self.type_ = type_
+class Fact(Protocol):
+    display_title:str
+    data_type:type
+
+class CalculatedFact(Enum):
+    DAILY_CHANGE_PERCENTAGE = ("Daily Change %", str)
+    COST = ("Cost", float)
+    def __init__(self, display_title: str, data_type: type):
+        self.display_title = display_title
+        self.data_type = data_type
 
 class Holding(NamedTuple):
     company:Company
-    amount:int
-    optional_fields:dict[Field,Any] = {}
-    def with_quote(self)-> HoldingWithQuote | None:
-        quote = get_latest_quote(self.company.yahoo_symbol)
-        if quote is None:
-            return None
-        return HoldingWithQuote(
-            holding=self,
-            quote=quote)
-
-class HoldingWithQuote(NamedTuple):
-    holding: Holding
-    quote: YFinanceQuote
-    def market_value_in_euro_cent(self) -> float:
-        return self.quote.price_in_euro_cent() * self.holding.amount
-    def market_value_in_euro(self) -> float:
-        return self.market_value_in_euro_cent() / 100
+    position:int
+    facts:dict[Fact,Any] = {}
 
 class HoldingsSnapshot(NamedTuple):
     bank:Bank
-    holding_with_quote_list:list[HoldingWithQuote]
-    def total_market_value_in_euro_cent(self) -> int:
-        return sum([h.market_value_in_euro_cent() for h in self.holding_with_quote_list])
+    holding_list:list[Holding]
 
     def to_dataframe(self) -> pd.DataFrame:
-        self.holding_with_quote_list.sort(key=lambda s: s.quote.daily_change, reverse=True)
-        def to_dict(holding_with_quote:HoldingWithQuote) -> dict[str,Any]:
+        #self.holding_list.sort(key=lambda s: s.quote.daily_change, reverse=True)
+        def to_dict(holding:Holding) -> dict[str,Any]:
             result = {
-                "company": holding_with_quote.holding.company.name,
-                "amount": holding_with_quote.holding.amount,
-                "price": holding_with_quote.quote.price,
-                "Price in EUR": holding_with_quote.quote.price_value_in_euro(),
-                "daily_change": holding_with_quote.quote.daily_change_rate_value(),
-                "market_value_in_euro": holding_with_quote.market_value_in_euro(),
-                "stake_by_market_value": f"{holding_with_quote.market_value_in_euro_cent() / self.total_market_value_in_euro_cent() * 100:.2f}%",
-                "dividend_yield": holding_with_quote.quote.dividend_yield,
-                "pe": holding_with_quote.quote.pe,
-                "roe": holding_with_quote.quote.roe_value(),
-                "timestamp": holding_with_quote.quote.timestamp_repr(),
+                "Company Name": holding.company.name,
+                "amount": holding.position,
             }
-            for f, val in holding_with_quote.holding.optional_fields.items():
-                result[f.label] = val
+            for fact, value in holding.facts.items():
+                result[fact.display_title] = value
             return result
-        return pd.DataFrame([to_dict(h) for h in self.holding_with_quote_list])
+        return pd.DataFrame([to_dict(h) for h in self.holding_list])
 
     @staticmethod
     def generate_snapshot(holdings:list[Holding]) -> tuple[HoldingsSnapshot, list[str]]:
         companies_missing_quote = []
-        holdings_with_quote = []
-        for h in holdings:
-            holding_with_quote = h.with_quote()
-            if holding_with_quote is None:
-                companies_missing_quote.append(h.company.name)
-            else:
-                holdings_with_quote.append(holding_with_quote)
-        return HoldingsSnapshot(Bank.NORDEA, holdings_with_quote), companies_missing_quote
+        return HoldingsSnapshot(Bank.NORDEA, holdings), companies_missing_quote
 
 Type = Literal["GAIN", "LOSS"]
 

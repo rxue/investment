@@ -24,14 +24,14 @@ def test_subperiods_count(sub_period_returns):
 @pytest.mark.integration
 @pytest.mark.parametrize("i,expected", [
     (0, SubPeriodReturn(
-        beginning_net_asset=NetAsset(date=date(2025, 7, 21), cash_in_cent=700000, holdings_map={}),
-        ending_net_asset=NetAsset(date=date(2025, 7, 31), cash_in_cent=610001, holdings_map={}))),
+        beginning_net_asset=NetAsset(date=date(2025, 7, 21), cash_in_cent=700000, unrealized_lots_map={}),
+        ending_net_asset=NetAsset(date=date(2025, 7, 31), cash_in_cent=610001, unrealized_lots_map={}))),
     (1, SubPeriodReturn(
-        beginning_net_asset=NetAsset(date=date(2025, 7, 31), cash_in_cent=605001, holdings_map={}),
-        ending_net_asset=NetAsset(date=date(2025, 8,  3), cash_in_cent=605001, holdings_map={}))),
+        beginning_net_asset=NetAsset(date=date(2025, 7, 31), cash_in_cent=605001, unrealized_lots_map={}),
+        ending_net_asset=NetAsset(date=date(2025, 8,  3), cash_in_cent=605001, unrealized_lots_map={}))),
     (2, SubPeriodReturn(
-        beginning_net_asset=NetAsset(date=date(2025, 8, 3), cash_in_cent=603452, holdings_map={}),
-        ending_net_asset=NetAsset(date=date(2025, 8, 26), cash_in_cent=395659, holdings_map={
+        beginning_net_asset=NetAsset(date=date(2025, 8, 3), cash_in_cent=603452, unrealized_lots_map={}),
+        ending_net_asset=NetAsset(date=date(2025, 8, 26), cash_in_cent=395659, unrealized_lots_map={
             'PFE US': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=62570)],
             'SIRI': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=54919)],
             'SAGCV': [BuyLot(date=date(2025, 8, 8), share_amount=50, value_in_cent=38900),
@@ -39,13 +39,13 @@ def test_subperiods_count(sub_period_returns):
         })
     )),
     (3, SubPeriodReturn(
-        beginning_net_asset=NetAsset(date=date(2025, 8, 26), cash_in_cent=386874, holdings_map={
+        beginning_net_asset=NetAsset(date=date(2025, 8, 26), cash_in_cent=386874, unrealized_lots_map={
             'PFE US': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=62570)],
             'SIRI': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=54919)],
             'SAGCV': [BuyLot(date=date(2025, 8, 8), share_amount=50, value_in_cent=38900),
                       BuyLot(date=date(2025, 8, 25), share_amount=70, value_in_cent=51300)]
         }),
-        ending_net_asset=NetAsset(date=date(2025, 9,  1), cash_in_cent=387463, holdings_map={
+        ending_net_asset=NetAsset(date=date(2025, 9,  1), cash_in_cent=387463, unrealized_lots_map={
             'PFE US': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=62570)],
             'SIRI': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=54919)],
             'SAGCV': [BuyLot(date=date(2025, 8, 8), share_amount=50, value_in_cent=38900),
@@ -53,13 +53,13 @@ def test_subperiods_count(sub_period_returns):
         })
     )),
     (4, SubPeriodReturn(
-        beginning_net_asset=NetAsset(date=date(2025, 9,  1), cash_in_cent=1187463, holdings_map={
+        beginning_net_asset=NetAsset(date=date(2025, 9,  1), cash_in_cent=1187463, unrealized_lots_map={
             'PFE US': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=62570)],
             'SIRI': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=54919)],
             'SAGCV': [BuyLot(date=date(2025, 8, 8), share_amount=50, value_in_cent=38900),
                       BuyLot(date=date(2025, 8, 25), share_amount=70, value_in_cent=51300)]
         }),
-        ending_net_asset=NetAsset(date=date(2026, 1, 14), cash_in_cent=15701, holdings_map={
+        ending_net_asset=NetAsset(date=date(2026, 1, 14), cash_in_cent=15701, unrealized_lots_map={
             'PFE US': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=62570)],
             'SIRI': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=54919),
                      BuyLot(date=date(2025, 12, 29), share_amount=25, value_in_cent=44327)],
@@ -85,7 +85,7 @@ def test_subperiods_count(sub_period_returns):
                      BuyLot(date=date(2026, 1, 13), share_amount=20, value_in_cent=57467)],
         }))),
     (5, SubPeriodReturn(
-        beginning_net_asset=NetAsset(date=date(2026, 1, 14), cash_in_cent=115701, holdings_map={
+        beginning_net_asset=NetAsset(date=date(2026, 1, 14), cash_in_cent=115701, unrealized_lots_map={
             'PFE US': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=62570)],
             'SIRI': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=54919),
                      BuyLot(date=date(2025, 12, 29), share_amount=25, value_in_cent=44327)],
@@ -110,7 +110,7 @@ def test_subperiods_count(sub_period_returns):
             'MRNA': [BuyLot(date=date(2026, 1, 13), share_amount=20, value_in_cent=57596),
                      BuyLot(date=date(2026, 1, 13), share_amount=20, value_in_cent=57467)],
         }),
-        ending_net_asset=NetAsset(date=date(2026, 1, 30), cash_in_cent=70539, holdings_map={
+        ending_net_asset=NetAsset(date=date(2026, 1, 30), cash_in_cent=70539, unrealized_lots_map={
             'PFE US': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=62570)],
             'SIRI': [BuyLot(date=date(2025, 8, 7), share_amount=30, value_in_cent=54919),
                      BuyLot(date=date(2025, 12, 29), share_amount=25, value_in_cent=44327),

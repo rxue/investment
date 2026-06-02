@@ -2,7 +2,7 @@ from datetime import date
 from typing import NamedTuple
 
 from investment.accounting.models import Holding
-from investment.market_quote.repository import find_closing_price_by_symbol, find_company_by_op_symbol
+from investment.data_fetch.repository import find_closing_price_by_symbol, find_company_by_op_symbol
 
 
 class SecurityHoldingAsAsset(NamedTuple):

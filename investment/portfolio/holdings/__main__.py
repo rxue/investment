@@ -3,10 +3,10 @@ import time
 
 import pandas as pd
 
-from investment.portfolio.holdings.models import Bank, HoldingsSnapshot, Holding
+from investment.data_fetch.models import QuoteFact
+from investment.portfolio.holdings.models import Bank, HoldingsSnapshot, Holding, CalculatedFact
 from investment.portfolio.holdings.nordea_trading_lots_extractor import extract
-from investment.portfolio.holdings.op.calculation import extract_holdings_from_op_transaction_csvs
-from investment.portfolio.holdings.nordea.calculation import extract_nordea_holdings_from_excel
+from investment.portfolio.holdings.op.holdings_extractor import extract_holdings_from_op_transaction_csvs
 from investment.portfolio.holdings.return_calculation import calculate_total_return
 
 
@@ -47,27 +47,27 @@ elif command == TOTAL_RETURN:
 
 elif command == SNAPSHOT:
     def generate_and_print_snapshot(holdings:list[Holding], companies_failed_get_holding:list[str]):
-        holdings_snapshot, companies_failed_to_get_quote = HoldingsSnapshot.generate_snapshot(holdings)
-        companies_failed_to_get_quote.extend(companies_failed_get_holding)
+        holdings_snapshot = HoldingsSnapshot(Bank.OP, holdings)
+        companies_failed_get_holding.extend(companies_failed_get_holding)
         pd.set_option('display.max_columns', 12)
         pd.set_option('display.width', 205)
         print(holdings_snapshot.to_dataframe())
-        if len(companies_failed_to_get_quote) > 0:
+        if len(companies_failed_get_holding) > 0:
             print("The following companies fail to get quote")
-            print(companies_failed_to_get_quote)
+            print(companies_failed_get_holding)
     if len(sys.argv) < 4:
         print(f"Usage: python -m investment.portfolio.holdings generate_holdings_snapshot <bank> <excel_file>")
         sys.exit(1)
     elif len(sys.argv) == 5:
-        optional_fields = sys.argv[4].split(",")
+        fact_names = sys.argv[4].split(",")
     else:
-        optional_fields = []
+        fact_names = []
     start = time.time()
     bank = Bank[sys.argv[2].upper()]
     if bank == Bank.OP:
         csv_dir = sys.argv[3]
-        generate_and_print_snapshot(*extract_holdings_from_op_transaction_csvs(csv_dir, optional_fields))
+        generate_and_print_snapshot(*extract_holdings_from_op_transaction_csvs(csv_dir, *fact_names))
     elif bank == Bank.NORDEA:
         excel_path = sys.argv[3]
-        generate_and_print_snapshot(*extract_nordea_holdings_from_excel(excel_path, optional_fields))
+        #generate_and_print_snapshot(*extract_nordea_holdings_from_excel(excel_path, facts))
     print(f"execution time: {time.time() - start:.2f}s")
