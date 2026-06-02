@@ -42,3 +42,14 @@ def test_fifo_one_lot_removed():
 
     assert realized == Realized([Realized.LotsGroup(sell, [buy1])])
     assert unrealized == Unrealized([buy2])
+
+def test_fifo_multiple_lots_removed():
+    buy1 = BuyLot(date=date(2025, 8, 8), share_amount=50, value_in_cent=389)
+    buy2 = BuyLot(date=date(2025, 8, 25), share_amount=70, value_in_cent=513)
+    buy3 = BuyLot(date=date(2025, 11, 26), share_amount=90, value_in_cent=585)
+    sell = SellLot(date=date(2025, 5, 7), share_amount=140, value_in_cent=1874)
+
+    realized, unrealized = match_lots_in_fifo([buy1, buy2, buy3, sell])
+
+    assert realized == Realized([Realized.LotsGroup(sell, [buy1, buy2, BuyLot(date=date(2025, 11, 26), share_amount=20, value_in_cent=130)])])
+    assert realized == Unrealized([BuyLot(date=date(2025, 11, 26), share_amount=20, value_in_cent=455)])
