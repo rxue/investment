@@ -80,24 +80,31 @@ class MatchingResult(NamedTuple):
     unrealized: Unrealized
 
 def match_lots_in_fifo(tradings:list[Lot], existing_unrealized_lots:list[BuyLot]=[]) -> MatchingResult:
-    remaining_lots: list[BuyLot] = list(existing_unrealized_lots)
+    remaining_fifo_lots: list[BuyLot] = list(existing_unrealized_lots)
     def dequeue(sell_lot: SellLot) -> Realized.LotsGroup:
-        buy_lots = []
+        realized_buy_lots = []
         amount_to_dequeue = sell_lot.share_amount
         while amount_to_dequeue > 0:
-            head_lot = remaining_lots[0]
+            head_lot = remaining_fifo_lots.pop(0)
             if head_lot.share_amount <= amount_to_dequeue:
                 amount_to_dequeue -= head_lot.share_amount
-                buy_lots.append(remaining_lots.pop(0))
-        return Realized.LotsGroup(sell_lot=sell_lot, buy_lots=buy_lots)
+                realized_buy_lots.append(head_lot)
+            else:
+                new_realized_value_in_cent = (amount_to_dequeue/head_lot.share_amount)*head_lot.value_in_cent
+                realized_buy_lots.append(BuyLot(date=head_lot.date, share_amount=amount_to_dequeue, value_in_cent=new_realized_value_in_cent))
+                new_unrealized_share_amount = head_lot.share_amount - amount_to_dequeue
+                new_unrealized_value_in_cent = head_lot.value_in_cent - new_realized_value_in_cent
+                remaining_fifo_lots.append(BuyLot(date=head_lot.date, share_amount=new_unrealized_share_amount, value_in_cent=new_unrealized_value_in_cent))
+                break
+        return Realized.LotsGroup(sell_lot=sell_lot, buy_lots=realized_buy_lots)
     realized_lots_group_list = []
     for tr in tradings:
         if tr.action() == Action.BUY:
-            remaining_lots.append(tr)
+            remaining_fifo_lots.append(tr)
         else:
             realized_lots_group_list.append(dequeue(tr))
 
-    return MatchingResult(Realized(realized_lots_group_list), Unrealized(remaining_lots))
+    return MatchingResult(Realized(realized_lots_group_list), Unrealized(remaining_fifo_lots))
 
 def group_match_lots_in_fifo(transactions_df:pd.DataFrame, existing_unrealized_lots_map:dict[str,list[BuyLot]]={}) -> dict[str,MatchingResult]:
     def to_lots_by_company_symbol(tradings_df: pd.DataFrame) -> dict[str, list[Lot]]:
