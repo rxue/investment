@@ -2,6 +2,7 @@ package io.github.rxue.investment.marketquote;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,7 +26,6 @@ public class YahooFinanceFetcher {
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-    private String crumb;
 
     public YahooFinanceFetcher() {
         this.httpClient = HttpClient.newBuilder()
@@ -33,32 +33,29 @@ public class YahooFinanceFetcher {
                 .build();
         this.objectMapper = new ObjectMapper();
     }
-    public Price getCurrentPrice(String symbol) throws IOException {
-        crumb = getCrumb();
+    public Pair<String,Price> getCurrentPrice(String companySymbol) throws IOException {
+        String crumb = getCrumb();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + symbol + "&crumb=" + URLEncoder.encode(crumb, StandardCharsets.UTF_8)))
+                .uri(URI.create("https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + companySymbol + "&crumb=" + URLEncoder.encode(crumb, StandardCharsets.UTF_8)))
                 .header("User-Agent", MOZILLA_5_0)
                 .GET()
                 .build();
         HttpResponse<String> response = send(request);
-        return parseCurrentPrice(response.body());
+        return Pair.of(crumb, parseCurrentPrice(response.body()));
     }
 
     private String getCrumb() throws IOException {
-        if (crumb == null) {
-            send(HttpRequest.newBuilder()
-                    .uri(URI.create("https://fc.yahoo.com/"))
-                    .header("User-Agent", MOZILLA_5_0)
-                    .GET()
-                    .build());
-            HttpResponse<String> crumbResponse = send(HttpRequest.newBuilder()
-                    .uri(URI.create(CRUMB_URL))
-                    .header("User-Agent", MOZILLA_5_0)
-                    .GET()
-                    .build());
-            return crumbResponse.body();
-        }
-        else return crumb;
+        send(HttpRequest.newBuilder()
+                .uri(URI.create("https://fc.yahoo.com/"))
+                .header("User-Agent", MOZILLA_5_0)
+                .GET()
+                .build());
+        HttpResponse<String> crumbResponse = send(HttpRequest.newBuilder()
+                .uri(URI.create(CRUMB_URL))
+                .header("User-Agent", MOZILLA_5_0)
+                .GET()
+                .build());
+        return crumbResponse.body();
     }
 
     private HttpResponse<String> send(HttpRequest request) throws IOException {
@@ -75,8 +72,9 @@ public class YahooFinanceFetcher {
                 .path("quoteResponse").path("result").get(0);
         String currency = result.path("currency").asText();
         BigDecimal price = result.path("regularMarketPrice").decimalValue();
-        ZonedDateTime timestamp = Instant.ofEpochSecond(result.path("regularMarketTime").asLong())
-                .atZone(ZoneId.systemDefault());
+        JsonNode regularMarketTime = result.path("regularMarketTime");
+        ZonedDateTime timestamp = Instant.ofEpochSecond(regularMarketTime.asLong())
+                .atZone(ZoneId.of(result.path("exchangeTimezoneName").asText()));
         return new Price(currency, price, timestamp);
     }
 }
