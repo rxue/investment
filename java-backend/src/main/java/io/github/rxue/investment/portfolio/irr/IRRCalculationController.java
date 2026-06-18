@@ -1,52 +1,48 @@
-package io.github.rxue.investment;
+package io.github.rxue.investment.portfolio.irr;
 
-import io.github.rxue.investment.entity.Job;
-import io.github.rxue.investment.lotsmatching.LotsMatcher;
-import io.github.rxue.investment.portfolio.TransactionFilter;
+import io.github.rxue.investment.portfolio.irr.jpaentity.IRRJob;
+import io.github.rxue.investment.portfolio.irr.jpaentity.IRRResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(IRRCalculationController.IRR)
-public class IRRCalculationController {
+class IRRCalculationController {
 
     public static final String IRR = "/irr";
     private final JobRepository jobRepository;
-    private final TransactionFilter transactionFilter;
-    private final LotsMatcher lotsMatcher;
-    private final ThreadPoolTaskExecutor taskExecutor;
-
-    public IRRCalculationController(JobRepository jobRepository,
-                                    TransactionFilter transactionFilter,
-                                    LotsMatcher lotsMatcher,
-                                    ThreadPoolTaskExecutor taskExecutor) {
+    private final IRRCalculationService irrCalculationService;
+    private final IRRResultRepository irrResultRepository;
+    public IRRCalculationController(JobRepository jobRepository, IRRCalculationService irrCalculationService, IRRResultRepository irrResultRepository) {
         this.jobRepository = jobRepository;
-        this.transactionFilter = transactionFilter;
-        this.lotsMatcher = lotsMatcher;
-        this.taskExecutor = taskExecutor;
+        this.irrCalculationService = irrCalculationService;
+        this.irrResultRepository = irrResultRepository;
     }
 
     @PostMapping
-    public ResponseEntity<Void> calculateIRRRequest(@RequestParam("file") List<MultipartFile> files) {
-
+    public ResponseEntity<Void> calculate(@RequestParam("file") List<MultipartFile> files) {
+        long jobId = irrCalculationService.calculate(files);
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
-                .location(URI.create(IRR + "/" + resultId))
+                .location(URI.create(IRR + "/" + jobId))
                 .build();
     }
+    @GetMapping("/{jobId}")
+    public IRRJob getJob(@PathVariable("jobId") long jobId) {
+        return jobRepository.findById(jobId).orElseThrow(IllegalArgumentException::new);
+    }
+    @GetMapping("/result/{jobId}")
+    public IRRResult getResult(@PathVariable("jobId") long jobId) {
+        Optional<IRRJob> jobOpt = jobRepository.findById(jobId);
+        return irrResultRepository.findByJob(jobOpt.get())
+                .orElseThrow(() -> new IllegalArgumentException("no result with job id " + jobId));
+    }
+
 }
 

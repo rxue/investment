@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -22,8 +21,8 @@ public class FXRateController {
     @GetMapping("/fxrate/euro/{currency}")
     public ResponseEntity<Price> getFxRateToEuro(@PathVariable String currency, @RequestParam(required = false) LocalDate date) {
         LocalDate rateDate = date == null ? LocalDate.now() : date;
-        double rate = fxRateFetcher.fetchFXRateToEuro(currency, rateDate);
-        Price price = new Price(currency, BigDecimal.valueOf(rate), rateDate.atStartOfDay(ZonedDateTime.now().getZone()));
+        BigDecimal rate = fxRateFetcher.fetchFXRateToEuro(currency, rateDate);
+        Price price = new Price(currency, rate, rateDate.atStartOfDay(ZonedDateTime.now().getZone()));
         return ResponseEntity.ok(price);
     }
 }

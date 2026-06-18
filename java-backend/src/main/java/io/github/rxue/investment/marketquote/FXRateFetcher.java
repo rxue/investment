@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.net.CookieManager;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -29,17 +31,17 @@ public class FXRateFetcher {
         this.objectMapper = new ObjectMapper();
     }
 
-    public double fetchFXRateToEuro(String currency, LocalDate date) {
+    public BigDecimal fetchFXRateToEuro(String currency, LocalDate date) {
         if ("EUR".equals(currency)) {
-            return 1.0;
+            return BigDecimal.ONE;
         }
         try {
             HttpResponse<String> response = send(buildRequest(currency.trim().toUpperCase(), date));
             if (response.statusCode() == 404) {
                 throw new IllegalStateException("No ECB exchange rate found for " + currency + " up to " + date);
             }
-            double currencyPerEuro = parseLatestRate(response.body());
-            return 1.0 / currencyPerEuro;
+            BigDecimal currencyPerEuro = parseLatestRate(response.body());
+            return BigDecimal.ONE.divide(currencyPerEuro, MathContext.DECIMAL64);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to fetch ECB exchange rate for " + currency, e);
         }
@@ -67,7 +69,7 @@ public class FXRateFetcher {
         }
     }
 
-    private double parseLatestRate(String json) throws IOException {
+    private BigDecimal parseLatestRate(String json) throws IOException {
         JsonNode root = objectMapper.readTree(json);
         JsonNode series = root.path("dataSets").get(0).path("series");
         Iterator<String> seriesKeys = series.fieldNames();
@@ -82,6 +84,6 @@ public class FXRateFetcher {
         if (latestIndex < 0) {
             throw new IllegalStateException("No exchange rate observations found in ECB response");
         }
-        return observations.path(String.valueOf(latestIndex)).get(0).asDouble();
+        return observations.path(String.valueOf(latestIndex)).get(0).decimalValue();
     }
 }

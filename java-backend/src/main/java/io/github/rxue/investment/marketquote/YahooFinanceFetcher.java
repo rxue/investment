@@ -33,7 +33,7 @@ public class YahooFinanceFetcher {
                 .build();
         this.objectMapper = new ObjectMapper();
     }
-    public Pair<String,Price> getCurrentPrice(String companySymbol) throws IOException {
+    public Price getCurrentPrice(String companySymbol) throws IOException {
         String crumb = getCrumb();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + companySymbol + "&crumb=" + URLEncoder.encode(crumb, StandardCharsets.UTF_8)))
@@ -41,7 +41,7 @@ public class YahooFinanceFetcher {
                 .GET()
                 .build();
         HttpResponse<String> response = send(request);
-        return Pair.of(crumb, parseCurrentPrice(response.body()));
+        return parseCurrentPrice(response.body());
     }
 
     private String getCrumb() throws IOException {

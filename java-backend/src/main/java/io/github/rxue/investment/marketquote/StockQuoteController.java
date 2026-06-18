@@ -1,31 +1,29 @@
 package io.github.rxue.investment.marketquote;
 
-import org.springframework.data.util.Pair;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
 @RestController
+@RequestMapping("/price")
 public class StockQuoteController {
     private final YahooFinanceFetcher yahooFinanceFetcher;
-
-    public StockQuoteController(YahooFinanceFetcher yahooFinanceFetcher) {
+    private final EuroPriceFetcher euroPriceFetcher;
+    public StockQuoteController(YahooFinanceFetcher yahooFinanceFetcher, EuroPriceFetcher euroPriceFetcher) {
         this.yahooFinanceFetcher = yahooFinanceFetcher;
+        this.euroPriceFetcher = euroPriceFetcher;
     }
 
-    @GetMapping("/price/{companySymbol}")
-    public ResponseEntity<Price> getPrice(@PathVariable String companySymbol) throws IOException {
-        Pair<String, Price> crumbAndPrice = yahooFinanceFetcher.getCurrentPrice(companySymbol);
-        ResponseCookie crumbCookie = ResponseCookie.from("crumb", crumbAndPrice.getFirst())
-                .path("/")
-                .build();
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, crumbCookie.toString())
-                .body(crumbAndPrice.getSecond());
+    @GetMapping("/{companySymbol}")
+    public Price getPrice(@PathVariable String companySymbol) throws IOException {
+        return yahooFinanceFetcher.getCurrentPrice(companySymbol);
+    }
+    @GetMapping("/euro/{companySymbol}")
+    public Price getEuroPrice(@PathVariable String companySymbol) throws IOException {
+        return euroPriceFetcher.getCurrentEuroPrice(companySymbol);
     }
 }
