@@ -1,4 +1,4 @@
-package io.github.rxue.investment.portfolio.irr.jpaentity;
+package io.github.rxue.investment.portfolio.xirr.jpaentity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.Immutable;
@@ -15,16 +15,13 @@ public class XIRRCashFlow {
     private LocalDate date;
     private long valueInCent;
 
-    @ManyToOne
-    private IRRResult irrResult;
 
     public XIRRCashFlow() {}
 
-    public XIRRCashFlow(boolean isAssumedLiquidation, LocalDate date, long amountInCent, IRRResult irrResult) {
+    public XIRRCashFlow(boolean isAssumedLiquidation, LocalDate date, long amountInCent) {
         this.isAssumedLiquidation = isAssumedLiquidation;
         this.date = date;
         this.valueInCent = amountInCent;
-        this.irrResult = irrResult;
     }
 
     public boolean isAssumedLiquidation() {

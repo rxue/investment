@@ -23,7 +23,7 @@ public class StockQuoteController {
         return yahooFinanceFetcher.getCurrentPrice(companySymbol);
     }
     @GetMapping("/euro/{companySymbol}")
-    public Price getEuroPrice(@PathVariable String companySymbol) throws IOException {
+    public Price getEuroPrice(@PathVariable String companySymbol) {
         return euroPriceFetcher.getCurrentEuroPrice(companySymbol);
     }
 }

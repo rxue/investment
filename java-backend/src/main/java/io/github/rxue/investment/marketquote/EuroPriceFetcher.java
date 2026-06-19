@@ -3,6 +3,7 @@ package io.github.rxue.investment.marketquote;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -17,8 +18,13 @@ public class EuroPriceFetcher {
         this.fxRateFetcher = fxRateFetcher;
     }
 
-    public Price getCurrentEuroPrice(String companySymbol) throws IOException {
-        Price price = priceFetcher.getCurrentPrice(companySymbol);
+    public Price getCurrentEuroPrice(String companySymbol) {
+        Price price;
+        try {
+            price = priceFetcher.getCurrentPrice(companySymbol);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to fetch current price for " + companySymbol, e);
+        }
         String currency = price.currency();
         if (EUR.equals(currency)) {
             return price;

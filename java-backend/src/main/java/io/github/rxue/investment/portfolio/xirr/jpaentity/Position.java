@@ -1,4 +1,4 @@
-package io.github.rxue.investment.portfolio.irr.jpaentity;
+package io.github.rxue.investment.portfolio.xirr.jpaentity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.rxue.investment.portfolio.holdings.Company;
@@ -15,12 +15,12 @@ public class Position {
     private int shareAmount;
     private Long euroCentMarketValue;
     @ManyToOne
-    private IRRJob irrJob;
-
-    private Position() {}
-
-    public Position(IRRJob irrJob) {
-        this.irrJob = irrJob;
+    private XIRRRawInput rawInput;
+    public Position() {}
+    public Position(Company company, int shareAmount, XIRRRawInput rawInput) {
+        this.company = company;
+        this.shareAmount = shareAmount;
+        this.rawInput = rawInput;
     }
 
     public Long getId() {
@@ -31,16 +31,8 @@ public class Position {
         return company;
     }
 
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
     public int getShareAmount() {
         return shareAmount;
-    }
-
-    public void setShareAmount(int shareAmount) {
-        this.shareAmount = shareAmount;
     }
 
     public Long getEuroCentMarketValue() {

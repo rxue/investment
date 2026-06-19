@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Queue;
 
 import io.github.rxue.investment.lotsmatching.MatchResult.*;
-
 @Service
 public class LotsMatcher {
     private RealizedLotsGroup dequeue(Lot.Sell sellLot, Queue<Lot.Buy> remainingLots) {

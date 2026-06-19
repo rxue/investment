@@ -1,4 +1,4 @@
-package io.github.rxue.investment.portfolio.irr;
+package io.github.rxue.investment.portfolio.xirr;
 
 import io.github.rxue.investment.OPTransaction;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ class IRRCalculatorTest {
     @Test
     void extractTransactions() throws IOException {
         try (InputStream inputStream = getClass().getResourceAsStream("/transactions.csv")) {
-            List<OPTransaction> transactions = IRRCalculator.extractTransactions(inputStream);
+            List<OPTransaction> transactions = XIRRCalculator.extractTransactions(inputStream);
             assertEquals(1, transactions.size());
             OPTransaction transaction = transactions.getFirst();
             assertEquals(LocalDate.of(2025, 7, 21), transaction.effectiveDate());
