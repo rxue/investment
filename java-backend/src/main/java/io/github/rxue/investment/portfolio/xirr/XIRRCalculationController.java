@@ -17,16 +17,16 @@ class XIRRCalculationController {
     public static final String IRR = "/irr";
     private final JobRepository jobRepository;
     private final RawInputRepository rawInputRepository;
-    private final XIRRCalculationService irrCalculationService;
+    private final XIRRCalculationService xirrCalculationService;
     public XIRRCalculationController(JobRepository jobRepository, RawInputRepository rawInputRepository, XIRRCalculationService irrCalculationService) {
         this.jobRepository = jobRepository;
         this.rawInputRepository = rawInputRepository;
-        this.irrCalculationService = irrCalculationService;
+        this.xirrCalculationService = irrCalculationService;
     }
 
     @PostMapping
     public ResponseEntity<Void> calculate(@RequestParam("file") List<MultipartFile> files) {
-        long jobId = irrCalculationService.calculate(files);
+        long jobId = xirrCalculationService.calculate(files);
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .location(URI.create(IRR + "/" + jobId))
@@ -39,9 +39,11 @@ class XIRRCalculationController {
 
     @GetMapping("/{jobId}/rawinput")
     public XIRRRawInput getRawInput(@PathVariable("jobId") long jobId) {
-        var job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new IllegalArgumentException("job with id " + jobId + " doesnot exist"));
-        return rawInputRepository.findAll().get(0);
+        return xirrCalculationService.getRawInput(jobId);
+    }
+    @GetMapping("/{jobId}/input")
+    public List<CashFlowInput> getCashFlowInputList(@PathVariable("jobId") long jobId) {
+        return xirrCalculationService.getCashFlowInputList(jobId);
     }
 
 

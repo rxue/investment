@@ -1,8 +1,10 @@
 package io.github.rxue.investment.portfolio.xirr;
 
 import io.github.rxue.investment.portfolio.xirr.jpaentity.XIRRJob;
+import io.github.rxue.investment.portfolio.xirr.jpaentity.XIRRRawInput;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -41,5 +43,15 @@ class XIRRCalculationService {
                 .setUploadedFiles(uploadedFiles);
         taskExecutor.execute(xirrCalculatorBuilder.build());
         return persistedJob.getId();
+    }
+    public XIRRRawInput getRawInput(long jobId) {
+        return xirrCalculatorBuilder.getRawInputRepository()
+                .findAll().stream()
+                .filter(rawInput -> rawInput.getJob().getId() == jobId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Raw input for job with id " + jobId + " doesnot exist"));
+    }
+    List<CashFlowInput> getCashFlowInputList(@PathVariable("jobId") long jobId) {
+        return XIRRCalculator.toCashFlowInput(getRawInput(jobId));
     }
 }

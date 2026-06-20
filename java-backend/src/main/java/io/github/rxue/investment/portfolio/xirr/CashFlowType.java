@@ -1,4 +1,4 @@
-package io.github.rxue.investment.portfolio.xirr.jpaentity;
+package io.github.rxue.investment.portfolio.xirr;
 
 public enum CashFlowType {
     DEPOSIT, ASSUMED_LIQUATION

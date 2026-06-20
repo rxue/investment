@@ -11,7 +11,6 @@ public class XIRRRawInput {
     private Long id;
     @OneToOne
     private XIRRJob job;
-    private State state;
     @OneToMany(mappedBy = "rawInput", cascade = CascadeType.ALL)
     private List<Position> holdings;
     private Long cashInEuroCent;
@@ -23,15 +22,10 @@ public class XIRRRawInput {
 
     public XIRRRawInput(XIRRJob job) {
         this.job = job;
-        this.state = State.INCOMPLETE;
     }
 
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
+    public XIRRJob getJob() {
+        return job;
     }
 
     public List<Position> getHoldings() {

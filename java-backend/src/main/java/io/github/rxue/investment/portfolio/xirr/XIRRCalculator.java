@@ -4,9 +4,12 @@ import io.github.rxue.investment.OPTransaction;
 import io.github.rxue.investment.portfolio.xirr.jpaentity.*;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.decampo.xirr.Transaction;
+import org.decampo.xirr.Xirr;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,8 +22,12 @@ class XIRRCalculator implements Runnable {
     private final RawInputGenerator rawInputGenerator;
     private final XIRRJob job;
     private final List<Path> uploadedFiles;
+    private final RawInputRepository rawInputRepository;
+    private final JobRepository jobRepository;
     private XIRRCalculator(Builder builder) {
         this.rawInputGenerator = builder.rawInputGenerator;
+        this.rawInputRepository = builder.rawInputRepository;
+        this.jobRepository = builder.jobRepository;
         this.job = builder.job;
         this.uploadedFiles = builder.uploadedFiles;
     }
@@ -36,16 +43,22 @@ class XIRRCalculator implements Runnable {
                     }
                 }).flatMap(List::stream)
                 .toList();
-        XIRRRawInput rawInput = generateRawInput(job, transactions);
+        XIRRRawInput rawInput = rawInputGenerator.generate(job, transactions);
+        List<CashFlowInput> cashFlowInput = toCashFlowInput(rawInputRepository.save(rawInput));
+        job.setResult(BigDecimal.valueOf(calculateXirr(cashFlowInput)));
+        jobRepository.save(job);
     }
 
-    XIRRRawInput generateRawInput(XIRRJob job, List<OPTransaction> transactions) {
-        XIRRRawInput rawInput = rawInputGenerator.initializeRawInputWithHoldings(job, transactions);
-        rawInputGenerator.setHoldingsMarketValues(rawInput);
-        rawInputGenerator.setCashFlows(rawInput, transactions);
-        rawInputGenerator.setRemainingCash(rawInput, transactions);
-        rawInputGenerator.markComplete(rawInput);
-        return rawInput;
+    private static double calculateXirr(List<CashFlowInput> cashFlowInput) {
+        List<Transaction> xirrTransactions = cashFlowInput.stream()
+                .map(cf -> new Transaction(toSignedEuroAmount(cf), cf.getDate()))
+                .toList();
+        return new Xirr(xirrTransactions).xirr();
+    }
+
+    private static double toSignedEuroAmount(CashFlowInput cashFlowInput) {
+        double amount = cashFlowInput.getValueInCent() / 100.0;
+        return cashFlowInput.getType() == CashFlowType.DEPOSIT ? -amount : amount;
     }
 
 
@@ -75,14 +88,30 @@ class XIRRCalculator implements Runnable {
                     .toList();
         }
     }
+
+    static List<CashFlowInput> toCashFlowInput(XIRRRawInput rawInput) {
+        List<CashFlowInput> cashFlows = new ArrayList<>();
+        for (CashFlow cashFlow : rawInput.getCashFlows()) {
+            cashFlows.add(CashFlowInput.toInput(cashFlow));
+        }
+        long marketValuesInEuroCent = rawInput.getHoldings().stream()
+                .mapToLong(Position::getEuroCentMarketValue)
+                .sum();
+        cashFlows.add(new CashFlowInput(LocalDate.now(), CashFlowType.ASSUMED_LIQUATION, marketValuesInEuroCent + rawInput.getCashInEuroCent()));
+        return cashFlows;
+    }
     @Service
     static class Builder {
         private final RawInputGenerator rawInputGenerator;
+        private final RawInputRepository rawInputRepository;
+        private final JobRepository jobRepository;
         private XIRRJob job;
         private List<Path> uploadedFiles;
 
-        public Builder(RawInputGenerator rawInputGenerator) {
+        public Builder(RawInputGenerator rawInputGenerator, RawInputRepository rawInputRepository, JobRepository jobRepository) {
             this.rawInputGenerator = rawInputGenerator;
+            this.rawInputRepository = rawInputRepository;
+            this.jobRepository = jobRepository;
         }
 
         public Builder setJob(XIRRJob job) {
@@ -93,6 +122,10 @@ class XIRRCalculator implements Runnable {
         public Builder setUploadedFiles(List<Path> uploadedFiles) {
             this.uploadedFiles = uploadedFiles;
             return this;
+        }
+
+        public RawInputRepository getRawInputRepository() {
+            return rawInputRepository;
         }
 
         XIRRCalculator build() {

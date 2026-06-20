@@ -23,19 +23,25 @@ class RawInputGenerator {
         this.lotsMatcher = lotsMatcher;
         this.euroPriceFetcher = euroPriceFetcher;
     }
+    XIRRRawInput generate(XIRRJob job, List<OPTransaction> transactions) {
+        XIRRRawInput rawInput = initializeRawInputWithHoldings(job, transactions);
+        setHoldingsMarketValues(rawInput);
+        setCashFlows(rawInput, transactions);
+        return rawInput;
+    }
 
-    @PersistRawInput
-    XIRRRawInput initializeRawInputWithHoldings(XIRRJob job, List<OPTransaction> transactions) {
+    private XIRRRawInput initializeRawInputWithHoldings(XIRRJob job, List<OPTransaction> transactions) {
         Map<String,MatchResult> matchResultByCompanySymbol = matchLots(transactions);
         XIRRRawInput rawInput = new XIRRRawInput(job);
         List<Position> holdings = matchResultByCompanySymbol.entrySet().stream()
                 .map(entry -> toPosition(rawInput, entry))
                 .toList();
         rawInput.setHoldings(holdings);
+        setCashFlows(rawInput, transactions);
+        setRemainingCash(rawInput, transactions);
         return rawInput;
     }
-    @PersistRawInput
-    void setHoldingsMarketValues(XIRRRawInput rawInput) {
+    private void setHoldingsMarketValues(XIRRRawInput rawInput) {
         for (Position position : rawInput.getHoldings()) {
             String yahooCompanySymbol = position.getCompany().getYahooSymbol();
             BigDecimal euroPrice = euroPriceFetcher.getCurrentEuroPrice(yahooCompanySymbol)
@@ -47,24 +53,18 @@ class RawInputGenerator {
             position.setEuroCentMarketValue(euroCentMarketValue);
         }
     }
-    @PersistRawInput
-    void setCashFlows(XIRRRawInput rawInput, List<OPTransaction> transactions) {
+    private void setCashFlows(XIRRRawInput rawInput, List<OPTransaction> transactions) {
         List<CashFlow> cashFlows = transactions.stream()
                 .filter(tr -> tr.category() == 710 && "TILISIIRTO".equals(tr.explanation()))
-                .map(tr -> new CashFlow(rawInput, CashFlowType.DEPOSIT, tr.effectiveDate(), toEuroCent(tr.amountInEuro())))
+                .map(tr -> new CashFlow(rawInput, tr.effectiveDate(), toEuroCent(tr.amountInEuro())))
                 .toList();
         rawInput.setCashFlows(cashFlows);
     }
-    @PersistRawInput
-    void setRemainingCash(XIRRRawInput rawInput, List<OPTransaction> transactions) {
+    private void setRemainingCash(XIRRRawInput rawInput, List<OPTransaction> transactions) {
         long remainingCash = transactions.stream()
                 .mapToLong(tr -> toEuroCent(tr.amountInEuro()))
                 .sum();
         rawInput.setCashInEuroCent(remainingCash);
-    }
-    @PersistRawInput
-    void markComplete(XIRRRawInput rawInput) {
-        rawInput.setState(State.COMPLETED);
     }
 
     private Position toPosition(XIRRRawInput rawInput, Map.Entry<String,MatchResult> companySymbolToMatchResult) {

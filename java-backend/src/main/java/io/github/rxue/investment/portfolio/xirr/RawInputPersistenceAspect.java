@@ -22,7 +22,8 @@ class RawInputPersistenceAspect {
                 ? resultRawInput
                 : findRawInputArgument(joinPoint.getArgs());
         if (rawInput != null) {
-            rawInputRepository.save(rawInput);
+            XIRRRawInput persistedRawInput = rawInputRepository.save(rawInput);
+            rawInput.setCashFlows(persistedRawInput.getCashFlows());
         }
         return result;
     }
