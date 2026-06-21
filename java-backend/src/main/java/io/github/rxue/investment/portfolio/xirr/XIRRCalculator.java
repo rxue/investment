@@ -24,11 +24,9 @@ class XIRRCalculator implements Runnable {
     private final XIRRJob job;
     private final List<Path> uploadedFiles;
     private final JobRepository jobRepository;
-    private final RawInputRepository rawInputRepository;
     private XIRRCalculator(Builder builder) {
         this.rawInputGenerator = builder.rawInputGenerator;
         this.jobRepository = builder.jobRepository;
-        this.rawInputRepository = builder.rawInputRepository;
         this.job = builder.job;
         this.uploadedFiles = builder.uploadedFiles;
     }
@@ -44,9 +42,7 @@ class XIRRCalculator implements Runnable {
                     }
                 }).flatMap(List::stream)
                 .toList();
-        XIRRRawInput rawInput = rawInputGenerator.generate(transactions);
-        rawInput.setJob(job);
-        rawInputRepository.save(rawInput);
+        XIRRRawInput rawInput = rawInputGenerator.generate(job, transactions);
         List<CashFlowInput> cashFlowInput = toCashFlowInput(rawInput);
         job.setResult(BigDecimal.valueOf(calculateXirr(cashFlowInput)));
         jobRepository.save(job);
@@ -108,14 +104,12 @@ class XIRRCalculator implements Runnable {
     static class Builder {
         private final RawInputGenerator rawInputGenerator;
         private final JobRepository jobRepository;
-        private final RawInputRepository rawInputRepository;
         private XIRRJob job;
         private List<Path> uploadedFiles;
 
-        public Builder(RawInputGenerator rawInputGenerator, JobRepository jobRepository, RawInputRepository rawInputRepository) {
+        public Builder(RawInputGenerator rawInputGenerator, JobRepository jobRepository) {
             this.rawInputGenerator = rawInputGenerator;
             this.jobRepository = jobRepository;
-            this.rawInputRepository = rawInputRepository;
         }
 
         public Builder setJob(XIRRJob job) {
