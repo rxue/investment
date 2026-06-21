@@ -23,16 +23,16 @@ class RawInputGenerator {
         this.lotsMatcher = lotsMatcher;
         this.euroPriceFetcher = euroPriceFetcher;
     }
-    XIRRRawInput generate(XIRRJob job, List<OPTransaction> transactions) {
-        XIRRRawInput rawInput = initializeRawInputWithHoldings(job, transactions);
+    XIRRRawInput generate(List<OPTransaction> transactions) {
+        XIRRRawInput rawInput = initializeRawInputWithHoldings(transactions);
         setHoldingsMarketValues(rawInput);
         setCashFlows(rawInput, transactions);
         return rawInput;
     }
 
-    private XIRRRawInput initializeRawInputWithHoldings(XIRRJob job, List<OPTransaction> transactions) {
+    private XIRRRawInput initializeRawInputWithHoldings(List<OPTransaction> transactions) {
         Map<String,MatchResult> matchResultByCompanySymbol = matchLots(transactions);
-        XIRRRawInput rawInput = new XIRRRawInput(job);
+        XIRRRawInput rawInput = new XIRRRawInput();
         List<Position> holdings = matchResultByCompanySymbol.entrySet().stream()
                 .map(entry -> toPosition(rawInput, entry))
                 .toList();

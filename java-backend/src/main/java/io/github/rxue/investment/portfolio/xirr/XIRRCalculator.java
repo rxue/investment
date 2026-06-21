@@ -6,6 +6,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.decampo.xirr.Transaction;
 import org.decampo.xirr.Xirr;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -22,12 +23,12 @@ class XIRRCalculator implements Runnable {
     private final RawInputGenerator rawInputGenerator;
     private final XIRRJob job;
     private final List<Path> uploadedFiles;
-    private final RawInputRepository rawInputRepository;
     private final JobRepository jobRepository;
+    private final RawInputRepository rawInputRepository;
     private XIRRCalculator(Builder builder) {
         this.rawInputGenerator = builder.rawInputGenerator;
-        this.rawInputRepository = builder.rawInputRepository;
         this.jobRepository = builder.jobRepository;
+        this.rawInputRepository = builder.rawInputRepository;
         this.job = builder.job;
         this.uploadedFiles = builder.uploadedFiles;
     }
@@ -43,8 +44,10 @@ class XIRRCalculator implements Runnable {
                     }
                 }).flatMap(List::stream)
                 .toList();
-        XIRRRawInput rawInput = rawInputGenerator.generate(job, transactions);
-        List<CashFlowInput> cashFlowInput = toCashFlowInput(rawInputRepository.save(rawInput));
+        XIRRRawInput rawInput = rawInputGenerator.generate(transactions);
+        rawInput.setJob(job);
+        rawInputRepository.save(rawInput);
+        List<CashFlowInput> cashFlowInput = toCashFlowInput(rawInput);
         job.setResult(BigDecimal.valueOf(calculateXirr(cashFlowInput)));
         jobRepository.save(job);
     }
@@ -101,17 +104,18 @@ class XIRRCalculator implements Runnable {
         return cashFlows;
     }
     @Service
+    @Scope("prototype")
     static class Builder {
         private final RawInputGenerator rawInputGenerator;
-        private final RawInputRepository rawInputRepository;
         private final JobRepository jobRepository;
+        private final RawInputRepository rawInputRepository;
         private XIRRJob job;
         private List<Path> uploadedFiles;
 
-        public Builder(RawInputGenerator rawInputGenerator, RawInputRepository rawInputRepository, JobRepository jobRepository) {
+        public Builder(RawInputGenerator rawInputGenerator, JobRepository jobRepository, RawInputRepository rawInputRepository) {
             this.rawInputGenerator = rawInputGenerator;
-            this.rawInputRepository = rawInputRepository;
             this.jobRepository = jobRepository;
+            this.rawInputRepository = rawInputRepository;
         }
 
         public Builder setJob(XIRRJob job) {
@@ -122,10 +126,6 @@ class XIRRCalculator implements Runnable {
         public Builder setUploadedFiles(List<Path> uploadedFiles) {
             this.uploadedFiles = uploadedFiles;
             return this;
-        }
-
-        public RawInputRepository getRawInputRepository() {
-            return rawInputRepository;
         }
 
         XIRRCalculator build() {

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.beans.factory.ObjectProvider;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,13 +18,15 @@ import java.util.List;
 @Service
 class XIRRCalculationService {
     private final JobRepository jobRepository;
+    private final RawInputRepository rawInputRepository;
     private final ThreadPoolTaskExecutor taskExecutor;
-    private final XIRRCalculator.Builder xirrCalculatorBuilder;
+    private final ObjectProvider<XIRRCalculator.Builder> xirrCalculatorBuilderProvider;
 
-    public XIRRCalculationService(JobRepository jobRepository, ThreadPoolTaskExecutor taskExecutor, XIRRCalculator.Builder xirrCalculatorBuilder) {
+    public XIRRCalculationService(JobRepository jobRepository, RawInputRepository rawInputRepository, ThreadPoolTaskExecutor taskExecutor, ObjectProvider<XIRRCalculator.Builder> xirrCalculatorBuilderProvider) {
         this.jobRepository = jobRepository;
+        this.rawInputRepository = rawInputRepository;
         this.taskExecutor = taskExecutor;
-        this.xirrCalculatorBuilder = xirrCalculatorBuilder;
+        this.xirrCalculatorBuilderProvider = xirrCalculatorBuilderProvider;
     }
 
     public Long calculate(List<MultipartFile> files) {
@@ -38,15 +42,14 @@ class XIRRCalculationService {
             }
             uploadedFiles.add(path);
         }
-        xirrCalculatorBuilder
+        XIRRCalculator.Builder xirrCalculatorBuilder = xirrCalculatorBuilderProvider.getObject()
                 .setJob(persistedJob)
                 .setUploadedFiles(uploadedFiles);
         taskExecutor.execute(xirrCalculatorBuilder.build());
         return persistedJob.getId();
     }
     public XIRRRawInput getRawInput(long jobId) {
-        return xirrCalculatorBuilder.getRawInputRepository()
-                .findAll().stream()
+        return rawInputRepository.findAll().stream()
                 .filter(rawInput -> rawInput.getJob().getId() == jobId)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Raw input for job with id " + jobId + " doesnot exist"));

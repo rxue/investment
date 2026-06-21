@@ -20,12 +20,13 @@ public class XIRRRawInput {
 
     public XIRRRawInput() {}
 
-    public XIRRRawInput(XIRRJob job) {
-        this.job = job;
-    }
 
     public XIRRJob getJob() {
         return job;
+    }
+
+    public void setJob(XIRRJob job) {
+        this.job = job;
     }
 
     public List<Position> getHoldings() {
