@@ -76,8 +76,8 @@ class RawInputGenerator {
         return new Position(company, companySymbolToMatchResult.getValue().unrealized().shareAmount(), rawInput);
     }
 
-    private Map<String, MatchResult> matchLots(List<OPTransaction> tradingTransactions) {
-        Map<String,List<Lot>> lotsBySymbol = Lot.toLotsByCompanySymbol(tradingTransactions);
+    private Map<String,MatchResult> matchLots(List<OPTransaction> tradingTransactions) {
+        Map<String,List<Lot>> lotsBySymbol = Lot.getTradingLotsByCompanySymbol(tradingTransactions);
         Map<String,MatchResult> matchLotsByCompanySymbol = new HashMap<>();
         for (Map.Entry<String,List<Lot>> entry : lotsBySymbol.entrySet()) {
             matchLotsByCompanySymbol.put(entry.getKey(), lotsMatcher.matchInFifo(entry.getValue(), List.of()));

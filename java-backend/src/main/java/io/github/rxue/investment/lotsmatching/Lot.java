@@ -22,7 +22,7 @@ public interface Lot {
     }
     record Sell(LocalDate date, int shareAmount, long valueInCent) implements Lot {
     }
-    static Map<String,List<Lot>> toLotsByCompanySymbol(List<OPTransaction> tradingTransactions) {
+    static Map<String,List<Lot>> getTradingLotsByCompanySymbol(List<OPTransaction> tradingTransactions) {
         final Pattern pattern = Pattern.compile("^\\s*([OM]):(.+?)\\s*/(\\d+)");
         Map<String, List<Lot>> result = new HashMap<>();
         for (OPTransaction t : tradingTransactions) {
