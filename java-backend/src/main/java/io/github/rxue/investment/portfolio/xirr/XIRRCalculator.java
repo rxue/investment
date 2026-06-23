@@ -56,7 +56,7 @@ class XIRRCalculator implements Runnable {
             cashFlows.add(CashFlowInput.toInput(cashFlow));
         }
         long marketValuesInEuroCent = rawInput.getHoldings().stream()
-                .mapToLong(Position::getEuroCentMarketValue)
+                .mapToLong(XIRRPosition::getEuroCentMarketValue)
                 .sum();
         cashFlows.add(new CashFlowInput(LocalDate.now(), CashFlowType.ASSUMED_LIQUATION, marketValuesInEuroCent + rawInput.getCashInEuroCent()));
         return cashFlows;

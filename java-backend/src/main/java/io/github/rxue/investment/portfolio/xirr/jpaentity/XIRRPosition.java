@@ -1,12 +1,12 @@
 package io.github.rxue.investment.portfolio.xirr.jpaentity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.github.rxue.investment.portfolio.holdings.Company;
+import io.github.rxue.investment.portfolio.holdings.jpaentity.Company;
 import jakarta.persistence.*;
 
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Position {
+public class XIRRPosition {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -16,8 +16,8 @@ public class Position {
     private Long euroCentMarketValue;
     @ManyToOne
     private XIRRRawInput rawInput;
-    public Position() {}
-    public Position(Company company, int shareAmount, XIRRRawInput rawInput) {
+    public XIRRPosition() {}
+    public XIRRPosition(Company company, int shareAmount, XIRRRawInput rawInput) {
         this.company = company;
         this.shareAmount = shareAmount;
         this.rawInput = rawInput;

@@ -5,8 +5,9 @@ import io.github.rxue.investment.lotsmatching.Lot;
 import io.github.rxue.investment.lotsmatching.LotsMatcher;
 import io.github.rxue.investment.lotsmatching.MatchResult;
 import io.github.rxue.investment.marketquote.EuroPriceFetcher;
-import io.github.rxue.investment.portfolio.holdings.Company;
+import io.github.rxue.investment.portfolio.holdings.jpaentity.Company;
 import io.github.rxue.investment.portfolio.holdings.CompanyRepository;
+import io.github.rxue.investment.portfolio.holdings.HoldingsGenerator;
 import io.github.rxue.investment.portfolio.xirr.jpaentity.*;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +33,11 @@ class RawInputGenerator {
     }
 
     private XIRRRawInput initializeRawInputWithHoldings(XIRRJob job, List<OPTransaction> transactions) {
-        Map<String,MatchResult> matchResultByCompanySymbol = matchLots(transactions);
+        Map<String,List<Lot>> lotsBySymbol = HoldingsGenerator.getTradingLotsByCompanySymbol(transactions);
+        Map<String,MatchResult> matchResultByCompanySymbol = HoldingsGenerator.matchLots(lotsMatcher, lotsBySymbol);
         XIRRRawInput rawInput = new XIRRRawInput();
         rawInput.setJob(job);
-        List<Position> holdings = matchResultByCompanySymbol.entrySet().stream()
+        List<XIRRPosition> holdings = matchResultByCompanySymbol.entrySet().stream()
                 .map(entry -> toPosition(rawInput, entry))
                 .toList();
         rawInput.setHoldings(holdings);
@@ -44,7 +46,7 @@ class RawInputGenerator {
         return rawInput;
     }
     private void setHoldingsMarketValues(XIRRRawInput rawInput) {
-        for (Position position : rawInput.getHoldings()) {
+        for (XIRRPosition position : rawInput.getHoldings()) {
             String yahooCompanySymbol = position.getCompany().getYahooSymbol();
             BigDecimal euroPrice = euroPriceFetcher.getCurrentEuroPrice(yahooCompanySymbol)
                     .value();
@@ -69,20 +71,11 @@ class RawInputGenerator {
         rawInput.setCashInEuroCent(remainingCash);
     }
 
-    private Position toPosition(XIRRRawInput rawInput, Map.Entry<String,MatchResult> companySymbolToMatchResult) {
+    private XIRRPosition toPosition(XIRRRawInput rawInput, Map.Entry<String,MatchResult> companySymbolToMatchResult) {
         String companySymbol = companySymbolToMatchResult.getKey();
         Company company = companyRepository.findByOpSymbol(companySymbol)
                 .orElseThrow(() -> new IllegalArgumentException("company with symbol " + companySymbol + " cannot be found"));
-        return new Position(company, companySymbolToMatchResult.getValue().unrealized().shareAmount(), rawInput);
-    }
-
-    private Map<String,MatchResult> matchLots(List<OPTransaction> tradingTransactions) {
-        Map<String,List<Lot>> lotsBySymbol = Lot.getTradingLotsByCompanySymbol(tradingTransactions);
-        Map<String,MatchResult> matchLotsByCompanySymbol = new HashMap<>();
-        for (Map.Entry<String,List<Lot>> entry : lotsBySymbol.entrySet()) {
-            matchLotsByCompanySymbol.put(entry.getKey(), lotsMatcher.matchInFifo(entry.getValue(), List.of()));
-        }
-        return Collections.unmodifiableMap(matchLotsByCompanySymbol);
+        return new XIRRPosition(company, companySymbolToMatchResult.getValue().unrealized().shareAmount(), rawInput);
     }
 
     private static long toEuroCent(double euroValue) {

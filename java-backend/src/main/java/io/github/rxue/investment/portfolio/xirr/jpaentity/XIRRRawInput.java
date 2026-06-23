@@ -12,7 +12,7 @@ public class XIRRRawInput {
     @OneToOne
     private XIRRJob job;
     @OneToMany(mappedBy = "rawInput", cascade = CascadeType.ALL)
-    private List<Position> holdings;
+    private List<XIRRPosition> holdings;
     private Long cashInEuroCent;
     @OneToMany(mappedBy = "rawInput", cascade = CascadeType.ALL)
     private List<CashFlow> cashFlows;
@@ -29,11 +29,11 @@ public class XIRRRawInput {
         this.job = job;
     }
 
-    public List<Position> getHoldings() {
+    public List<XIRRPosition> getHoldings() {
         return holdings;
     }
 
-    public void setHoldings(List<Position> holdings) {
+    public void setHoldings(List<XIRRPosition> holdings) {
         this.holdings = holdings;
     }
 
