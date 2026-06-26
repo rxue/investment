@@ -1,21 +1,21 @@
 package io.github.rxue.investment.marketquote;
 
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Service
 public class EuroPriceFetcher {
     private static final String EUR = "EUR";
 
     private final YahooFinanceFetcher priceFetcher;
     private final FXRateFetcher fxRateFetcher;
-    public EuroPriceFetcher(YahooFinanceFetcher priceFetcher, FXRateFetcher fxRateFetcher) {
+    private EuroPriceFetcher(YahooFinanceFetcher priceFetcher, FXRateFetcher fxRateFetcher) {
         this.priceFetcher = priceFetcher;
         this.fxRateFetcher = fxRateFetcher;
+    }
+    public EuroPriceFetcher() {
+        this(new YahooFinanceFetcher(), new FXRateFetcher());
     }
 
     public Price getCurrentEuroPrice(String companySymbol) {

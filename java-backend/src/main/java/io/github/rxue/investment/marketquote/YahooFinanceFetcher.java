@@ -18,7 +18,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-@Service
 public class YahooFinanceFetcher {
 
     private static final String CRUMB_URL = "https://query2.finance.yahoo.com/v1/test/getcrumb";
@@ -41,7 +40,12 @@ public class YahooFinanceFetcher {
                 .GET()
                 .build();
         HttpResponse<String> response = send(request);
-        return parseCurrentPrice(response.body());
+        JsonNode resultNode = objectMapper.readTree(response.body())
+                .path("quoteResponse").path("result").get(0);
+        if (resultNode == null) {
+            throw new IllegalArgumentException("Cannot fetch any price with the the given company symbol " + companySymbol);
+        }
+        return parseCurrentPrice(resultNode);
     }
 
     private String getCrumb() throws IOException {
@@ -67,9 +71,7 @@ public class YahooFinanceFetcher {
         }
     }
 
-    private Price parseCurrentPrice(String json) throws IOException {
-        JsonNode result = objectMapper.readTree(json)
-                .path("quoteResponse").path("result").get(0);
+    private Price parseCurrentPrice(JsonNode result) {
         String currency = result.path("currency").asText();
         BigDecimal price = result.path("regularMarketPrice").decimalValue();
         JsonNode regularMarketTime = result.path("regularMarketTime");

@@ -1,26 +1,20 @@
 package io.github.rxue.investment.portfolio.xirr;
 
-import io.github.rxue.investment.OPTransaction;
+import io.github.rxue.investment.portfolio.OPTransaction;
 import io.github.rxue.investment.lotsmatching.Lot;
 import io.github.rxue.investment.lotsmatching.LotsMatcher;
 import io.github.rxue.investment.lotsmatching.MatchResult;
 import io.github.rxue.investment.marketquote.EuroPriceFetcher;
-import io.github.rxue.investment.portfolio.holdings.jpaentity.Company;
-import io.github.rxue.investment.portfolio.holdings.CompanyRepository;
 import io.github.rxue.investment.portfolio.holdings.HoldingsGenerator;
 import io.github.rxue.investment.portfolio.xirr.jpaentity.*;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-@Service
 class RawInputGenerator {
-    private final CompanyRepository companyRepository;
     private final LotsMatcher lotsMatcher;
     private final EuroPriceFetcher euroPriceFetcher;
-    RawInputGenerator(CompanyRepository companyRepository, LotsMatcher lotsMatcher, EuroPriceFetcher euroPriceFetcher) {
-        this.companyRepository = companyRepository;
+    RawInputGenerator(LotsMatcher lotsMatcher, EuroPriceFetcher euroPriceFetcher) {
         this.lotsMatcher = lotsMatcher;
         this.euroPriceFetcher = euroPriceFetcher;
     }
@@ -72,10 +66,11 @@ class RawInputGenerator {
     }
 
     private XIRRPosition toPosition(XIRRRawInput rawInput, Map.Entry<String,MatchResult> companySymbolToMatchResult) {
-        String companySymbol = companySymbolToMatchResult.getKey();
+/*        String companySymbol = companySymbolToMatchResult.getKey();
         Company company = companyRepository.findByOpSymbol(companySymbol)
                 .orElseThrow(() -> new IllegalArgumentException("company with symbol " + companySymbol + " cannot be found"));
-        return new XIRRPosition(company, companySymbolToMatchResult.getValue().unrealized().shareAmount(), rawInput);
+        return new XIRRPosition(company, companySymbolToMatchResult.getValue().unrealized().shareAmount(), rawInput);*/
+        throw new UnsupportedOperationException();
     }
 
     private static long toEuroCent(double euroValue) {

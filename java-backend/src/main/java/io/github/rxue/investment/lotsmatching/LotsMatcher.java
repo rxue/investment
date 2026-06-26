@@ -2,10 +2,7 @@ package io.github.rxue.investment.lotsmatching;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 import io.github.rxue.investment.lotsmatching.MatchResult.*;
 @Service

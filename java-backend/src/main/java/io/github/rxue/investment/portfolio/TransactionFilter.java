@@ -1,6 +1,5 @@
 package io.github.rxue.investment.portfolio;
 
-import io.github.rxue.investment.OPTransaction;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

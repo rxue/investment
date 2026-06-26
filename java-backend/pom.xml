@@ -58,6 +58,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>4.7.6</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
@@ -73,6 +79,12 @@
 			<groupId>com.github.RayDeCampo</groupId>
 			<artifactId>java-xirr</artifactId>
 			<version>v1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.vandermeer</groupId>
+			<artifactId>asciitable</artifactId>
+			<version>0.3.2</version>
 		</dependency>
 
 		<dependency>

@@ -1,6 +1,5 @@
 package io.github.rxue.investment.marketquote;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +17,11 @@ public class StockQuoteController {
         this.euroPriceFetcher = euroPriceFetcher;
     }
 
-    @GetMapping("/{companySymbol}")
+    @GetMapping("/{companyIdentifier}")
     public Price getPrice(@PathVariable String companySymbol) throws IOException {
         return yahooFinanceFetcher.getCurrentPrice(companySymbol);
     }
-    @GetMapping("/euro/{companySymbol}")
+    @GetMapping("/euro/{companyIdentifier}")
     public Price getEuroPrice(@PathVariable String companySymbol) {
         return euroPriceFetcher.getCurrentEuroPrice(companySymbol);
     }

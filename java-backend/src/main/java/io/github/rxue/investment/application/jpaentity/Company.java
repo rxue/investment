@@ -1,4 +1,4 @@
-package io.github.rxue.investment.portfolio.holdings.jpaentity;
+package io.github.rxue.investment.application.jpaentity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

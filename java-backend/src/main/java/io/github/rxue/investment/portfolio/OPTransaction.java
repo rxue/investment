@@ -1,4 +1,4 @@
-package io.github.rxue.investment;
+package io.github.rxue.investment.portfolio;
 
 import java.time.LocalDate;
 

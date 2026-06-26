@@ -1,6 +1,6 @@
 package io.github.rxue.investment.portfolio.xirr;
 
-import io.github.rxue.investment.OPTransaction;
+import io.github.rxue.investment.portfolio.OPTransaction;
 import io.github.rxue.investment.portfolio.io.TransactionExtractor;
 import org.junit.jupiter.api.Test;
 

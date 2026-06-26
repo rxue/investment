@@ -1,7 +1,7 @@
 package io.github.rxue.investment.portfolio.xirr.jpaentity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.github.rxue.investment.portfolio.holdings.jpaentity.Company;
+import io.github.rxue.investment.application.jpaentity.Company;
 import jakarta.persistence.*;
 
 @Entity
