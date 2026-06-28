@@ -18,8 +18,7 @@ class XIRR implements Runnable {
 
     @Override
     public void run() {
-        List<Path> transactionFiles = Main.getFilePaths(directory);
-        List<OPTransaction> opTransactions = opTransactionExtractor.extract(transactionFiles);
+        List<OPTransaction> opTransactions = opTransactionExtractor.extract(directory);
         XIRRResult result = new OPXIRRCalculator().calculate(opTransactions);
         System.out.println(result);
         System.out.println(result.value());

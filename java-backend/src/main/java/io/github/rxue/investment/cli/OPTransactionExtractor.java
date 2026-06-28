@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 
 public class OPTransactionExtractor {
@@ -40,6 +41,10 @@ public class OPTransactionExtractor {
                     .toList();
         }
     }
+    public List<OPTransaction> extract(Path directory) {
+        return extract(csvFilePaths(directory));
+    }
+
     public List<OPTransaction> extract(List<Path> csvFilePaths) {
         return csvFilePaths.stream()
                 .map(filePath -> {
@@ -51,5 +56,16 @@ public class OPTransactionExtractor {
                 })
                 .flatMap(List::stream)
                 .toList();
+    }
+
+    private static List<Path> csvFilePaths(Path directory) {
+        try (var paths = Files.list(directory)) {
+            return paths.filter(Files::isRegularFile)
+                    .filter(p -> p.getFileName().toString().endsWith(".csv"))
+                    .sorted(Comparator.comparing(p -> p.getFileName().toString()))
+                    .toList();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

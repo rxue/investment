@@ -26,8 +26,7 @@ public class OPHoldingsGenerator {
 
     private static final Pattern ACTION_PATTERN = Pattern.compile("^\\s*([OM]):(.+?)\\s*/(\\d+)");
 
-    public List<Holding> generate(List<Path> csvFiles, Set<String> fieldNames) {
-        List<OPTransaction> transactions = transactionExtractor.extract(csvFiles);
+    public List<Holding> generate(List<OPTransaction> transactions, Set<String> fieldNames) {
         List<Trade> trades = transactions.stream()
                 .map(this::toTrade)
                 .filter(Objects::nonNull)
