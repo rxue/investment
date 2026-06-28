@@ -1,6 +1,6 @@
 package io.github.rxue.investment.portfolio.xirr;
 
-import io.github.rxue.investment.portfolio.OPTransaction;
+import io.github.rxue.investment.application.op.OPTransaction;
 import io.github.rxue.investment.lotsmatching.Lot;
 import io.github.rxue.investment.lotsmatching.LotsMatcher;
 import io.github.rxue.investment.lotsmatching.MatchResult;
@@ -20,13 +20,14 @@ class RawInputGenerator {
     }
     @PersistRawInput
     XIRRRawInput generate(XIRRJob job, List<OPTransaction> transactions) {
-        XIRRRawInput rawInput = initializeRawInputWithHoldings(job, transactions);
+        /*XIRRRawInput rawInput = initializeRawInputWithHoldings(job, transactions);
         setHoldingsMarketValues(rawInput);
         setCashFlows(rawInput, transactions);
-        return rawInput;
+        return rawInput;*/
+        throw new UnsupportedOperationException();
     }
 
-    private XIRRRawInput initializeRawInputWithHoldings(XIRRJob job, List<OPTransaction> transactions) {
+    /*private XIRRRawInput initializeRawInputWithHoldings(XIRRJob job, List<OPTransaction> transactions) {
         Map<String,List<Lot>> lotsBySymbol = HoldingsGenerator.getTradingLotsByCompanySymbol(transactions);
         Map<String,MatchResult> matchResultByCompanySymbol = HoldingsGenerator.matchLots(lotsMatcher, lotsBySymbol);
         XIRRRawInput rawInput = new XIRRRawInput();
@@ -66,14 +67,14 @@ class RawInputGenerator {
     }
 
     private XIRRPosition toPosition(XIRRRawInput rawInput, Map.Entry<String,MatchResult> companySymbolToMatchResult) {
-/*        String companySymbol = companySymbolToMatchResult.getKey();
+*//*        String companySymbol = companySymbolToMatchResult.getKey();
         Company company = companyRepository.findByOpSymbol(companySymbol)
                 .orElseThrow(() -> new IllegalArgumentException("company with symbol " + companySymbol + " cannot be found"));
-        return new XIRRPosition(company, companySymbolToMatchResult.getValue().unrealized().shareAmount(), rawInput);*/
+        return new XIRRPosition(company, companySymbolToMatchResult.getValue().unrealized().shareAmount(), rawInput);*//*
         throw new UnsupportedOperationException();
     }
 
     private static long toEuroCent(double euroValue) {
         return Math.round(euroValue * 100);
-    }
+    }*/
 }

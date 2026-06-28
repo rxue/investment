@@ -17,12 +17,12 @@ import java.util.List;
 
 @Service
 class XIRRCalculationService {
-    private final JobRepository jobRepository;
-    private final RawInputRepository rawInputRepository;
-    private final ThreadPoolTaskExecutor taskExecutor;
-    private final ObjectProvider<XIRRCalculator.Builder> xirrCalculatorBuilderProvider;
-
-    public XIRRCalculationService(JobRepository jobRepository, RawInputRepository rawInputRepository, ThreadPoolTaskExecutor taskExecutor, ObjectProvider<XIRRCalculator.Builder> xirrCalculatorBuilderProvider) {
+    //private final JobRepository jobRepository;
+    //private final RawInputRepository rawInputRepository;
+    //private final ThreadPoolTaskExecutor taskExecutor;
+    //private final ObjectProvider<LegacyXIRRCalculator.Builder> xirrCalculatorBuilderProvider;
+/*
+    public XIRRCalculationService(JobRepository jobRepository, RawInputRepository rawInputRepository, ThreadPoolTaskExecutor taskExecutor, ObjectProvider<LegacyXIRRCalculator.Builder> xirrCalculatorBuilderProvider) {
         this.jobRepository = jobRepository;
         this.rawInputRepository = rawInputRepository;
         this.taskExecutor = taskExecutor;
@@ -42,7 +42,7 @@ class XIRRCalculationService {
             }
             uploadedFiles.add(path);
         }
-        XIRRCalculator.Builder xirrCalculatorBuilder = xirrCalculatorBuilderProvider.getObject()
+        LegacyXIRRCalculator.Builder xirrCalculatorBuilder = xirrCalculatorBuilderProvider.getObject()
                 .setJob(persistedJob)
                 .setUploadedFiles(uploadedFiles);
         taskExecutor.execute(xirrCalculatorBuilder.build());
@@ -55,6 +55,6 @@ class XIRRCalculationService {
                 .orElseThrow(() -> new IllegalArgumentException("Raw input for job with id " + jobId + " doesnot exist"));
     }
     List<CashFlowInput> getCashFlowInputList(@PathVariable("jobId") long jobId) {
-        return XIRRCalculator.toCashFlowInput(getRawInput(jobId));
-    }
+        return LegacyXIRRCalculator.toCashFlowInput(getRawInput(jobId));
+    }*/
 }

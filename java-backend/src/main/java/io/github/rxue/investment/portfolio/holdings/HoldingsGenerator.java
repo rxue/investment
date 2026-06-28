@@ -3,7 +3,8 @@ package io.github.rxue.investment.portfolio.holdings;
 import io.github.rxue.investment.lotsmatching.Lot;
 import io.github.rxue.investment.lotsmatching.LotsMatcher;
 import io.github.rxue.investment.lotsmatching.MatchResult;
-import io.github.rxue.investment.portfolio.OPTransaction;
+import io.github.rxue.investment.portfolio.transaction.Action;
+import io.github.rxue.investment.portfolio.transaction.Trade;
 
 import java.util.*;
 
@@ -19,13 +20,10 @@ public class HoldingsGenerator {
         this(new LotsMatcher(), new HoldingGenerator());
     }
 
-    public List<Holding> generate(List<Trade> trades, List<Field> optionalFields) {
+    public List<Holding> generate(List<Trade> trades, Field... optionalFields) {
         return matchAllInFifo(trades).entrySet().stream()
                 .map(entry -> holdingGenerator.generate(entry.getKey(), entry.getValue(), optionalFields))
                 .toList();
-    }
-    public static Map<String,List<Lot>> getTradingLotsByCompanySymbol(List<OPTransaction> transactions) {
-        throw new UnsupportedOperationException();
     }
     public static Map<String,MatchResult> matchLots(LotsMatcher lotsMatcher, Map<String,List<Lot>> lotsByCompanyIdentifier) {
         throw new UnsupportedOperationException();
@@ -43,7 +41,7 @@ public class HoldingsGenerator {
     private static Map<String,List<Lot>> toLotsByCompanyIdentifier(List<Trade> trades) {
         Map<String,List<Lot>> result = new HashMap<>();
         for (Trade t : trades) {
-            Lot lot = t.type() == Trade.Type.BUY
+            Lot lot = t.action() == Action.BUY
                     ? new Lot.Buy(t.date(), t.shareAmount(), t.valueInCent())
                     : new Lot.Sell(t.date(), t.shareAmount(), t.valueInCent());
             result.computeIfAbsent(t.companyIdentifier(), k -> new ArrayList<>()).add(lot);

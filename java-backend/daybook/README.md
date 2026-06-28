@@ -1,6 +1,8 @@
 # Practical Tips
 ## Java SE
 Since Java SE 8, there is a `UncheckedIOException` added to `java.io`, to which `IOException` can be propogated
+### Use of `record` (20260628)
+`record` cannot `extends` a class but can `implements` *interface*
 
 ## add of `spring-boot-starter-data-jpa` makes database configuration a must
 That is to say, app will not start up successfully until database connection is configured

@@ -1,0 +1,22 @@
+package io.github.rxue.investment.portfolio.xirr;
+
+import io.github.rxue.investment.portfolio.Util;
+import io.github.rxue.investment.portfolio.holdings.Holding;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+ * Assumed eventually all the money is withdrawn on the calculation date
+ * @param holdings
+ * @param remainingCash
+ */
+record AssumedLiquidation(List<Holding> holdings, BigDecimal remainingCash) {
+    CashFlowInput toCashFlowInput() {
+        long totalMarketValueInEuroCent = holdings.stream()
+                .mapToLong(Holding::marketValueInEuroCent)
+                .sum() + Util.toValueInCent(remainingCash);
+        return new CashFlowInput(LocalDate.now(), CashFlowType.ASSUMED_LIQUATION, -totalMarketValueInEuroCent);
+    }
+}

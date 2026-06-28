@@ -4,7 +4,7 @@ import io.github.rxue.investment.portfolio.xirr.jpaentity.CashFlow;
 
 import java.time.LocalDate;
 
-public class CashFlowInput {
+public final class CashFlowInput {
     private final LocalDate date;
     private final CashFlowType type;
     private final long valueInCent;

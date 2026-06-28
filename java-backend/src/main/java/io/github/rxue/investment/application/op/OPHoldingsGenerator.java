@@ -1,5 +1,8 @@
-package io.github.rxue.investment.application;
+package io.github.rxue.investment.application.op;
 
+import io.github.rxue.investment.cli.OPTransactionExtractor;
+import io.github.rxue.investment.portfolio.transaction.Action;
+import io.github.rxue.investment.portfolio.transaction.Trade;
 import io.github.rxue.investment.portfolio.holdings.*;
 
 import java.nio.file.Path;
@@ -30,7 +33,7 @@ public class OPHoldingsGenerator {
                 .filter(Objects::nonNull)
                 .toList();
         List<Field> fields = fieldNames.stream().map(Field::valueOf).toList();
-        return holdingsGenerator.generate(trades, fields);
+        return holdingsGenerator.generate(trades, fields.toArray(Field[]::new));
     }
     private Trade toTrade(OPTransaction tr) {
         Matcher matcher = ACTION_PATTERN.matcher(tr.message());
@@ -42,9 +45,9 @@ public class OPHoldingsGenerator {
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find the Yahoo company symbol with the given OP's defined company identifier " + matcher.group(2).strip()));
         int shareAmount = Integer.parseInt(matcher.group(3));
         return new Trade(tr.effectiveDate(),
+                tr.amountInEuro(),
                 yahooCompanySymbol,
-                "O".equals(action) ? Trade.Type.BUY : Trade.Type.SELL,
-                shareAmount,
-                tr.amountInEuro());
+                "O".equals(action) ? Action.BUY : Action.SELL,
+                shareAmount);
     }
 }

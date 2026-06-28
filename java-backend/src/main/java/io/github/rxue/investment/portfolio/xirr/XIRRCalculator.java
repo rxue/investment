@@ -1,93 +1,56 @@
 package io.github.rxue.investment.portfolio.xirr;
 
-import io.github.rxue.investment.portfolio.OPTransaction;
-import io.github.rxue.investment.portfolio.io.TransactionExtractor;
-import io.github.rxue.investment.portfolio.xirr.jpaentity.*;
-import org.decampo.xirr.Transaction;
+import io.github.rxue.investment.portfolio.Util;
+import io.github.rxue.investment.portfolio.holdings.Field;
+import io.github.rxue.investment.portfolio.holdings.Holding;
+import io.github.rxue.investment.portfolio.holdings.HoldingsGenerator;
+import io.github.rxue.investment.portfolio.transaction.Deposit;
+import io.github.rxue.investment.portfolio.transaction.Trade;
+import io.github.rxue.investment.portfolio.transaction.Transaction;
 import org.decampo.xirr.Xirr;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.nio.file.Path;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-class XIRRCalculator implements Runnable {
+public class XIRRCalculator {
+    private final HoldingsGenerator holdingsGenerator;
 
-    private final RawInputGenerator rawInputGenerator;
-    private final TransactionExtractor transactionExtractor;
-    private final XIRRJob job;
-    private final List<Path> uploadedFiles;
-    private final JobRepository jobRepository;
-    private XIRRCalculator(Builder builder) {
-        this.rawInputGenerator = builder.rawInputGenerator;
-        this.transactionExtractor = builder.transactionExtractor;
-        this.jobRepository = builder.jobRepository;
-        this.job = builder.job;
-        this.uploadedFiles = builder.uploadedFiles;
+    private XIRRCalculator(HoldingsGenerator holdingsGenerator) {
+        this.holdingsGenerator = holdingsGenerator;
+    }
+    public XIRRCalculator() {
+        this(new HoldingsGenerator());
     }
 
-    @Override
-    public void run() {
-        List<OPTransaction> transactions = transactionExtractor.extract(uploadedFiles);
-        XIRRRawInput rawInput = rawInputGenerator.generate(job, transactions);
-        List<CashFlowInput> cashFlowInput = toCashFlowInput(rawInput);
-        job.setResult(BigDecimal.valueOf(calculateXirr(cashFlowInput)));
-        jobRepository.save(job);
-    }
-
-    private static double calculateXirr(List<CashFlowInput> cashFlowInput) {
-        List<Transaction> xirrTransactions = cashFlowInput.stream()
-                .map(cf -> new Transaction(toSignedEuroAmount(cf), cf.getDate()))
+    public XIRRResult calculate(List<Transaction> transactions) {
+        List<CashFlowInput> cashFlowInputList = getCashFlowInput(transactions);
+        List<org.decampo.xirr.Transaction> xirrTransactions = cashFlowInputList.stream()
+                .map(cf -> new org.decampo.xirr.Transaction(cf.getValueInCent(), cf.getDate()))
                 .toList();
-        return new Xirr(xirrTransactions).xirr();
+        return new XIRRResult(cashFlowInputList, BigDecimal.valueOf(new Xirr(xirrTransactions).xirr()));
     }
 
-    private static double toSignedEuroAmount(CashFlowInput cashFlowInput) {
-        double amount = cashFlowInput.getValueInCent() / 100.0;
-        return cashFlowInput.getType() == CashFlowType.DEPOSIT ? -amount : amount;
+    private List<CashFlowInput> getCashFlowInput(List<Transaction> transactions) {
+        List<CashFlowInput> result = new ArrayList<>();
+        transactions.stream()
+                .filter(Deposit.class::isInstance)
+                .map(Deposit.class::cast)
+                .map(cf -> new CashFlowInput(cf.date(), CashFlowType.DEPOSIT, Util.toValueInCent(cf.moneyAmount())))
+                .forEach(result::add);
+        result.add(getAssumedLiquidation(transactions).toCashFlowInput());
+        return result;
     }
 
-
-    static List<CashFlowInput> toCashFlowInput(XIRRRawInput rawInput) {
-        List<CashFlowInput> cashFlows = new ArrayList<>();
-        for (CashFlow cashFlow : rawInput.getCashFlows()) {
-            cashFlows.add(CashFlowInput.toInput(cashFlow));
-        }
-        long marketValuesInEuroCent = rawInput.getHoldings().stream()
-                .mapToLong(XIRRPosition::getEuroCentMarketValue)
-                .sum();
-        cashFlows.add(new CashFlowInput(LocalDate.now(), CashFlowType.ASSUMED_LIQUATION, marketValuesInEuroCent + rawInput.getCashInEuroCent()));
-        return cashFlows;
-    }
-    @Service
-    @Scope("prototype")
-    static class Builder {
-        private final RawInputGenerator rawInputGenerator;
-        private final TransactionExtractor transactionExtractor;
-        private final JobRepository jobRepository;
-        private XIRRJob job;
-        private List<Path> uploadedFiles;
-
-        public Builder(RawInputGenerator rawInputGenerator, TransactionExtractor transactionExtractor, JobRepository jobRepository) {
-            this.rawInputGenerator = rawInputGenerator;
-            this.transactionExtractor = transactionExtractor;
-            this.jobRepository = jobRepository;
-        }
-
-        public Builder setJob(XIRRJob job) {
-            this.job = job;
-            return this;
-        }
-
-        public Builder setUploadedFiles(List<Path> uploadedFiles) {
-            this.uploadedFiles = uploadedFiles;
-            return this;
-        }
-
-        XIRRCalculator build() {
-            return new XIRRCalculator(this);
-        }
+    private AssumedLiquidation getAssumedLiquidation(List<Transaction> transactions) {
+        List<Trade> trades = transactions.stream()
+                .filter(Trade.class::isInstance)
+                .map(Trade.class::cast)
+                .toList();
+        List<Holding> holdings = holdingsGenerator.generate(trades, Field.EURO_PRICE);
+        BigDecimal remainingCash = transactions.stream()
+                .map(Transaction::moneyAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new AssumedLiquidation(holdings, remainingCash);
     }
 }

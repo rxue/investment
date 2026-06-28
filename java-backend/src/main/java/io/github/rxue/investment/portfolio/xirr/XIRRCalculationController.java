@@ -11,8 +11,9 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(XIRRCalculationController.IRR)
+//@RequestMapping(XIRRCalculationController.IRR)
 class XIRRCalculationController {
+/*
 
     public static final String IRR = "/irr";
     private final JobRepository jobRepository;
@@ -45,6 +46,7 @@ class XIRRCalculationController {
     public List<CashFlowInput> getCashFlowInputList(@PathVariable("jobId") long jobId) {
         return xirrCalculationService.getCashFlowInputList(jobId);
     }
+*/
 
 
 }

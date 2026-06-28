@@ -1,15 +1,11 @@
-package io.github.rxue.investment.portfolio.io;
+package io.github.rxue.investment.cli;
 
-import io.github.rxue.investment.portfolio.OPTransaction;
+import io.github.rxue.investment.application.op.OPTransaction;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UncheckedIOException;
+import java.io.*;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,8 +13,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Service
-public class TransactionExtractor {
+public class OPTransactionExtractor {
     private static List<OPTransaction> extract(InputStream inputStream) throws IOException {
         final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         final Charset encoding = Charset.forName("ISO-8859-1");
@@ -37,7 +32,7 @@ public class TransactionExtractor {
             return parser.getRecords().stream()
                     .map(r -> new OPTransaction(
                             LocalDate.parse(r.get(fieldValueDate).trim(), dateFormat),
-                            Double.parseDouble(r.get(fieldAmount).trim().replace("+", "").replace(",", ".")),
+                            new BigDecimal(r.get(fieldAmount).trim().replace("+", "").replace(",", ".")),
                             Integer.parseInt(r.get(fieldCategory).trim()),
                             r.get(fieldExplanation).trim(),
                             r.get(fieldMessage).trim()

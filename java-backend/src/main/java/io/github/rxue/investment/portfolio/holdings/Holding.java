@@ -3,6 +3,7 @@ package io.github.rxue.investment.portfolio.holdings;
 import io.github.rxue.investment.marketquote.Price;
 
 import java.util.Optional;
+import java.util.OptionalLong;
 
 public class Holding {
     private final String companyIdentifier;
@@ -22,8 +23,11 @@ public class Holding {
         return position;
     }
 
-    public Optional<Price> getPriceInEuro() {
-        return Optional.of(priceInEuro);
+    public Price getPriceInEuro() {
+        return priceInEuro;
+    }
+    public long marketValueInEuroCent() {
+        return priceInEuro.toCent() * position;
     }
 
     static class Builder {
