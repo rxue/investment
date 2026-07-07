@@ -15,4 +15,15 @@ A *crumb* has limit times of request from the endpoint, so in order to always ge
 AOP in Spring is done by *proxy*, so in case of persisting an entity by using AOP, the returned entity is *proxy*, which is different from the *persisted state entity*. So using AOP to persist entities might not be a good practice at all
 ## Design Tips
 ### [Command Query Separation](https://martinfowler.com/bliki/CommandQuerySeparation.html)
+### Redesign on the investment portfolio calculation
+There are 2 ways to run the app:
+* local run with non-interactive CLI without database
+* run with Spring framework with database
 
+database, frameworks and CLI are the *details* in the architecture
+#### Modeling
+Each calculation is as per a portfolio => As to each csv upload, there should be a corresponding portfolio with a *portfoio ID*, which be either automatically generated or given explicitly.
+* When running locally, input is directly in a directory or a single file => no *portfolio ID* is needed
+* When running with Spring framework, it can either run by
+ * getting input from the request without a database, in this case no *portfolio ID* is needed
+ * getting input from the database, in this case *portfolio ID* is need to distinguish itself from other portfolios
