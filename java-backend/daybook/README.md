@@ -25,5 +25,5 @@ database, frameworks and CLI are the *details* in the architecture
 Each calculation is as per a portfolio => As to each csv upload, there should be a corresponding portfolio with a *portfoio ID*, which be either automatically generated or given explicitly.
 * When running locally, input is directly in a directory or a single file => no *portfolio ID* is needed
 * When running with Spring framework, it can either run by
- * getting input from the request without a database, in this case no *portfolio ID* is needed
- * getting input from the database, in this case *portfolio ID* is need to distinguish itself from other portfolios
+  * getting input from the request without a database, in this case no *portfolio ID* is needed
+  * getting input from the database, in this case *portfolio ID* is need to distinguish itself from other portfolios
