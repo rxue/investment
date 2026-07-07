@@ -1,6 +1,8 @@
 package io.github.rxue.investment.portfolio.xirr;
 
 import io.github.rxue.investment.portfolio.xirr.jpaentity.CashFlow;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.LocalDate;
 
@@ -28,5 +30,14 @@ public final class CashFlowInput {
 
     static CashFlowInput toInput(CashFlow cashFlow) {
         return new CashFlowInput(cashFlow.getDate(), CashFlowType.DEPOSIT, cashFlow.getValueInCent());
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("date", date)
+                .append("type", type)
+                .append("valueInCent", valueInCent)
+                .toString();
     }
 }
