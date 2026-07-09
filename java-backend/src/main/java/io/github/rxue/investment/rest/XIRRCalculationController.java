@@ -1,14 +1,6 @@
-package io.github.rxue.investment.portfolio.xirr;
+package io.github.rxue.investment.springrest;
 
-import io.github.rxue.investment.portfolio.xirr.jpaentity.XIRRJob;
-import io.github.rxue.investment.portfolio.xirr.jpaentity.XIRRRawInput;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.net.URI;
-import java.util.List;
 
 @RestController
 //@RequestMapping(XIRRCalculationController.IRR)
