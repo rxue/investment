@@ -17,6 +17,6 @@ record AssumedLiquidation(List<Holding> holdings, BigDecimal remainingCash) {
         long totalMarketValueInEuroCent = holdings.stream()
                 .mapToLong(Holding::marketValueInEuroCent)
                 .sum() + Util.toValueInCent(remainingCash);
-        return new CashFlowInput(LocalDate.now(), CashFlowType.ASSUMED_LIQUATION, -totalMarketValueInEuroCent);
+        return new CashFlowInput(LocalDate.now(), CashFlowType.ASSUMED_LIQUIDATION, -totalMarketValueInEuroCent);
     }
 }

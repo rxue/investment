@@ -23,7 +23,7 @@ There are 2 ways to run the app:
 database, frameworks and CLI are the *details* in the architecture
 
 #### Architectural review comments (20260709)
-The `io.github.rxue.investment.application.op` package is named improperly in that the logic inside this package is not a business use-case in the application level, but just adapting the input so that it can be passed to the core domain. So this package should be renamed to something like `io.github.rxue.investment.adapter.op`. The *adapter* is the adapter pattern and it is the *adapter* in the *Ports and Adapters* architecture
+The `io.github.rxue.investment.adapter.op` package is named improperly in that the logic inside this package is not a business use-case in the application level, but just adapting the input so that it can be passed to the core domain. So this package should be renamed to something like `io.github.rxue.investment.adapter.op`. The *adapter* is the adapter pattern and it is the *adapter* in the *Ports and Adapters* architecture
 
 #### Modeling
 Each calculation is as per a portfolio => As to each csv upload, there should be a corresponding portfolio with a *portfoio ID*, which be either automatically generated or given explicitly.

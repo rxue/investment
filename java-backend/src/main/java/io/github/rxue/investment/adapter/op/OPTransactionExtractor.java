@@ -1,6 +1,5 @@
-package io.github.rxue.investment.cli;
+package io.github.rxue.investment.adapter.op;
 
-import io.github.rxue.investment.application.op.OPTransaction;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 
@@ -11,11 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 import java.util.List;
 
-public class OPTransactionExtractor {
-    private static List<OPTransaction> extract(InputStream inputStream) throws IOException {
+class OPTransactionExtractor {
+    private static List<OPTransaction> extractPaths(InputStream inputStream) throws IOException {
         final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         final Charset encoding = Charset.forName("ISO-8859-1");
         final String fieldValueDate = "Arvopäivä";
@@ -41,15 +39,25 @@ public class OPTransactionExtractor {
                     .toList();
         }
     }
-    public List<OPTransaction> extract(Path directory) {
-        return extract(csvFilePaths(directory));
+
+    public List<OPTransaction> extract(List<InputStream> csvInputStreams) {
+        return csvInputStreams.stream()
+                .map(is -> {
+                    try(InputStream csvInputStream = is) {
+                        return extractPaths(csvInputStream);
+                    } catch(IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                })
+                .flatMap(List::stream)
+                .toList();
     }
 
-    public List<OPTransaction> extract(List<Path> csvFilePaths) {
+    public List<OPTransaction> extractPaths(List<Path> csvFilePaths) {
         return csvFilePaths.stream()
                 .map(filePath -> {
                     try {
-                        return extract(Files.newInputStream(filePath));
+                        return extractPaths(Files.newInputStream(filePath));
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
@@ -58,14 +66,5 @@ public class OPTransactionExtractor {
                 .toList();
     }
 
-    private static List<Path> csvFilePaths(Path directory) {
-        try (var paths = Files.list(directory)) {
-            return paths.filter(Files::isRegularFile)
-                    .filter(p -> p.getFileName().toString().endsWith(".csv"))
-                    .sorted(Comparator.comparing(p -> p.getFileName().toString()))
-                    .toList();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
+
 }

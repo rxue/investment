@@ -1,6 +1,5 @@
 package io.github.rxue.investment.portfolio.xirr;
 
-import io.github.rxue.investment.portfolio.xirr.jpaentity.CashFlow;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -28,9 +27,6 @@ public final class CashFlowInput {
         return valueInCent;
     }
 
-    static CashFlowInput toInput(CashFlow cashFlow) {
-        return new CashFlowInput(cashFlow.getDate(), CashFlowType.DEPOSIT, cashFlow.getValueInCent());
-    }
 
     @Override
     public String toString() {

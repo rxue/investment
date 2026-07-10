@@ -1,22 +1,23 @@
-package io.github.rxue.investment.application.op;
+package io.github.rxue.investment.adapter.op;
 
-import io.github.rxue.investment.cli.OPTransactionExtractor;
 import io.github.rxue.investment.portfolio.transaction.Action;
 import io.github.rxue.investment.portfolio.transaction.Trade;
 import io.github.rxue.investment.portfolio.holdings.*;
 
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class OPHoldingsGenerator {
-    private final OPTransactionExtractor transactionExtractor;
+    private final OPTransactionExtractor opTransactionExtractor;
     private final YahooCompanySymbolRepository companySymbolRepository;
     private final HoldingsGenerator holdingsGenerator;
 
-    private OPHoldingsGenerator(OPTransactionExtractor transactionExtractor, YahooCompanySymbolRepository companySymbolRepository, HoldingsGenerator holdingsGenerator) {
-        this.transactionExtractor = transactionExtractor;
+    private OPHoldingsGenerator(OPTransactionExtractor opTransactionExtractor,
+                                YahooCompanySymbolRepository companySymbolRepository,
+                                HoldingsGenerator holdingsGenerator) {
+        this.opTransactionExtractor = opTransactionExtractor;
         this.companySymbolRepository = companySymbolRepository;
         this.holdingsGenerator = holdingsGenerator;
     }
@@ -26,8 +27,8 @@ public class OPHoldingsGenerator {
 
     private static final Pattern ACTION_PATTERN = Pattern.compile("^\\s*([OM]):(.+?)\\s*/(\\d+)");
 
-    public List<Holding> generate(List<OPTransaction> transactions, Set<String> fieldNames) {
-        List<Trade> trades = transactions.stream()
+    public List<Holding> generate(List<InputStream> csvPaths, Set<String> fieldNames) {
+        List<Trade> trades = opTransactionExtractor.extract(csvPaths).stream()
                 .map(this::toTrade)
                 .filter(Objects::nonNull)
                 .toList();

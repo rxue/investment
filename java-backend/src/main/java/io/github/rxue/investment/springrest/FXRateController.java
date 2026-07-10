@@ -1,5 +1,7 @@
-package io.github.rxue.investment.marketquote;
+package io.github.rxue.investment.springrest;
 
+import io.github.rxue.investment.marketquote.FXRateFetcher;
+import io.github.rxue.investment.marketquote.Price;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,11 +13,11 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @RestController
-public class FXRateController {
+class FXRateController {
     private final FXRateFetcher fxRateFetcher;
 
-    public FXRateController(FXRateFetcher fxRateFetcher) {
-        this.fxRateFetcher = fxRateFetcher;
+    public FXRateController() {
+        this.fxRateFetcher = new FXRateFetcher();
     }
 
     @GetMapping("/fxrate/euro/{currency}")

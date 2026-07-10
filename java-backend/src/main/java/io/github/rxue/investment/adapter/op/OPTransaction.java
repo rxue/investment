@@ -1,4 +1,4 @@
-package io.github.rxue.investment.application.op;
+package io.github.rxue.investment.adapter.op;
 
 import io.github.rxue.investment.portfolio.transaction.Action;
 import io.github.rxue.investment.portfolio.transaction.Deposit;
