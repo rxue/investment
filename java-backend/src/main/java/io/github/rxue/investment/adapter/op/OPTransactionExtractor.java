@@ -1,13 +1,12 @@
 package io.github.rxue.investment.adapter.op;
 
+import io.github.rxue.investment.portfolio.transaction.Trade;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -20,6 +19,7 @@ class OPTransactionExtractor {
         final String fieldAmount = "Määrä EUROA";
         final String fieldCategory = "Laji";
         final String fieldExplanation = "Selitys";
+        final String fieldReceiver = "Saaja/Maksaja";
         final String fieldMessage = "Viesti";
         try (Reader reader = new InputStreamReader(inputStream, encoding);
              CSVParser parser = CSVFormat.DEFAULT.builder()
@@ -29,13 +29,14 @@ class OPTransactionExtractor {
                      .build()
                      .parse(reader)) {
             return parser.getRecords().stream()
-                    .map(r -> new OPTransaction(
-                            LocalDate.parse(r.get(fieldValueDate).trim(), dateFormat),
-                            new BigDecimal(r.get(fieldAmount).trim().replace("+", "").replace(",", ".")),
-                            Integer.parseInt(r.get(fieldCategory).trim()),
-                            r.get(fieldExplanation).trim(),
-                            r.get(fieldMessage).trim()
-                    ))
+                    .map(r -> new OPTransaction.Builder()
+                            .effectiveDate(LocalDate.parse(r.get(fieldValueDate).trim(), dateFormat))
+                            .amountInEuro(new BigDecimal(r.get(fieldAmount).trim().replace("+", "").replace(",", ".")))
+                            .category(Integer.parseInt(r.get(fieldCategory).trim()))
+                            .explanation(r.get(fieldExplanation).trim())
+                            .counterpart(r.get(fieldReceiver))
+                            .message(r.get(fieldMessage).trim())
+                            .build())
                     .toList();
         }
     }
@@ -52,19 +53,5 @@ class OPTransactionExtractor {
                 .flatMap(List::stream)
                 .toList();
     }
-
-    public List<OPTransaction> extractPaths(List<Path> csvFilePaths) {
-        return csvFilePaths.stream()
-                .map(filePath -> {
-                    try {
-                        return extractPaths(Files.newInputStream(filePath));
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                })
-                .flatMap(List::stream)
-                .toList();
-    }
-
 
 }

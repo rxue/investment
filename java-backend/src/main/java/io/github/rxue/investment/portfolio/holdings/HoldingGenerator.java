@@ -6,7 +6,7 @@ import io.github.rxue.investment.marketquote.Price;
 
 import java.util.Arrays;
 
-public class HoldingGenerator {
+class HoldingGenerator {
     private final EuroPriceFetcher euroPriceFetcher;
 
     private HoldingGenerator(EuroPriceFetcher euroPriceFetcher) {

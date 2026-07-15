@@ -44,8 +44,9 @@ class Holdings implements Runnable {
     }
 
     static List<InputStream> csvInputStreams(Path directory) {
-        try (var paths = Files.list(directory)) {
-            return paths.filter(Files::isRegularFile)
+        try {
+            return Files.list(directory)
+                    .filter(Files::isRegularFile)
                     .filter(p -> p.getFileName().toString().endsWith(".csv"))
                     .sorted(Comparator.comparing(p -> p.getFileName().toString()))
                     .map(p -> {

@@ -2,9 +2,6 @@ package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.marketquote.Price;
 
-import java.util.Optional;
-import java.util.OptionalLong;
-
 public class Holding {
     private final String companyIdentifier;
     private final int position;

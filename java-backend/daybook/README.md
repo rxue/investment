@@ -31,3 +31,9 @@ Each calculation is as per a portfolio => As to each csv upload, there should be
 * When running with Spring framework, it can either run by
   * getting input from the request without a database, in this case no *portfolio ID* is needed
   * getting input from the database, in this case *portfolio ID* is need to distinguish itself from other portfolios
+#### TWR Calculation process
+The original input is a list of portfolio account transactions
+##### Step 1: split the list of portfolio account transactions into consecutive *sub-periods*
+##### Step 2: calculate *start value* and *end value* of each sub-period
+##### step 3: make use of the calculated *start value* and *end value* to apply the geometric mean
+

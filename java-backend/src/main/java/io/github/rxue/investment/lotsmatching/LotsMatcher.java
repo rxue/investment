@@ -1,11 +1,8 @@
 package io.github.rxue.investment.lotsmatching;
 
-import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 import io.github.rxue.investment.lotsmatching.MatchResult.*;
-@Service
 public class LotsMatcher {
     private RealizedLotsGroup dequeue(Lot.Sell sellLot, Queue<Lot.Buy> remainingLots) {
         int remainingSellShareAmount = sellLot.shareAmount();
@@ -29,8 +26,8 @@ public class LotsMatcher {
         return new RealizedLotsGroup(sellLot, matchedBuyLots);
     }
 
-    public MatchResult matchInFifo(List<Lot> lots, List<Lot.Buy> existingLots) {
-        Queue<Lot.Buy> remainingLotQueue = new ArrayDeque<>(existingLots);
+    public MatchResult matchInFifo(List<Lot> lots, Unrealized existingUnrealizedLots) {
+        Queue<Lot.Buy> remainingLotQueue = new ArrayDeque<>(existingUnrealizedLots.lots());
         List<RealizedLotsGroup> realizedLotsGroups = new ArrayList<>();
         for (Lot lot: lots) {
             if (lot instanceof Lot.Buy buyLot) {

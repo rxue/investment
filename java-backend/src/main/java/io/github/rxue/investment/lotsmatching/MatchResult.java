@@ -10,6 +10,15 @@ public record MatchResult(Unrealized unrealized, Realized realized) {
                     .mapToInt(Lot.Buy::shareAmount)
                     .sum();
         }
+
+        /**
+         * utility function primarily used in unit tests
+         * @return
+         */
+        static Unrealized empty() {
+            return new Unrealized(List.of());
+        }
     }
     record Realized(List<RealizedLotsGroup> realizedLotsGroups) {}
+
 }

@@ -1,28 +1,51 @@
 package io.github.rxue.investment.adapter.op;
 
-import io.github.rxue.investment.portfolio.transaction.Action;
-import io.github.rxue.investment.portfolio.transaction.Deposit;
-import io.github.rxue.investment.portfolio.transaction.Trade;
-import io.github.rxue.investment.portfolio.transaction.Transaction;
+import io.github.rxue.investment.portfolio.transaction.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record OPTransaction(LocalDate effectiveDate,
-                    BigDecimal amountInEuro,
-                    int category,
-                    String explanation,
-                    String message) {
+public class OPTransaction {
     private static YahooCompanySymbolRepository companySymbolRepository = new YahooCompanySymbolRepository();
+
+    private final LocalDate effectiveDate;
+    private final BigDecimal amountInEuro;
+    private final int category;
+    private final String explanation;
+    private final String counterpart;
+    private final String message;
+
+    private OPTransaction(Builder builder) {
+        this.effectiveDate = builder.effectiveDate;
+        this.amountInEuro = builder.amountInEuro;
+        this.category = builder.category;
+        this.explanation = builder.explanation;
+        this.counterpart = builder.counterpart;
+        this.message = builder.message;
+    }
+
+    LocalDate effectiveDate() {
+        return effectiveDate;
+    }
+
+    BigDecimal amountInEuro() {
+        return amountInEuro;
+    }
+
+    String message() {
+        return message;
+    }
 
     /**
      * Convert OPTransaction to Transaction, which is used as input to XIRR calculation
      *
      * cases:
-     * - Desposit
      * - Trade
+     * - Desposit
+     * - Expense - all other negative outflow
      * - other i.e. any kinda cash flow
      * @return
      */
@@ -39,6 +62,9 @@ public record OPTransaction(LocalDate effectiveDate,
         if (category == 710 && "TILISIIRTO".equals(explanation)) {
             return new Deposit(effectiveDate, amountInEuro);
         }
+        if (amountInEuro.signum() < 0) {
+            return new Expense(effectiveDate, amountInEuro);
+        }
         return new Transaction() {
             @Override
             public LocalDate date() {
@@ -50,5 +76,48 @@ public record OPTransaction(LocalDate effectiveDate,
                 return amountInEuro;
             }
         };
+    }
+
+    static class Builder {
+        private LocalDate effectiveDate;
+        private BigDecimal amountInEuro;
+        private int category;
+        private String explanation;
+        private String counterpart;
+        private String message;
+
+        Builder effectiveDate(LocalDate effectiveDate) {
+            this.effectiveDate = effectiveDate;
+            return this;
+        }
+
+        Builder amountInEuro(BigDecimal amountInEuro) {
+            this.amountInEuro = amountInEuro;
+            return this;
+        }
+
+        Builder category(int category) {
+            this.category = category;
+            return this;
+        }
+
+        Builder explanation(String explanation) {
+            this.explanation = explanation;
+            return this;
+        }
+
+        Builder counterpart(String counterpart) {
+            this.counterpart = counterpart;
+            return this;
+        }
+
+        Builder message(String message) {
+            this.message = message;
+            return this;
+        }
+
+        OPTransaction build() {
+            return new OPTransaction(this);
+        }
     }
 }
