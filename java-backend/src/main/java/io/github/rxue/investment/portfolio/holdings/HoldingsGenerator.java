@@ -1,6 +1,7 @@
 package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.lotsmatching.LotsMatcher;
+import io.github.rxue.investment.lotsmatching.MatchResult;
 import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatcher;
 import io.github.rxue.investment.portfolio.transaction.Trade;
 
@@ -21,7 +22,7 @@ public class HoldingsGenerator {
 
     public List<Holding> generate(List<Trade> trades, Field... optionalFields) {
         return tradeLotsMatcher.matchAllInFifo(trades, Map.of()).stream()
-                .map(matchResult -> holdingGenerator.generate(matchResult.securityId(), matchResult.result(), optionalFields))
+                .map(tradeMatchResult -> holdingGenerator.generate(tradeMatchResult, optionalFields))
                 .toList();
     }
 }

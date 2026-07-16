@@ -26,8 +26,8 @@ public class LotsMatcher {
         return new RealizedLotsGroup(sellLot, matchedBuyLots);
     }
 
-    public MatchResult matchInFifo(List<Lot> lots, Unrealized existingUnrealizedLots) {
-        Queue<Lot.Buy> remainingLotQueue = new ArrayDeque<>(existingUnrealizedLots.lots());
+    public MatchResult matchInFifo(List<Lot> lots, List<Lot.Buy> existingUnrealizedLots) {
+        Queue<Lot.Buy> remainingLotQueue = new ArrayDeque<>(existingUnrealizedLots);
         List<RealizedLotsGroup> realizedLotsGroups = new ArrayList<>();
         for (Lot lot: lots) {
             if (lot instanceof Lot.Buy buyLot) {
@@ -36,6 +36,8 @@ public class LotsMatcher {
                 realizedLotsGroups.add(dequeue(sellLot, remainingLotQueue));
             }
         }
-        return new MatchResult(new Unrealized(new ArrayList<>(remainingLotQueue)), new Realized(realizedLotsGroups));
+        List<Lot.Buy> remainingLots = remainingLotQueue.stream()
+                .toList();
+        return new MatchResult(new Realized(realizedLotsGroups), remainingLots);
     }
 }

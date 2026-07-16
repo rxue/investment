@@ -13,12 +13,12 @@ public class TradeLotsMatcher {
     public TradeLotsMatcher(LotsMatcher lotsMatcher) {
         this.lotsMatcher = lotsMatcher;
     }
-    public List<TradeLotsMatchResult> matchAllInFifo(List<Trade> trades, Map<String,MatchResult.Unrealized> existingUnrealizedLots) {
+    public List<TradeLotsMatchResult> matchAllInFifo(List<Trade> trades, Map<String,List<Lot.Buy>> existingUnrealizedLots) {
         Map<String,List<Lot>> lotsByCompanyIdentifier = toLotsBySecurity(trades);
         List<TradeLotsMatchResult> matchResults = new ArrayList<>();
         for (Map.Entry<String,List<Lot>> entry : lotsByCompanyIdentifier.entrySet()) {
             String securityId = entry.getKey();
-            MatchResult matchResult = lotsMatcher.matchInFifo(entry.getValue(), existingUnrealizedLots.getOrDefault(securityId, new MatchResult.Unrealized(List.of())));
+            MatchResult matchResult = lotsMatcher.matchInFifo(entry.getValue(), existingUnrealizedLots.getOrDefault(securityId, List.of()));
             matchResults.add(new TradeLotsMatchResult(securityId, matchResult));
         }
         return Collections.unmodifiableList(matchResults);
