@@ -5,20 +5,20 @@ import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class EuroPriceFetcher {
+public class PriceFetcher {
     private static final String EUR = "EUR";
 
     private final YahooFinanceFetcher priceFetcher;
     private final FXRateFetcher fxRateFetcher;
-    private EuroPriceFetcher(YahooFinanceFetcher priceFetcher, FXRateFetcher fxRateFetcher) {
+    private PriceFetcher(YahooFinanceFetcher priceFetcher, FXRateFetcher fxRateFetcher) {
         this.priceFetcher = priceFetcher;
         this.fxRateFetcher = fxRateFetcher;
     }
-    public EuroPriceFetcher() {
+    public PriceFetcher() {
         this(new YahooFinanceFetcher(), new FXRateFetcher());
     }
 
-    public Price getCurrentEuroPrice(String companySymbol) {
+    public Price getCurrentPriceInEuro(String companySymbol) {
         Price price;
         try {
             price = priceFetcher.getCurrentPrice(companySymbol);

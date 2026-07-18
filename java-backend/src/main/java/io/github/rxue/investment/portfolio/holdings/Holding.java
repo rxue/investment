@@ -41,10 +41,6 @@ public class Holding {
             return this;
         }
 
-        public boolean has(Field field) {
-            return values.get(fields.indexOf(field)) != null;
-        }
-
         @SuppressWarnings("unchecked")
         public <T> T value(Field field) {
             Object value = values.get(fields.indexOf(field));
