@@ -7,16 +7,18 @@ import io.github.rxue.investment.marketquote.Price;
 import java.math.BigDecimal;
 import java.util.List;
 
-class HoldingBuilderGenerator {
+class HoldingBuilderDirector {
+    private final List<OptionalField> fields;
     private final EuroPriceFetcher euroPriceFetcher;
-    private HoldingBuilderGenerator(EuroPriceFetcher euroPriceFetcher) {
+    private HoldingBuilderDirector(List<OptionalField> fields, EuroPriceFetcher euroPriceFetcher) {
+        this.fields = fields;
         this.euroPriceFetcher = euroPriceFetcher;
     }
-    public HoldingBuilderGenerator() {
-        this(new EuroPriceFetcher());
+    public HoldingBuilderDirector(List<OptionalField> fields) {
+        this(fields, new EuroPriceFetcher());
     }
 
-    Holding.Builder generate(String securityId, List<Lot.Buy> unrealizedLots, List<OptionalField> fields) {
+    Holding.Builder direct(String securityId, List<Lot.Buy> unrealizedLots) {
         Holding.Builder builder = new Holding.Builder(fields);
         builder.add(CompulsoryField.COMPANY_ID, securityId)
                 .add(CompulsoryField.POSITION, unrealizedLots.stream().mapToInt(Lot.Buy::shareAmount).sum());
