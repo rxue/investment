@@ -38,6 +38,6 @@ public class LotsMatcher {
         }
         List<Lot.Buy> remainingLots = remainingLotQueue.stream()
                 .toList();
-        return new MatchResult(new Realized(realizedLotsGroups), remainingLots);
+        return new MatchResult(realizedLotsGroups, remainingLots);
     }
 }

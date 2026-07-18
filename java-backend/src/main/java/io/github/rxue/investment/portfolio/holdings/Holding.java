@@ -1,49 +1,59 @@
 package io.github.rxue.investment.portfolio.holdings;
 
-import io.github.rxue.investment.marketquote.Price;
+import java.util.*;
 
 public class Holding {
-    private final String companyIdentifier;
-    private final int position;
-    private final Price priceInEuro;
+    private final List<Field> fields;
+    private final List<Object> values;
+
     private Holding(Builder builder) {
-        this.companyIdentifier = builder.companyIdentifier;
-        this.position = builder.position;
-        this.priceInEuro = builder.priceInEuro;
+        this.fields = builder.fields;
+        this.values = Collections.unmodifiableList(builder.values);
     }
-
-    public String getCompanyIdentifier() {
-        return companyIdentifier;
+    public List<Field> fields() {
+        return fields;
     }
-
-    public int getPosition() {
-        return position;
+    public List<Object> values() {
+        return values;
     }
-
-    public Price getPriceInEuro() {
-        return priceInEuro;
+    @SuppressWarnings("unchecked")
+    public <T> T value(Field field) {
+        Object value = values.get(fields.indexOf(field));
+        return (T) field.type().cast(value);
     }
-    public long marketValueInEuroCent() {
-        return priceInEuro.toCent() * position;
-    }
-
-    static class Builder {
-        private final String companyIdentifier;
-        private final int position;
-        private Price priceInEuro;
-
-        public Builder(String companyIdentifier, int position) {
-            this.companyIdentifier = companyIdentifier;
-            this.position = position;
+    public static class Builder {
+        private final List<Field> fields;
+        private final List<Object> values;
+        public Builder(List<OptionalField> fields) {
+            this.fields = allFields(fields);
+            this.values = Arrays.asList(new Object[fields.size() + CompulsoryField.values().length]);
         }
 
-        public Builder setPriceInEuro(Price priceInEuro) {
-            this.priceInEuro = priceInEuro;
+        private static List<Field> allFields(List<OptionalField> optionalFields) {
+            List<Field> allFields = new ArrayList<>();
+            Collections.addAll(allFields, CompulsoryField.values());
+            allFields.addAll(optionalFields);
+            return Collections.unmodifiableList(allFields);
+        }
+
+        public Builder add(Field field, Object value) {
+            values.set(fields.indexOf(field), value);
             return this;
         }
+
+        public boolean has(Field field) {
+            return values.get(fields.indexOf(field)) != null;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <T> T value(Field field) {
+            Object value = values.get(fields.indexOf(field));
+            return (T) field.type().cast(value);
+        }
+
+
         public Holding build() {
             return new Holding(this);
         }
     }
-
 }

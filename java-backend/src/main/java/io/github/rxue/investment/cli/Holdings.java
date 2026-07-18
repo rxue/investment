@@ -31,13 +31,10 @@ class Holdings implements Runnable {
 
         AsciiTable table = new AsciiTable();
         table.addRule();
-        table.addRow("Company", "Shares", "Price (EUR)");
+        table.addRow(holdings.get(0).fields());
         table.addRule();
-        for (Holding h : holdings) {
-            table.addRow(
-                    h.getCompanyIdentifier(),
-                    h.getPosition(),
-                    h.getPriceInEuro().value());
+        for (Holding holding : holdings) {
+            table.addRow(holding.values());
         }
         table.addRule();
         System.out.println(table.render());

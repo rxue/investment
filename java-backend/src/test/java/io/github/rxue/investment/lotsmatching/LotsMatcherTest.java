@@ -26,7 +26,7 @@ class LotsMatcherTest {
         var buy2 = new Lot.Buy(LocalDate.of(2026, 1, 13), 20, 57468);
         var sell = new Lot.Sell(LocalDate.of(2026, 1, 14), 20, 61200);
         List<RealizedLotsGroup> expectedRealizedLotsGroup = List.of(new RealizedLotsGroup(sell, List.of(buy1)));
-        MatchResult expected = new MatchResult(new Realized(expectedRealizedLotsGroup), List.of(buy2));
+        MatchResult expected = new MatchResult(expectedRealizedLotsGroup, List.of(buy2));
         assertEquals(expected, out.matchInFifo(List.of(buy1, buy2, sell), List.of()));
     }
 
@@ -39,7 +39,7 @@ class LotsMatcherTest {
         long lastRemovedLotCostInCent = (58500L * 20) / 90;
         List<RealizedLotsGroup> expectedRealizedLotsGroups = List.of(new RealizedLotsGroup(sell, List.of(buy1, buy2, new Lot.Buy(LocalDate.of(2025, 11, 26), 20, lastRemovedLotCostInCent))));
         List<Lot.Buy> expectedUnrealized = List.of(new Lot.Buy(LocalDate.of(2025, 11, 26), 70, 58500 - lastRemovedLotCostInCent));
-        MatchResult expected = new MatchResult(new Realized(expectedRealizedLotsGroups), expectedUnrealized);
+        MatchResult expected = new MatchResult(expectedRealizedLotsGroups, expectedUnrealized);
         assertEquals(expected, out.matchInFifo(List.of(buy1, buy2, buy3, sell), List.of()));
     }
 }

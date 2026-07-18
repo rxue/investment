@@ -19,13 +19,17 @@ public class OPHoldingsGenerator {
         this(new OPTransactionExtractor(), new HoldingsGenerator());
     }
 
-    public List<Holding> generate(List<InputStream> csvPaths, Set<String> fieldNames) {
+    public List<Holding> generate(List<InputStream> csvPaths, Set<String> optionalFieldNames) {
         List<Trade> trades = opTransactionExtractor.extract(csvPaths).stream()
                 .map(OPTransaction::toTransaction)
                 .filter(Trade.class::isInstance)
                 .map(Trade.class::cast)
                 .toList();
-        List<Field> fields = fieldNames.stream().map(Field::valueOf).toList();
-        return holdingsGenerator.generate(trades, fields.toArray(Field[]::new));
+        return holdingsGenerator.generate(trades, getAllOptionalFields(optionalFieldNames));
+    }
+    private static OptionalField[] getAllOptionalFields(Set<String> optionalFieldNames) {
+        return optionalFieldNames.stream()
+                .map(OptionalField::valueOf)
+                .toArray(OptionalField[]::new);
     }
 }

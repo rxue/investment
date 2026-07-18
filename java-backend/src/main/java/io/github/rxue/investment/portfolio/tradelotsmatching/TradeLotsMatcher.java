@@ -10,18 +10,28 @@ import java.util.*;
 
 public class TradeLotsMatcher {
     private final LotsMatcher lotsMatcher;
-    public TradeLotsMatcher(LotsMatcher lotsMatcher) {
-        this.lotsMatcher = lotsMatcher;
+    public TradeLotsMatcher() {
+        this.lotsMatcher = new LotsMatcher();
     }
-    public List<TradeLotsMatchResult> matchAllInFifo(List<Trade> trades, Map<String,List<Lot.Buy>> existingUnrealizedLots) {
+    public List<SingleSecurityTradeLotsMatchResult> matchAllInFifo(List<Trade> trades, Map<String,List<Lot.Buy>> existingUnrealizedLots) {
         Map<String,List<Lot>> lotsByCompanyIdentifier = toLotsBySecurity(trades);
-        List<TradeLotsMatchResult> matchResults = new ArrayList<>();
+        List<SingleSecurityTradeLotsMatchResult> matchResults = new ArrayList<>();
         for (Map.Entry<String,List<Lot>> entry : lotsByCompanyIdentifier.entrySet()) {
             String securityId = entry.getKey();
             MatchResult matchResult = lotsMatcher.matchInFifo(entry.getValue(), existingUnrealizedLots.getOrDefault(securityId, List.of()));
-            matchResults.add(new TradeLotsMatchResult(securityId, matchResult));
+            matchResults.add(new SingleSecurityTradeLotsMatchResult(securityId, matchResult));
         }
         return Collections.unmodifiableList(matchResults);
+    }
+    public TradeLotsMatchResult matchInFifo(List<Trade> trades, Map<String,List<Lot.Buy>> existingUnrealizedLots) {
+        Map<String,List<Lot>> lotsByCompanyIdentifier = toLotsBySecurity(trades);
+        TradeLotsMatchResult.Builder tradeMatchResult = new TradeLotsMatchResult.Builder();
+        for (Map.Entry<String,List<Lot>> entry : lotsByCompanyIdentifier.entrySet()) {
+            String securityId = entry.getKey();
+            MatchResult matchResult = lotsMatcher.matchInFifo(entry.getValue(), existingUnrealizedLots.getOrDefault(securityId, List.of()));
+            tradeMatchResult.add(securityId, matchResult);
+        }
+        return tradeMatchResult.build();
     }
 
     private static Map<String,List<Lot>> toLotsBySecurity(List<Trade> trades) {
