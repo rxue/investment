@@ -15,6 +15,7 @@ A *crumb* has limit times of request from the endpoint, so in order to always ge
 AOP in Spring is done by *proxy*, so in case of persisting an entity by using AOP, the returned entity is *proxy*, which is different from the *persisted state entity*. So using AOP to persist entities might not be a good practice at all
 ## Design Tips
 ### [Command Query Separation](https://martinfowler.com/bliki/CommandQuerySeparation.html)
+### Design Pattern: [Dynamic Property Pattern](https://martinfowler.com/apsupp/properties.pdf) (20260718)
 ### Redesign on the investment portfolio calculation
 There are 2 ways to run the app:
 * local run with non-interactive CLI without database
