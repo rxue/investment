@@ -2,6 +2,7 @@ package io.github.rxue.investment.marketquote;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.rxue.investment.portfolio.money.Price;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

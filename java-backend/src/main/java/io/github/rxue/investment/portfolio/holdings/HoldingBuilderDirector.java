@@ -2,39 +2,48 @@ package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.lotsmatching.Lot;
 import io.github.rxue.investment.marketquote.PriceFetcher;
-import io.github.rxue.investment.marketquote.Price;
+import io.github.rxue.investment.portfolio.money.Price;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
-class HoldingBuilderDirector {
+public class HoldingBuilderDirector {
     private final List<OptionalField> optionalFields;
+    private final LocalDate date;
     private final PriceFetcher priceFetcher;
+    private Price priceInEuro;
 
-    private HoldingBuilderDirector(List<OptionalField> optionalFields, PriceFetcher priceFetcher) {
+    public HoldingBuilderDirector(List<OptionalField> optionalFields, LocalDate date, PriceFetcher priceFetcher) {
         this.optionalFields = optionalFields;
+        this.date = date;
         this.priceFetcher = priceFetcher;
     }
-    public HoldingBuilderDirector(List<OptionalField> fields) {
-        this(fields, new PriceFetcher());
-    }
 
-    Holding.Builder direct(String securityId, List<Lot.Buy> unrealizedLots) {
+    public Holding.Builder direct(Map.Entry<String,List<Lot.Buy>> securityIdToUnrealizedLots) {
         Holding.Builder builder = new Holding.Builder(optionalFields);
-        builder.add(CompulsoryField.COMPANY_ID, securityId)
-                .add(CompulsoryField.POSITION, unrealizedLots.stream().mapToInt(Lot.Buy::shareAmount).sum());
+        final String securityId = securityIdToUnrealizedLots.getKey();
+        builder.set(CompulsoryField.COMPANY_ID, securityId)
+                .set(CompulsoryField.POSITION, securityIdToUnrealizedLots.getValue().stream().mapToInt(Lot.Buy::shareAmount).sum());
         boolean needsPrice = optionalFields.contains(OptionalField.PRICE_IN_EURO)
                 || optionalFields.contains(OptionalField.MARKET_VALUE_IN_EURO);
         if (needsPrice) {
-            Price priceInEuro = priceFetcher.getCurrentPriceInEuro(securityId);
+            priceInEuro = doGetPriceInEuro(securityId);
             if (optionalFields.contains(OptionalField.PRICE_IN_EURO)) {
-                builder.add(OptionalField.PRICE_IN_EURO, priceInEuro);
+                builder.set(OptionalField.PRICE_IN_EURO, priceInEuro);
             }
             if (optionalFields.contains(OptionalField.MARKET_VALUE_IN_EURO)) {
-                builder.add(OptionalField.MARKET_VALUE_IN_EURO,
-                        priceInEuro.value().multiply(BigDecimal.valueOf(builder.<Integer>value(CompulsoryField.POSITION))));
+                BigDecimal marketValueInEuro = priceInEuro.value()
+                        .multiply(BigDecimal.valueOf(builder.<Integer>value(CompulsoryField.POSITION)))
+                        .setScale(2, RoundingMode.HALF_UP);
+                builder.set(OptionalField.MARKET_VALUE_IN_EURO, marketValueInEuro);
             }
         }
         return builder;
+    }
+    private Price doGetPriceInEuro(String securityId) {
+        return date == null ? priceFetcher.getCurrentPriceInEuro(securityId) : priceFetcher.getClosePriceInEuro(securityId, date);
     }
 }

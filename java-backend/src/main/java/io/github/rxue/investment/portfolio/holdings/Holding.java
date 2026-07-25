@@ -16,10 +16,21 @@ public class Holding {
     public List<Object> values() {
         return values;
     }
+
     @SuppressWarnings("unchecked")
     public <T> T value(Field field) {
         Object value = values.get(fields.indexOf(field));
         return (T) field.type().cast(value);
+    }
+    @Override
+    public boolean equals(Object that){
+        return that instanceof Holding t
+                && Objects.equals(t.fields, fields)
+                && Objects.equals(t.values, values);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(fields, values);
     }
     public static class Builder {
         private final List<Field> fields;
@@ -36,7 +47,7 @@ public class Holding {
             return Collections.unmodifiableList(allFields);
         }
 
-        public Builder add(Field field, Object value) {
+        public Builder set(Field field, Object value) {
             values.set(fields.indexOf(field), value);
             return this;
         }

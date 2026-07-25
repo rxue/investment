@@ -1,4 +1,4 @@
-package io.github.rxue.investment.portfolio;
+package io.github.rxue.investment.portfolio.money;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

@@ -1,6 +1,5 @@
 package io.github.rxue.investment.adapter.op;
 
-import io.github.rxue.investment.portfolio.transaction.Trade;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 

@@ -11,21 +11,28 @@ import java.util.stream.Collectors;
 
 public class TradeLotsMatchResult {
     private final Map<String,MatchResult> securityToMatchResult;
-    private TradeLotsMatchResult(Builder builder) {
-        this.securityToMatchResult = Collections.unmodifiableMap(builder.securityToMatchResult);
+    private TradeLotsMatchResult(Generator generator) {
+        this.securityToMatchResult = Collections.unmodifiableMap(generator.securityToMatchResult);
     }
     public Map<String,List<Lot.Buy>> unrealizedLotsMap() {
         return securityToMatchResult.entrySet().stream()
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> e.getValue().unrealizedLots()));
     }
 
-    public static class Builder {
+    public static class Generator {
         private final Map<String, MatchResult> securityToMatchResult = new HashMap<>();
-        public Builder add(String securityId, MatchResult matchResult) {
+        public Generator add(String securityId, MatchResult matchResult) {
             securityToMatchResult.put(securityId, matchResult);
             return this;
         }
-        public TradeLotsMatchResult build() {
+        public Generator add(Map.Entry<String,List<Lot.Buy>> existingUnrealizedLots) {
+            securityToMatchResult.put(existingUnrealizedLots.getKey(), new MatchResult(List.of(), existingUnrealizedLots.getValue()));
+            return this;
+        }
+        public boolean has(String securityId) {
+            return securityToMatchResult.get(securityId) != null;
+        }
+        public TradeLotsMatchResult generate() {
             return new TradeLotsMatchResult(this);
         }
     }

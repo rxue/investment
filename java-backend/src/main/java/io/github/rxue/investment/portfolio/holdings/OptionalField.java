@@ -1,6 +1,6 @@
 package io.github.rxue.investment.portfolio.holdings;
 
-import io.github.rxue.investment.marketquote.Price;
+import io.github.rxue.investment.portfolio.money.Price;
 
 import java.math.BigDecimal;
 

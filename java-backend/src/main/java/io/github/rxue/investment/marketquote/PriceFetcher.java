@@ -1,5 +1,7 @@
 package io.github.rxue.investment.marketquote;
 
+import io.github.rxue.investment.portfolio.money.Price;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

@@ -1,6 +1,6 @@
 package io.github.rxue.investment.portfolio.xirr;
 
-import io.github.rxue.investment.portfolio.Util;
+import io.github.rxue.investment.portfolio.money.Util;
 import io.github.rxue.investment.portfolio.holdings.*;
 import io.github.rxue.investment.portfolio.transaction.Deposit;
 import io.github.rxue.investment.portfolio.transaction.Trade;

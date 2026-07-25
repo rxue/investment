@@ -1,6 +1,7 @@
 package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.lotsmatching.Lot;
+import io.github.rxue.investment.marketquote.PriceFetcher;
 import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatcher;
 import io.github.rxue.investment.portfolio.transaction.Trade;
 
@@ -9,13 +10,15 @@ import java.util.function.Predicate;
 
 public class HoldingsGenerator {
     private final TradeLotsMatcher tradeLotsMatcher;
+    private final PriceFetcher priceFetcher;
     static final Set<Field> POST_CALCULATED_FIELDS = Set.of(OptionalField.PORTFOLIO_WEIGHT);
-    private HoldingsGenerator(TradeLotsMatcher tradeLotsMatcher) {
+    private HoldingsGenerator(TradeLotsMatcher tradeLotsMatcher, PriceFetcher priceFetcher) {
         this.tradeLotsMatcher = tradeLotsMatcher;
+        this.priceFetcher = priceFetcher;
     }
 
     public HoldingsGenerator() {
-        this(new TradeLotsMatcher());
+        this(new TradeLotsMatcher(), new PriceFetcher());
     }
 
     /**
@@ -31,9 +34,9 @@ public class HoldingsGenerator {
         List<OptionalField> commonOptionalFields = Arrays.stream(optionalFields)
                 .filter(((Predicate<OptionalField>) POST_CALCULATED_FIELDS::contains).negate())
                 .toList();
-        HoldingBuilderDirector holdingBuilderDirector = new HoldingBuilderDirector(commonOptionalFields);
+        HoldingBuilderDirector holdingBuilderDirector = new HoldingBuilderDirector(commonOptionalFields, null, priceFetcher);
         List<Holding.Builder> holdingBuilders = unrealizedLotsMap.entrySet().stream()
-                .map(entry -> holdingBuilderDirector.direct(entry.getKey(), entry.getValue()))
+                .map(holdingBuilderDirector::direct)
                 .toList();
         return holdingBuilders.stream()
                 .map(Holding.Builder::build)
