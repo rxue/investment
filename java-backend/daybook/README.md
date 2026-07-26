@@ -3,6 +3,8 @@
 Since Java SE 8, there is a `UncheckedIOException` added to `java.io`, to which `IOException` can be propogated
 ### Use of `record` (20260628)
 `record` cannot `extends` a class but can `implements` *interface*
+### `Collections.unmodifiableXXX` methods just returns the unmodifiable collection
+Making `Collections.unmodifiableList` as an example, it returns kinda unmodifiable *proxy* of the origin list. But if the original list is updated, it the *proxy* is updated as well
 
 ## add of `spring-boot-starter-data-jpa` makes database configuration a must
 That is to say, app will not start up successfully until database connection is configured
