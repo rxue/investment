@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 public enum OptionalField implements Field {
     PRICE_IN_EURO(Price.class),
     MARKET_VALUE_IN_EURO(BigDecimal.class),
+    PE(BigDecimal.class),
     PORTFOLIO_WEIGHT(Double.class);
 
     private final Class<?> type;

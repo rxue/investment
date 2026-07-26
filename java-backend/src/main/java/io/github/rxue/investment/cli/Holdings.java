@@ -2,7 +2,10 @@ package io.github.rxue.investment.cli;
 
 import de.vandermeer.asciitable.AsciiTable;
 import io.github.rxue.investment.adapter.op.OPHoldingsGenerator;
+import io.github.rxue.investment.portfolio.holdings.Field;
 import io.github.rxue.investment.portfolio.holdings.Holding;
+import io.github.rxue.investment.portfolio.holdings.OptionalField;
+import io.github.rxue.investment.portfolio.money.Price;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -10,10 +13,12 @@ import picocli.CommandLine.Parameters;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Command(name = "HOLDINGS")
@@ -34,10 +39,24 @@ class Holdings implements Runnable {
         table.addRow(holdings.get(0).fields());
         table.addRule();
         for (Holding holding : holdings) {
-            table.addRow(holding.values());
+            table.addRow(displayValues(holding.asMap()));
         }
         table.addRule();
         System.out.println(table.render());
+    }
+
+    private static List<Object> displayValues(Map<Field,Object> valueMap) {
+        return valueMap.entrySet().stream()
+                .map(entry -> {
+                    Field field = entry.getKey();
+                    Object value = entry.getValue();
+                    return switch (field) {
+                        case OptionalField.PRICE_IN_EURO ->
+                                value == null ? null : ((Price) value).value().setScale(2, RoundingMode.HALF_UP);
+                        default -> value;
+                    };
+                })
+                .toList();
     }
 
     static List<InputStream> csvInputStreams(Path directory) {
