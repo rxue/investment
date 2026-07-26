@@ -8,7 +8,7 @@ public class Holding {
 
     private Holding(Builder builder) {
         this.fields = builder.fields;
-        this.values = Collections.unmodifiableList(builder.values);
+        this.values = Collections.unmodifiableList(new ArrayList<>(builder.values));
     }
     public List<Field> fields() {
         return fields;
