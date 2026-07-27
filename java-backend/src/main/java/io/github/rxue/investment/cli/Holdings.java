@@ -51,8 +51,11 @@ class Holdings implements Runnable {
                     Field field = entry.getKey();
                     Object value = entry.getValue();
                     return switch (field) {
-                        case OptionalField.PRICE_IN_EURO ->
-                                value == null ? null : ((Price) value).value().setScale(2, RoundingMode.HALF_UP);
+                        case OptionalField.PRICE -> {
+                            Price price = (Price) value;
+                            yield price.value().setScale(2, RoundingMode.HALF_UP) + " " + price.currency();
+                        }
+                        case OptionalField.PRICE_IN_EURO -> ((Price) value).value().setScale(2, RoundingMode.HALF_UP);
                         default -> value;
                     };
                 })

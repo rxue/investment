@@ -18,8 +18,12 @@ public class PriceFetcher {
         this(new YahooFinanceFetcher(), new FXRateFetcher());
     }
 
+    public Price getCurrentPrice(String symbol) {
+        return priceFetcher.getCurrentPrice(symbol);
+    }
+
     public Price getCurrentPriceInEuro(String symbol) {
-        Price price = priceFetcher.getCurrentPrice(symbol);
+        Price price = getCurrentPrice(symbol);
         String currency = price.currency();
         if (EUR.equals(currency)) {
             return price;

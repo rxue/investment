@@ -5,8 +5,10 @@ import io.github.rxue.investment.portfolio.money.Price;
 import java.math.BigDecimal;
 
 public enum OptionalField implements Field {
+    PRICE(Price.class),
     PRICE_IN_EURO(Price.class),
     MARKET_VALUE_IN_EURO(BigDecimal.class),
+    COST(BigDecimal.class),
     PE(BigDecimal.class),
     PORTFOLIO_WEIGHT(Double.class);
 

@@ -27,9 +27,12 @@ public class HoldingBuilderDirector {
         final String securityId = securityIdToUnrealizedLots.getKey();
         builder.set(CompulsoryField.COMPANY_ID, securityId)
                 .set(CompulsoryField.POSITION, securityIdToUnrealizedLots.getValue().stream().mapToInt(Lot.Buy::shareAmount).sum());
-        boolean needsPrice = optionalFields.contains(OptionalField.PRICE_IN_EURO)
+        if (optionalFields.contains(OptionalField.PRICE)) {
+            builder.set(OptionalField.PRICE, doGetPrice(securityId));
+        }
+        boolean needsPriceInEuro = optionalFields.contains(OptionalField.PRICE_IN_EURO)
                 || optionalFields.contains(OptionalField.MARKET_VALUE_IN_EURO);
-        if (needsPrice) {
+        if (needsPriceInEuro) {
             priceInEuro = doGetPriceInEuro(securityId);
             if (optionalFields.contains(OptionalField.PRICE_IN_EURO)) {
                 builder.set(OptionalField.PRICE_IN_EURO, priceInEuro);
@@ -41,7 +44,16 @@ public class HoldingBuilderDirector {
                 builder.set(OptionalField.MARKET_VALUE_IN_EURO, marketValueInEuro);
             }
         }
+        if (optionalFields.contains(OptionalField.COST)) {
+            long cost = securityIdToUnrealizedLots.getValue().stream()
+                            .mapToLong(Lot.Buy::valueInCent)
+                            .sum();
+            builder.set(OptionalField.COST, BigDecimal.valueOf(cost/100));
+        }
         return builder;
+    }
+    private Price doGetPrice(String securityId) {
+        return date == null ? priceFetcher.getCurrentPrice(securityId) : priceFetcher.getClosePrice(securityId, date);
     }
     private Price doGetPriceInEuro(String securityId) {
         return date == null ? priceFetcher.getCurrentPriceInEuro(securityId) : priceFetcher.getClosePriceInEuro(securityId, date);
