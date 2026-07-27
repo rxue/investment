@@ -93,7 +93,7 @@ public class TWRCalculator implements Calculator<TWRResult> {
                 //end date portfolio snapshot calculation
                 remainingCashInEuro = remainingCashInEuro.add(subPeriod.summedCashInEuro().subtract(firstExternalCashFlowAmount));
                 TradeLotsMatchResult matchResult = tradeLotsMatcher.matchInFifo(subPeriod.trades(), remainingUnrealizedLots);
-                remainingUnrealizedLots = matchResult.unrealizedLotsMap();
+                remainingUnrealizedLots = matchResult.getUnrealizedLotsMap();
                 PortfolioRawSnapshot subPeriodEndRawSnapshot = new PortfolioRawSnapshot(subPeriod.endDate(), remainingCashInEuro, remainingUnrealizedLots, priceFetcher);
                 allSnapshots.add(new SubPeriodPortfolioSnapshots(subPeriodStartSnapshot, subPeriodEndRawSnapshot.toSnapshot()));
                 previousSubPeriodEndRawSnapshot = subPeriodEndRawSnapshot;

@@ -28,7 +28,7 @@ class TradeLotsMatcherTest {
 
         final String existingSecurityId = "PFE";
         TradeLotsMatchResult result = out.matchInFifo(trades, Map.of(existingSecurityId, existingUnrealizedLots));
-        Map<String, List<Lot.Buy>> actualLotsMatchResult = result.unrealizedLotsMap();
+        Map<String, List<Lot.Buy>> actualLotsMatchResult = result.getUnrealizedLotsMap();
         assertEquals(2, actualLotsMatchResult.size());
         assertEquals(existingUnrealizedLots, actualLotsMatchResult.get(existingSecurityId), "existing unrealized lots are expected to be in the new match result as well");
         assertNotNull(actualLotsMatchResult.get("STZ"));

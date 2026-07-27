@@ -30,7 +30,7 @@ public class HoldingsGenerator {
      */
     public List<Holding> generate(List<Trade> trades, OptionalField... optionalFields) {
         Map<String,List<Lot.Buy>> unrealizedLotsMap = tradeLotsMatcher.matchInFifo(trades, Map.of())
-                .unrealizedLotsMap();
+                .getUnrealizedLotsMap();
         List<OptionalField> commonOptionalFields = Arrays.stream(optionalFields)
                 .filter(((Predicate<OptionalField>) POST_CALCULATED_FIELDS::contains).negate())
                 .toList();

@@ -14,8 +14,9 @@ public class TradeLotsMatchResult {
     private TradeLotsMatchResult(Generator generator) {
         this.securityToMatchResult = Collections.unmodifiableMap(generator.securityToMatchResult);
     }
-    public Map<String,List<Lot.Buy>> unrealizedLotsMap() {
+    public Map<String,List<Lot.Buy>> getUnrealizedLotsMap() {
         return securityToMatchResult.entrySet().stream()
+                .filter(e -> !e.getValue().unrealizedLots().isEmpty())
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> e.getValue().unrealizedLots()));
     }
 
@@ -25,12 +26,12 @@ public class TradeLotsMatchResult {
             securityToMatchResult.put(securityId, matchResult);
             return this;
         }
-        public Generator add(Map.Entry<String,List<Lot.Buy>> existingUnrealizedLots) {
-            securityToMatchResult.put(existingUnrealizedLots.getKey(), new MatchResult(List.of(), existingUnrealizedLots.getValue()));
+        public Generator add(Map.Entry<String,List<Lot.Buy>> existingUnrealizedLotsEntry) {
+            securityToMatchResult.put(existingUnrealizedLotsEntry.getKey(), new MatchResult(List.of(), existingUnrealizedLotsEntry.getValue()));
             return this;
         }
         public boolean has(String securityId) {
-            return securityToMatchResult.get(securityId) != null;
+            return securityToMatchResult.containsKey(securityId);
         }
         public TradeLotsMatchResult generate() {
             return new TradeLotsMatchResult(this);
