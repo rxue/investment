@@ -1,7 +1,7 @@
 package io.github.rxue.investment.portfolio.twr.output;
 
 import io.github.rxue.investment.lotsmatching.Lot;
-import io.github.rxue.investment.marketquote.PriceFetcher;
+import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
 import io.github.rxue.investment.portfolio.holdings.Holding;
 import io.github.rxue.investment.portfolio.holdings.HoldingBuilderDirector;
 import io.github.rxue.investment.portfolio.holdings.OptionalField;
@@ -17,11 +17,11 @@ public class PortfolioRawSnapshot {
     private final BigDecimal cashInEuro;
     private final Map<String, List<Lot.Buy>> unrealizedLots;
     private final HoldingBuilderDirector hodlingBuilderDirector;
-    public PortfolioRawSnapshot(LocalDate date, BigDecimal cashInEuro, Map<String,List<Lot.Buy>> unrealizedLots, PriceFetcher priceFetcher) {
+    public PortfolioRawSnapshot(LocalDate date, BigDecimal cashInEuro, Map<String,List<Lot.Buy>> unrealizedLots, MarketQuoteFetcher marketQuoteFetcher) {
         this.date = date;
         this.cashInEuro = cashInEuro;
         this.unrealizedLots = unrealizedLots;
-        this.hodlingBuilderDirector = new HoldingBuilderDirector(List.of(OptionalField.MARKET_VALUE_IN_EURO), date, priceFetcher);
+        this.hodlingBuilderDirector = new HoldingBuilderDirector(List.of(OptionalField.MARKET_VALUE_IN_EURO), date, marketQuoteFetcher);
     }
 
     public BigDecimal getCashInEuro() {

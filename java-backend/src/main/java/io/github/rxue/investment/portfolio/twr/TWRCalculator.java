@@ -1,7 +1,7 @@
 package io.github.rxue.investment.portfolio.twr;
 
 import io.github.rxue.investment.lotsmatching.Lot;
-import io.github.rxue.investment.marketquote.PriceFetcher;
+import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
 import io.github.rxue.investment.portfolio.Calculator;
 import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatchResult;
 import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatcher;
@@ -65,7 +65,7 @@ public class TWRCalculator implements Calculator<TWRResult> {
 
     static class SnapshotsGenerator implements Function<List<SubPeriod>,List<SubPeriodPortfolioSnapshots>> {
         private final TradeLotsMatcher tradeLotsMatcher = new TradeLotsMatcher();
-        private final PriceFetcher priceFetcher = new PriceFetcher();
+        private final MarketQuoteFetcher marketQuoteFetcher = new MarketQuoteFetcher();
 
         @Override
         public List<SubPeriodPortfolioSnapshots> apply(List<SubPeriod> subPeriods) {
@@ -88,13 +88,13 @@ public class TWRCalculator implements Calculator<TWRResult> {
                     remainingCashInEuro = previousSubPeriodEndRawSnapshot.getCashInEuro()
                             .add(firstExternalCashFlowAmount);
                 }
-                subPeriodStartSnapshot = new PortfolioRawSnapshot(subPeriod.startDate(), remainingCashInEuro, remainingUnrealizedLots, priceFetcher)
+                subPeriodStartSnapshot = new PortfolioRawSnapshot(subPeriod.startDate(), remainingCashInEuro, remainingUnrealizedLots, marketQuoteFetcher)
                         .toSnapshot();
                 //end date portfolio snapshot calculation
                 remainingCashInEuro = remainingCashInEuro.add(subPeriod.summedCashInEuro().subtract(firstExternalCashFlowAmount));
                 TradeLotsMatchResult matchResult = tradeLotsMatcher.matchInFifo(subPeriod.trades(), remainingUnrealizedLots);
                 remainingUnrealizedLots = matchResult.getUnrealizedLotsMap();
-                PortfolioRawSnapshot subPeriodEndRawSnapshot = new PortfolioRawSnapshot(subPeriod.endDate(), remainingCashInEuro, remainingUnrealizedLots, priceFetcher);
+                PortfolioRawSnapshot subPeriodEndRawSnapshot = new PortfolioRawSnapshot(subPeriod.endDate(), remainingCashInEuro, remainingUnrealizedLots, marketQuoteFetcher);
                 allSnapshots.add(new SubPeriodPortfolioSnapshots(subPeriodStartSnapshot, subPeriodEndRawSnapshot.toSnapshot()));
                 previousSubPeriodEndRawSnapshot = subPeriodEndRawSnapshot;
             }

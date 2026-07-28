@@ -19,11 +19,24 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 class YahooFinanceFetcher {
     private static final String ENDPOINT_ROOT_URL = "https://query1.finance.yahoo.com/v8/finance";
+    private static final String QUOTE_SUMMARY_URL = "https://query1.finance.yahoo.com/v10/finance/quoteSummary";
     private static final String CRUMB_URL = "https://query2.finance.yahoo.com/v1/test/getcrumb";
     private static final String MOZILLA_5_0 = "Mozilla/5.0";
+
+    private static final Map<String, String> FUNDAMENTAL_MODULE_BY_FIELD = Map.of(
+            "trailingPE", "summaryDetail",
+            "dividendYield", "summaryDetail",
+            "returnOnEquity", "financialData"
+    );
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -56,6 +69,34 @@ class YahooFinanceFetcher {
             throw new IllegalArgumentException("Cannot fetch any price with the given company symbol " + companySymbol);
         }
         return parseCurrentPrice(resultNode);
+    }
+    public Map<String, BigDecimal> getFundamentals(String symbol, List<String> metricNames) {
+        if (metricNames.isEmpty()) {
+            return Map.of();
+        }
+        Set<String> modules = metricNames.stream()
+                .map(FUNDAMENTAL_MODULE_BY_FIELD::get)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        JsonNode resultNode;
+        try {
+            String crumb = getCrumb();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(QUOTE_SUMMARY_URL + "/" + symbol
+                            + "?modules=" + URLEncoder.encode(String.join(",", modules), StandardCharsets.UTF_8)
+                            + "&crumb=" + URLEncoder.encode(crumb, StandardCharsets.UTF_8)))
+                    .header("User-Agent", MOZILLA_5_0)
+                    .GET()
+                    .build();
+            HttpResponse<String> response = send(request);
+            resultNode = objectMapper.readTree(response.body())
+                    .path("quoteSummary").path("result").get(0);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        if (resultNode == null) {
+            throw new IllegalArgumentException("Cannot fetch fundamentals with the given company symbol " + symbol);
+        }
+        return parseFundamentals(resultNode, symbol, metricNames);
     }
 
     public Price getClosePrice(String symbol, LocalDate date) {
@@ -116,6 +157,17 @@ class YahooFinanceFetcher {
         ZonedDateTime timestamp = Instant.ofEpochSecond(regularMarketTime.asLong())
                 .atZone(ZoneId.of(meta.path("exchangeTimezoneName").asText()));
         return new Price(currency, price, timestamp);
+    }
+
+    private Map<String, BigDecimal> parseFundamentals(JsonNode result, String symbol, List<String> metricNames) {
+        Map<String, BigDecimal> values = new LinkedHashMap<>();
+        for (String metricName : metricNames) {
+            JsonNode valueNode = result.path(FUNDAMENTAL_MODULE_BY_FIELD.get(metricName))
+                    .path(metricName)
+                    .path("raw");
+            values.put(metricName, valueNode.isNumber() ? valueNode.decimalValue() : null);
+        }
+        return values;
     }
 
     private Price parseHistoricalPrice(JsonNode result, String symbol, LocalDate date) {

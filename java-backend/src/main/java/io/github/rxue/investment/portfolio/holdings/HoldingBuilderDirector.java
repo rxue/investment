@@ -1,7 +1,7 @@
 package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.lotsmatching.Lot;
-import io.github.rxue.investment.marketquote.PriceFetcher;
+import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
 import io.github.rxue.investment.portfolio.money.Price;
 
 import java.math.BigDecimal;
@@ -13,13 +13,13 @@ import java.util.Map;
 public class HoldingBuilderDirector {
     private final List<OptionalField> optionalFields;
     private final LocalDate date;
-    private final PriceFetcher priceFetcher;
+    private final MarketQuoteFetcher marketQuoteFetcher;
     private Price priceInEuro;
 
-    public HoldingBuilderDirector(List<OptionalField> optionalFields, LocalDate date, PriceFetcher priceFetcher) {
+    public HoldingBuilderDirector(List<OptionalField> optionalFields, LocalDate date, MarketQuoteFetcher marketQuoteFetcher) {
         this.optionalFields = optionalFields;
         this.date = date;
-        this.priceFetcher = priceFetcher;
+        this.marketQuoteFetcher = marketQuoteFetcher;
     }
 
     public Holding.Builder direct(Map.Entry<String,List<Lot.Buy>> securityIdToUnrealizedLots) {
@@ -53,9 +53,9 @@ public class HoldingBuilderDirector {
         return builder;
     }
     private Price doGetPrice(String securityId) {
-        return date == null ? priceFetcher.getCurrentPrice(securityId) : priceFetcher.getClosePrice(securityId, date);
+        return date == null ? marketQuoteFetcher.getCurrentPrice(securityId) : marketQuoteFetcher.getClosePrice(securityId, date);
     }
     private Price doGetPriceInEuro(String securityId) {
-        return date == null ? priceFetcher.getCurrentPriceInEuro(securityId) : priceFetcher.getClosePriceInEuro(securityId, date);
+        return date == null ? marketQuoteFetcher.getCurrentPriceInEuro(securityId) : marketQuoteFetcher.getClosePriceInEuro(securityId, date);
     }
 }

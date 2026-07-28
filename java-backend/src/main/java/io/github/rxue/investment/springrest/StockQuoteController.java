@@ -1,6 +1,6 @@
 package io.github.rxue.investment.springrest;
 
-import io.github.rxue.investment.marketquote.PriceFetcher;
+import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
 import io.github.rxue.investment.portfolio.money.Price;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,10 +13,10 @@ import java.io.IOException;
 @RequestMapping("/price")
 class StockQuoteController {
     //private final YahooFinanceFetcher yahooFinanceFetcher;
-    private final PriceFetcher priceFetcher;
+    private final MarketQuoteFetcher marketQuoteFetcher;
     public StockQuoteController() {
         //this.yahooFinanceFetcher = new YahooFinanceFetcher();
-        this.priceFetcher = new PriceFetcher();
+        this.marketQuoteFetcher = new MarketQuoteFetcher();
     }
 
     @GetMapping("/{companyIdentifier}")
@@ -26,6 +26,6 @@ class StockQuoteController {
     }
     @GetMapping("/euro/{companyIdentifier}")
     public Price getEuroPrice(@PathVariable String companySymbol) {
-        return priceFetcher.getCurrentPriceInEuro(companySymbol);
+        return marketQuoteFetcher.getCurrentPriceInEuro(companySymbol);
     }
 }
