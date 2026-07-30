@@ -1,6 +1,7 @@
 package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.lotsmatching.Lot;
+import io.github.rxue.investment.marketquote.FundamentalMetric;
 import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
 import io.github.rxue.investment.portfolio.money.Price;
 
@@ -10,7 +11,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.rxue.investment.marketquote.FundamentalMetric.TRAILING_PE;
+
 public class HoldingBuilderDirector {
+    private static final Map<FundamentalMetric,OptionalField> FIELD_TO_FETCHED_METRICS = Map.of(TRAILING_PE, OptionalField.TRAILING_PE);
     private final List<OptionalField> optionalFields;
     private final LocalDate date;
     private final MarketQuoteFetcher marketQuoteFetcher;
@@ -50,8 +54,23 @@ public class HoldingBuilderDirector {
                             .sum();
             builder.set(OptionalField.COST, BigDecimal.valueOf(cost/100));
         }
+        setFundamentalMetricsFields(builder, securityId);
         return builder;
     }
+    private void setFundamentalMetricsFields(Holding.Builder holdingBuilder, String securityId) {
+        Map<FundamentalMetric,BigDecimal> fetchedMetrics = marketQuoteFetcher.getFundamentals(securityId, getFundamentalMetrics());
+        for(Map.Entry metric : fetchedMetrics.entrySet()) {
+            OptionalField field = FIELD_TO_FETCHED_METRICS.get(metric.getKey());
+            holdingBuilder.set(field, metric.getValue());
+        }
+    }
+    private List<FundamentalMetric> getFundamentalMetrics() {
+        return FIELD_TO_FETCHED_METRICS.entrySet().stream()
+                .filter(entry -> optionalFields.contains(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .toList();
+    }
+
     private Price doGetPrice(String securityId) {
         return date == null ? marketQuoteFetcher.getCurrentPrice(securityId) : marketQuoteFetcher.getClosePrice(securityId, date);
     }

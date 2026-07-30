@@ -56,7 +56,7 @@ class Holdings implements Runnable {
                             yield price.value().setScale(2, RoundingMode.HALF_UP) + " " + price.currency();
                         }
                         case OptionalField.PRICE_IN_EURO -> ((Price) value).value().setScale(2, RoundingMode.HALF_UP);
-                        default -> value;
+                        default -> value == null ? " - " : value;
                     };
                 })
                 .toList();

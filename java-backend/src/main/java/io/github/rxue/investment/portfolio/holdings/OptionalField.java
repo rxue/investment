@@ -9,7 +9,7 @@ public enum OptionalField implements Field {
     PRICE_IN_EURO(Price.class),
     MARKET_VALUE_IN_EURO(BigDecimal.class),
     COST(BigDecimal.class),
-    PE(BigDecimal.class),
+    TRAILING_PE(BigDecimal.class),
     PORTFOLIO_WEIGHT(Double.class);
 
     private final Class<?> type;
