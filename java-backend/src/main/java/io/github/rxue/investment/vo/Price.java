@@ -1,4 +1,4 @@
-package io.github.rxue.investment.portfolio.money;
+package io.github.rxue.investment.vo;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

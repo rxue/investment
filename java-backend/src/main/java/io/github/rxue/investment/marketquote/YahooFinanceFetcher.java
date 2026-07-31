@@ -2,7 +2,7 @@ package io.github.rxue.investment.marketquote;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.rxue.investment.portfolio.money.Price;
+import io.github.rxue.investment.vo.Price;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -32,10 +32,11 @@ class YahooFinanceFetcher {
     private static final String CRUMB_URL = "https://query2.finance.yahoo.com/v1/test/getcrumb";
     private static final String MOZILLA_5_0 = "Mozilla/5.0";
 
-    private static final Map<String, String> FUNDAMENTAL_MODULE_BY_FIELD = Map.of(
+    private static final Map<String, String> FUNDAMENTAL_METRIC_TO_SECTION = Map.of(
             "trailingPE", "summaryDetail",
             "dividendYield", "summaryDetail",
-            "returnOnEquity", "financialData"
+            "returnOnEquity", "financialData",
+            "regularMarketChangePercent", "price"
     );
 
     private final HttpClient httpClient;
@@ -75,7 +76,7 @@ class YahooFinanceFetcher {
             return Map.of();
         }
         Set<String> modules = metricNames.stream()
-                .map(FUNDAMENTAL_MODULE_BY_FIELD::get)
+                .map(FUNDAMENTAL_METRIC_TO_SECTION::get)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         JsonNode resultNode;
         try {
@@ -96,7 +97,7 @@ class YahooFinanceFetcher {
         if (resultNode == null) {
             throw new IllegalArgumentException("Cannot fetch fundamentals with the given company symbol " + symbol);
         }
-        return parseFundamentals(resultNode, symbol, metricNames);
+        return parseFundamentals(resultNode, metricNames);
     }
 
     public Price getClosePrice(String symbol, LocalDate date) {
@@ -159,10 +160,10 @@ class YahooFinanceFetcher {
         return new Price(currency, price, timestamp);
     }
 
-    private Map<String, BigDecimal> parseFundamentals(JsonNode result, String symbol, List<String> metricNames) {
+    private Map<String, BigDecimal> parseFundamentals(JsonNode result, List<String> metricNames) {
         Map<String, BigDecimal> values = new LinkedHashMap<>();
         for (String metricName : metricNames) {
-            JsonNode valueNode = result.path(FUNDAMENTAL_MODULE_BY_FIELD.get(metricName))
+            JsonNode valueNode = result.path(FUNDAMENTAL_METRIC_TO_SECTION.get(metricName))
                     .path(metricName)
                     .path("raw");
             values.put(metricName, valueNode.isNumber() ? valueNode.decimalValue() : null);

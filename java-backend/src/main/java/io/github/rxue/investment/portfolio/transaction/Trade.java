@@ -1,7 +1,5 @@
 package io.github.rxue.investment.portfolio.transaction;
 
-import io.github.rxue.investment.portfolio.money.Util;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

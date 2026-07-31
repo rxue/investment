@@ -1,22 +1,14 @@
 package io.github.rxue.investment.marketquote;
 
-import io.github.rxue.investment.portfolio.money.Price;
+import io.github.rxue.investment.vo.Price;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MarketQuoteFetcher {
     private static final String EUR = "EUR";
-
-    private static final Map<FundamentalMetric, String> YAHOO_FIELD_BY_METRIC = Map.of(
-            FundamentalMetric.TRAILING_PE, "trailingPE",
-            FundamentalMetric.DIVIDEND_YIELD, "dividendYield",
-            FundamentalMetric.ROE, "returnOnEquity"
-    );
 
     private final YahooFinanceFetcher yahooFinanceFetcher;
     private final FXRateFetcher fxRateFetcher;
@@ -56,15 +48,7 @@ public class MarketQuoteFetcher {
         return new Price(EUR, priceInEuro, price.timestamp());
     }
 
-    public Map<FundamentalMetric, BigDecimal> getFundamentals(String symbol, List<FundamentalMetric> fundamentalMetrics) {
-        List<String> yahooFieldNames = fundamentalMetrics.stream()
-                .map(YAHOO_FIELD_BY_METRIC::get)
-                .collect(Collectors.toList());
-        Map<String, BigDecimal> valuesByYahooField = yahooFinanceFetcher.getFundamentals(symbol, yahooFieldNames);
-        Map<FundamentalMetric, BigDecimal> values = new EnumMap<>(FundamentalMetric.class);
-        for (FundamentalMetric metric : fundamentalMetrics) {
-            values.put(metric, valuesByYahooField.get(YAHOO_FIELD_BY_METRIC.get(metric)));
-        }
-        return values;
+    public Map<String, BigDecimal> getFundamentals(String symbol, List<String> yahooFieldNames) {
+        return yahooFinanceFetcher.getFundamentals(symbol, yahooFieldNames);
     }
 }

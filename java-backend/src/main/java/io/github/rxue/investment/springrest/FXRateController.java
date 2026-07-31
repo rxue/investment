@@ -1,7 +1,7 @@
 package io.github.rxue.investment.springrest;
 
 import io.github.rxue.investment.marketquote.FXRateFetcher;
-import io.github.rxue.investment.portfolio.money.Price;
+import io.github.rxue.investment.vo.Price;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

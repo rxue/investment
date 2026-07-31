@@ -2,17 +2,15 @@ package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.lotsmatching.Lot;
 import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
-import io.github.rxue.investment.portfolio.money.Price;
+import io.github.rxue.investment.vo.Price;
 import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatcher;
 import io.github.rxue.investment.portfolio.transaction.Trade;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 public class HoldingsGenerator {
     private final TradeLotsMatcher tradeLotsMatcher;
     private final MarketQuoteFetcher marketQuoteFetcher;
-    static final Set<Field> POST_CALCULATED_FIELDS = Set.of(OptionalField.PORTFOLIO_WEIGHT);
     public HoldingsGenerator(TradeLotsMatcher tradeLotsMatcher, MarketQuoteFetcher marketQuoteFetcher) {
         this.tradeLotsMatcher = tradeLotsMatcher;
         this.marketQuoteFetcher = marketQuoteFetcher;

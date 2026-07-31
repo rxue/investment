@@ -5,7 +5,7 @@ import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
 import io.github.rxue.investment.portfolio.holdings.Holding;
 import io.github.rxue.investment.portfolio.holdings.HoldingBuilderDirector;
 import io.github.rxue.investment.portfolio.holdings.OptionalField;
-import io.github.rxue.investment.portfolio.money.Util;
+import io.github.rxue.investment.vo.Util;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

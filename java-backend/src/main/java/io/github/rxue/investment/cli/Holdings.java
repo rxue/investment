@@ -5,7 +5,7 @@ import io.github.rxue.investment.adapter.op.OPHoldingsGenerator;
 import io.github.rxue.investment.portfolio.holdings.Field;
 import io.github.rxue.investment.portfolio.holdings.Holding;
 import io.github.rxue.investment.portfolio.holdings.OptionalField;
-import io.github.rxue.investment.portfolio.money.Price;
+import io.github.rxue.investment.vo.Price;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -26,13 +26,16 @@ class Holdings implements Runnable {
     @Option(names = "--fields", split = ",")
     Set<String> fieldNames = Set.of();
 
+    @Option(names = "--sort-by")
+    String sortByField;
+
     @Parameters(index = "0", description = "Directory containing transaction CSV files")
     Path directory;
 
     @Override
     public void run() {
         OPHoldingsGenerator holdingsGenerator = new OPHoldingsGenerator();
-        List<Holding> holdings = holdingsGenerator.generate(csvInputStreams(directory), fieldNames, "PRICE_IN_EURO");
+        List<Holding> holdings = holdingsGenerator.generate(csvInputStreams(directory), fieldNames, sortByField);
 
         AsciiTable table = new AsciiTable();
         table.addRule();

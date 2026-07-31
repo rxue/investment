@@ -1,20 +1,17 @@
 package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.lotsmatching.Lot;
-import io.github.rxue.investment.marketquote.FundamentalMetric;
 import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
-import io.github.rxue.investment.portfolio.money.Price;
+import io.github.rxue.investment.vo.Price;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-
-import static io.github.rxue.investment.marketquote.FundamentalMetric.TRAILING_PE;
+import java.util.Objects;
 
 public class HoldingBuilderDirector {
-    private static final Map<FundamentalMetric,OptionalField> FIELD_TO_FETCHED_METRICS = Map.of(TRAILING_PE, OptionalField.TRAILING_PE);
     private final List<OptionalField> optionalFields;
     private final LocalDate date;
     private final MarketQuoteFetcher marketQuoteFetcher;
@@ -58,16 +55,18 @@ public class HoldingBuilderDirector {
         return builder;
     }
     private void setFundamentalMetricsFields(Holding.Builder holdingBuilder, String securityId) {
-        Map<FundamentalMetric,BigDecimal> fetchedMetrics = marketQuoteFetcher.getFundamentals(securityId, getFundamentalMetrics());
-        for(Map.Entry metric : fetchedMetrics.entrySet()) {
-            OptionalField field = FIELD_TO_FETCHED_METRICS.get(metric.getKey());
-            holdingBuilder.set(field, metric.getValue());
+        Map<String,BigDecimal> fetchedMetrics = marketQuoteFetcher.getFundamentals(securityId, getFundamentalMetrics());
+        for (OptionalField field : optionalFields) {
+            String yahooMetricName = field.yahooMetricName();
+            if (yahooMetricName != null) {
+                holdingBuilder.set(field, fetchedMetrics.get(yahooMetricName));
+            }
         }
     }
-    private List<FundamentalMetric> getFundamentalMetrics() {
-        return FIELD_TO_FETCHED_METRICS.entrySet().stream()
-                .filter(entry -> optionalFields.contains(entry.getValue()))
-                .map(Map.Entry::getKey)
+    private List<String> getFundamentalMetrics() {
+        return optionalFields.stream()
+                .map(OptionalField::yahooMetricName)
+                .filter(Objects::nonNull)
                 .toList();
     }
 

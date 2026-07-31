@@ -1,6 +1,6 @@
 package io.github.rxue.investment.portfolio.xirr;
 
-import io.github.rxue.investment.portfolio.money.Util;
+import io.github.rxue.investment.vo.Util;
 import io.github.rxue.investment.portfolio.holdings.Holding;
 import io.github.rxue.investment.portfolio.holdings.OptionalField;
 

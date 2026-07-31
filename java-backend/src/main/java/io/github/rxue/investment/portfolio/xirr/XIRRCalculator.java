@@ -1,7 +1,7 @@
 package io.github.rxue.investment.portfolio.xirr;
 
 import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
-import io.github.rxue.investment.portfolio.money.Util;
+import io.github.rxue.investment.vo.Util;
 import io.github.rxue.investment.portfolio.holdings.*;
 import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatcher;
 import io.github.rxue.investment.portfolio.transaction.Deposit;

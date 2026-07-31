@@ -1,6 +1,6 @@
 package io.github.rxue.investment.marketquote;
 
-import io.github.rxue.investment.portfolio.money.Price;
+import io.github.rxue.investment.vo.Price;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.RepeatedTest;
@@ -51,12 +51,12 @@ class MarketQuoteFetcherIT {
 
     @Test
     void getFundamentals_KHC_returns_trailing_pe_dividend_yield_and_roe() {
-        Map<FundamentalMetric, BigDecimal> fundamentals = out.getFundamentals("KHC",
-                List.of(FundamentalMetric.TRAILING_PE, FundamentalMetric.DIVIDEND_YIELD, FundamentalMetric.ROE));
+        Map<String, BigDecimal> fundamentals = out.getFundamentals("KHC",
+                List.of("trailingPE", "dividendYield", "returnOnEquity"));
 
-        BigDecimal trailingPE = fundamentals.get(FundamentalMetric.TRAILING_PE);
-        BigDecimal dividendYield = fundamentals.get(FundamentalMetric.DIVIDEND_YIELD);
-        BigDecimal roe = fundamentals.get(FundamentalMetric.ROE);
+        BigDecimal trailingPE = fundamentals.get("trailingPE");
+        BigDecimal dividendYield = fundamentals.get("dividendYield");
+        BigDecimal roe = fundamentals.get("returnOnEquity");
         assertTrue(trailingPE == null || isGreaterThanZero(trailingPE), "trailing PE should be positive, but was " + trailingPE);
         assertTrue(isGreaterThanZero(dividendYield), "dividend yield should be positive, but was " + dividendYield);
         assertTrue(roe != null, "ROE should be positive, but was " + roe);
