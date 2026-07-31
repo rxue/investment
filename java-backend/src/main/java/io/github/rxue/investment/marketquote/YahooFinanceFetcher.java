@@ -2,6 +2,7 @@ package io.github.rxue.investment.marketquote;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.rxue.investment.vo.Percentage;
 import io.github.rxue.investment.vo.Price;
 
 import java.io.IOException;
@@ -32,12 +33,14 @@ class YahooFinanceFetcher {
     private static final String CRUMB_URL = "https://query2.finance.yahoo.com/v1/test/getcrumb";
     private static final String MOZILLA_5_0 = "Mozilla/5.0";
 
+    public static final String REGULAR_MARKET_CHANGE_PERCENT = "regularMarketChangePercent";
     private static final Map<String, String> FUNDAMENTAL_METRIC_TO_SECTION = Map.of(
             "trailingPE", "summaryDetail",
             "dividendYield", "summaryDetail",
             "returnOnEquity", "financialData",
-            "regularMarketChangePercent", "price"
+            REGULAR_MARKET_CHANGE_PERCENT, "price"
     );
+    private static final Set<String> PERCENTAGE_METRICS = Set.of(REGULAR_MARKET_CHANGE_PERCENT);
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -71,7 +74,7 @@ class YahooFinanceFetcher {
         }
         return parseCurrentPrice(resultNode);
     }
-    public Map<String, BigDecimal> getFundamentals(String symbol, List<String> metricNames) {
+    public Map<String, Object> getFundamentals(String symbol, List<String> metricNames) {
         if (metricNames.isEmpty()) {
             return Map.of();
         }
@@ -160,13 +163,18 @@ class YahooFinanceFetcher {
         return new Price(currency, price, timestamp);
     }
 
-    private Map<String, BigDecimal> parseFundamentals(JsonNode result, List<String> metricNames) {
-        Map<String, BigDecimal> values = new LinkedHashMap<>();
+    private Map<String, Object> parseFundamentals(JsonNode result, List<String> metricNames) {
+        Map<String, Object> values = new LinkedHashMap<>();
         for (String metricName : metricNames) {
             JsonNode valueNode = result.path(FUNDAMENTAL_METRIC_TO_SECTION.get(metricName))
                     .path(metricName)
                     .path("raw");
-            values.put(metricName, valueNode.isNumber() ? valueNode.decimalValue() : null);
+            if (!valueNode.isNumber()) {
+                values.put(metricName, null);
+                continue;
+            }
+            BigDecimal value = valueNode.decimalValue();
+            values.put(metricName, PERCENTAGE_METRICS.contains(metricName) ? new Percentage(value) : value);
         }
         return values;
     }

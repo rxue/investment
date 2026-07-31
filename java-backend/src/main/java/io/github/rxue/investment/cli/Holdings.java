@@ -5,6 +5,7 @@ import io.github.rxue.investment.adapter.op.OPHoldingsGenerator;
 import io.github.rxue.investment.portfolio.holdings.Field;
 import io.github.rxue.investment.portfolio.holdings.Holding;
 import io.github.rxue.investment.portfolio.holdings.OptionalField;
+import io.github.rxue.investment.vo.Percentage;
 import io.github.rxue.investment.vo.Price;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -78,7 +79,11 @@ class Holdings implements Runnable {
                             yield price.value().setScale(2, RoundingMode.HALF_UP) + " " + price.currency();
                         }
                         case OptionalField.PRICE_IN_EURO -> ((Price) value).value().setScale(2, RoundingMode.HALF_UP);
-                        default -> value == null ? " - " : value;
+                        default -> switch (value) {
+                            case null -> " - ";
+                            case Percentage percentage -> percentage.presentedValue();
+                            default -> value;
+                        };
                     };
                 })
                 .toList();

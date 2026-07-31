@@ -48,7 +48,7 @@ public class MarketQuoteFetcher {
         return new Price(EUR, priceInEuro, price.timestamp());
     }
 
-    public Map<String, BigDecimal> getFundamentals(String symbol, List<String> yahooFieldNames) {
+    public Map<String, Object> getFundamentals(String symbol, List<String> yahooFieldNames) {
         return yahooFinanceFetcher.getFundamentals(symbol, yahooFieldNames);
     }
 }

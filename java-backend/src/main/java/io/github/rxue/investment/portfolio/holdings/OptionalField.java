@@ -1,5 +1,6 @@
 package io.github.rxue.investment.portfolio.holdings;
 
+import io.github.rxue.investment.vo.Percentage;
 import io.github.rxue.investment.vo.Price;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ public enum OptionalField implements Field {
     MARKET_VALUE_IN_EURO(BigDecimal.class, null),
     COST(BigDecimal.class, null),
     TRAILING_PE(BigDecimal.class, "trailingPE"),
+    DAILY_CHANGE_PERCENT(Percentage.class, "regularMarketChangePercent"),
     PORTFOLIO_WEIGHT(Double.class, null);
 
     private final Class<?> type;

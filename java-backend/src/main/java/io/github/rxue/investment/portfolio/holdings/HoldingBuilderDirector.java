@@ -55,7 +55,7 @@ public class HoldingBuilderDirector {
         return builder;
     }
     private void setFundamentalMetricsFields(Holding.Builder holdingBuilder, String securityId) {
-        Map<String,BigDecimal> fetchedMetrics = marketQuoteFetcher.getFundamentals(securityId, getFundamentalMetrics());
+        Map<String,Object> fetchedMetrics = marketQuoteFetcher.getFundamentals(securityId, getFundamentalMetrics());
         for (OptionalField field : optionalFields) {
             String yahooMetricName = field.yahooMetricName();
             if (yahooMetricName != null) {

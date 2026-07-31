@@ -1,5 +1,6 @@
 package io.github.rxue.investment.marketquote;
 
+import io.github.rxue.investment.vo.Percentage;
 import io.github.rxue.investment.vo.Price;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -50,16 +51,18 @@ class MarketQuoteFetcherIT {
     }
 
     @Test
-    void getFundamentals_KHC_returns_trailing_pe_dividend_yield_and_roe() {
-        Map<String, BigDecimal> fundamentals = out.getFundamentals("KHC",
-                List.of("trailingPE", "dividendYield", "returnOnEquity"));
+    void getFundamentals_KHC_returns_trailing_pe_dividend_yield_roe_and_daily_change_percent() {
+        Map<String, Object> fundamentals = out.getFundamentals("KHC",
+                List.of("trailingPE", "dividendYield", "returnOnEquity", "regularMarketChangePercent"));
 
-        BigDecimal trailingPE = fundamentals.get("trailingPE");
-        BigDecimal dividendYield = fundamentals.get("dividendYield");
-        BigDecimal roe = fundamentals.get("returnOnEquity");
+        BigDecimal trailingPE = (BigDecimal) fundamentals.get("trailingPE");
+        BigDecimal dividendYield = (BigDecimal) fundamentals.get("dividendYield");
+        BigDecimal roe = (BigDecimal) fundamentals.get("returnOnEquity");
+        Percentage dailyChangePercent = (Percentage) fundamentals.get("regularMarketChangePercent");
         assertTrue(trailingPE == null || isGreaterThanZero(trailingPE), "trailing PE should be positive, but was " + trailingPE);
         assertTrue(isGreaterThanZero(dividendYield), "dividend yield should be positive, but was " + dividendYield);
         assertTrue(roe != null, "ROE should be positive, but was " + roe);
+        assertTrue(dailyChangePercent != null, "daily change percent should not be null, but was " + dailyChangePercent);
     }
     private static boolean isGreaterThanZero(BigDecimal numberValue) {
         return numberValue.compareTo(BigDecimal.ZERO) > 0;
