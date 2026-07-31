@@ -32,7 +32,7 @@ class Holdings implements Runnable {
     @Override
     public void run() {
         OPHoldingsGenerator holdingsGenerator = new OPHoldingsGenerator();
-        List<Holding> holdings = holdingsGenerator.generate(csvInputStreams(directory), fieldNames);
+        List<Holding> holdings = holdingsGenerator.generate(csvInputStreams(directory), fieldNames, "PRICE_IN_EURO");
 
         AsciiTable table = new AsciiTable();
         table.addRule();
@@ -43,23 +43,6 @@ class Holdings implements Runnable {
         }
         table.addRule();
         System.out.println(table.render());
-    }
-
-    private static List<Object> displayValues(Map<Field,Object> valueMap) {
-        return valueMap.entrySet().stream()
-                .map(entry -> {
-                    Field field = entry.getKey();
-                    Object value = entry.getValue();
-                    return switch (field) {
-                        case OptionalField.PRICE -> {
-                            Price price = (Price) value;
-                            yield price.value().setScale(2, RoundingMode.HALF_UP) + " " + price.currency();
-                        }
-                        case OptionalField.PRICE_IN_EURO -> ((Price) value).value().setScale(2, RoundingMode.HALF_UP);
-                        default -> value == null ? " - " : value;
-                    };
-                })
-                .toList();
     }
 
     static List<InputStream> csvInputStreams(Path directory) {
@@ -79,5 +62,22 @@ class Holdings implements Runnable {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private static List<Object> displayValues(Map<Field,Object> valueMap) {
+        return valueMap.entrySet().stream()
+                .map(entry -> {
+                    Field field = entry.getKey();
+                    Object value = entry.getValue();
+                    return switch (field) {
+                        case OptionalField.PRICE -> {
+                            Price price = (Price) value;
+                            yield price.value().setScale(2, RoundingMode.HALF_UP) + " " + price.currency();
+                        }
+                        case OptionalField.PRICE_IN_EURO -> ((Price) value).value().setScale(2, RoundingMode.HALF_UP);
+                        default -> value == null ? " - " : value;
+                    };
+                })
+                .toList();
     }
 }

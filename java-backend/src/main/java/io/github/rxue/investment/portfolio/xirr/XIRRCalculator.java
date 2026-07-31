@@ -1,7 +1,9 @@
 package io.github.rxue.investment.portfolio.xirr;
 
+import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
 import io.github.rxue.investment.portfolio.money.Util;
 import io.github.rxue.investment.portfolio.holdings.*;
+import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatcher;
 import io.github.rxue.investment.portfolio.transaction.Deposit;
 import io.github.rxue.investment.portfolio.transaction.Trade;
 import io.github.rxue.investment.portfolio.transaction.Transaction;
@@ -18,7 +20,7 @@ public class XIRRCalculator {
         this.holdingsGenerator = holdingsGenerator;
     }
     public XIRRCalculator() {
-        this(new HoldingsGenerator());
+        this(new HoldingsGenerator(new TradeLotsMatcher(), new MarketQuoteFetcher()));
     }
 
     public XIRRResult calculate(List<Transaction> transactions) {
@@ -45,7 +47,7 @@ public class XIRRCalculator {
                 .filter(Trade.class::isInstance)
                 .map(Trade.class::cast)
                 .toList();
-        List<Holding> holdings = holdingsGenerator.generate(trades, OptionalField.MARKET_VALUE_IN_EURO);
+        List<Holding> holdings = holdingsGenerator.generate(trades, new Fields(List.of(OptionalField.MARKET_VALUE_IN_EURO),null));
         BigDecimal remainingCash = transactions.stream()
                 .map(Transaction::moneyAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

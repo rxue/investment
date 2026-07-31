@@ -2,6 +2,7 @@ package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.lotsmatching.Lot;
 import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
+import io.github.rxue.investment.portfolio.money.Price;
 import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatcher;
 import io.github.rxue.investment.portfolio.transaction.Trade;
 
@@ -12,35 +13,43 @@ public class HoldingsGenerator {
     private final TradeLotsMatcher tradeLotsMatcher;
     private final MarketQuoteFetcher marketQuoteFetcher;
     static final Set<Field> POST_CALCULATED_FIELDS = Set.of(OptionalField.PORTFOLIO_WEIGHT);
-    private HoldingsGenerator(TradeLotsMatcher tradeLotsMatcher, MarketQuoteFetcher marketQuoteFetcher) {
+    public HoldingsGenerator(TradeLotsMatcher tradeLotsMatcher, MarketQuoteFetcher marketQuoteFetcher) {
         this.tradeLotsMatcher = tradeLotsMatcher;
         this.marketQuoteFetcher = marketQuoteFetcher;
-    }
-
-    public HoldingsGenerator() {
-        this(new TradeLotsMatcher(), new MarketQuoteFetcher());
     }
 
     /**
      * corner case: field, percentage of portfolio, has dependency on the total market value of the whole holdings, thus needs to calculated after all other fields are calculated
      *
      * @param trades
-     * @param optionalFields
+     * @param fields
      * @return
      */
-    public List<Holding> generate(List<Trade> trades, OptionalField... optionalFields) {
+    public List<Holding> generate(List<Trade> trades, Fields fields) {
         Map<String,List<Lot.Buy>> unrealizedLotsMap = tradeLotsMatcher.matchInFifo(trades, Map.of())
                 .getUnrealizedLotsMap();
-        List<OptionalField> commonOptionalFields = Arrays.stream(optionalFields)
-                .filter(((Predicate<OptionalField>) POST_CALCULATED_FIELDS::contains).negate())
-                .toList();
+        List<OptionalField> commonOptionalFields = fields.commonOptionalFields();
         HoldingBuilderDirector holdingBuilderDirector = new HoldingBuilderDirector(commonOptionalFields, null, marketQuoteFetcher);
         List<Holding.Builder> holdingBuilders = unrealizedLotsMap.entrySet().stream()
                 .map(holdingBuilderDirector::direct)
                 .toList();
+        Field sortBy = fields.sortBy();
+        Comparator<Holding> comparator = sortBy == null
+                ? (a, b) -> 0
+                : Comparator.comparing(holding -> sortKey(holding, sortBy), Comparator.nullsLast(Comparator.naturalOrder()));
         return holdingBuilders.stream()
                 .map(Holding.Builder::build)
+                .sorted(comparator)
                 .toList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Comparable<Object> sortKey(Holding holding, Field field) {
+        Object value = holding.value(field);
+        if (value instanceof Price price) {
+            value = price.value();
+        }
+        return (Comparable<Object>) value;
     }
 
  }

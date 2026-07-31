@@ -1,5 +1,7 @@
 package io.github.rxue.investment.adapter.op;
 
+import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
+import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatcher;
 import io.github.rxue.investment.portfolio.transaction.Trade;
 import io.github.rxue.investment.portfolio.holdings.*;
 
@@ -16,20 +18,21 @@ public class OPHoldingsGenerator {
         this.holdingsGenerator = holdingsGenerator;
     }
     public OPHoldingsGenerator() {
-        this(new OPTransactionExtractor(), new HoldingsGenerator());
+        this(new OPTransactionExtractor(), new HoldingsGenerator(new TradeLotsMatcher(), new MarketQuoteFetcher()));
     }
 
-    public List<Holding> generate(List<InputStream> csvPaths, Set<String> optionalFieldNames) {
+    public List<Holding> generate(List<InputStream> csvPaths, Set<String> optionalFieldNames, String sortByField) {
         List<Trade> trades = opTransactionExtractor.extract(csvPaths).stream()
                 .map(OPTransaction::toTransaction)
                 .filter(Trade.class::isInstance)
                 .map(Trade.class::cast)
                 .toList();
-        return holdingsGenerator.generate(trades, getAllOptionalFields(optionalFieldNames));
+        return holdingsGenerator.generate(trades, getFields(optionalFieldNames, sortByField));
     }
-    private static OptionalField[] getAllOptionalFields(Set<String> optionalFieldNames) {
-        return optionalFieldNames.stream()
+    private static Fields getFields(Set<String> optionalFieldNames, String sortByField) {
+        List<OptionalField> optionalFiels = optionalFieldNames.stream()
                 .map(OptionalField::valueOf)
-                .toArray(OptionalField[]::new);
+                .toList();
+        return new Fields(optionalFiels, OptionalField.valueOf(sortByField));
     }
 }
