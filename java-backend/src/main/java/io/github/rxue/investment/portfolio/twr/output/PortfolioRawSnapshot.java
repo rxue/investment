@@ -21,7 +21,7 @@ public class PortfolioRawSnapshot {
         this.date = date;
         this.cashInEuro = cashInEuro;
         this.unrealizedLots = unrealizedLots;
-        this.hodlingBuilderDirector = new HoldingBuilderDirector(List.of(OptionalField.MARKET_VALUE_IN_EURO), date, marketQuoteFetcher);
+        this.hodlingBuilderDirector = new HoldingBuilderDirector(List.of(OptionalField.REPORT_MARKET_VALUE), date, marketQuoteFetcher);
     }
 
     public BigDecimal getCashInEuro() {

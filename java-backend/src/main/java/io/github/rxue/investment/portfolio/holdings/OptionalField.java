@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 public enum OptionalField implements Field {
     PRICE(Price.class, null),
     PRICE_IN_EURO(Price.class, null),
-    MARKET_VALUE_IN_EURO(BigDecimal.class, null),
+    REPORT_MARKET_VALUE(BigDecimal.class, null),
     COST(BigDecimal.class, null),
     TRAILING_PE(BigDecimal.class, "trailingPE"),
     DAILY_CHANGE_PERCENT(Percentage.class, "regularMarketChangePercent"),
-    PORTFOLIO_WEIGHT(Double.class, null);
+    PORTFOLIO_WEIGHT(Percentage.class, null);
 
     private final Class<?> type;
     private final String yahooMetricName;

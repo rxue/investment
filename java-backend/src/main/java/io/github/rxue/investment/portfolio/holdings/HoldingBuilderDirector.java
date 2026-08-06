@@ -24,25 +24,23 @@ public class HoldingBuilderDirector {
     }
 
     public Holding.Builder direct(Map.Entry<String,List<Lot.Buy>> securityIdToUnrealizedLots) {
-        Holding.Builder builder = new Holding.Builder(optionalFields);
         final String securityId = securityIdToUnrealizedLots.getKey();
-        builder.set(CompulsoryField.COMPANY_ID, securityId)
-                .set(CompulsoryField.POSITION, securityIdToUnrealizedLots.getValue().stream().mapToInt(Lot.Buy::shareAmount).sum());
+        Holding.Builder builder = new Holding.Builder(securityId, securityIdToUnrealizedLots.getValue().stream().mapToInt(Lot.Buy::shareAmount).sum());
         if (optionalFields.contains(OptionalField.PRICE)) {
             builder.set(OptionalField.PRICE, doGetPrice(securityId));
         }
         boolean needsPriceInEuro = optionalFields.contains(OptionalField.PRICE_IN_EURO)
-                || optionalFields.contains(OptionalField.MARKET_VALUE_IN_EURO);
+                || optionalFields.contains(OptionalField.REPORT_MARKET_VALUE);
         if (needsPriceInEuro) {
             priceInEuro = doGetPriceInEuro(securityId);
             if (optionalFields.contains(OptionalField.PRICE_IN_EURO)) {
                 builder.set(OptionalField.PRICE_IN_EURO, priceInEuro);
             }
-            if (optionalFields.contains(OptionalField.MARKET_VALUE_IN_EURO)) {
+            if (optionalFields.contains(OptionalField.REPORT_MARKET_VALUE)) {
                 BigDecimal marketValueInEuro = priceInEuro.value()
                         .multiply(BigDecimal.valueOf(builder.<Integer>value(CompulsoryField.POSITION)))
                         .setScale(2, RoundingMode.HALF_UP);
-                builder.set(OptionalField.MARKET_VALUE_IN_EURO, marketValueInEuro);
+                builder.set(OptionalField.REPORT_MARKET_VALUE, marketValueInEuro);
             }
         }
         if (optionalFields.contains(OptionalField.COST)) {
@@ -54,6 +52,7 @@ public class HoldingBuilderDirector {
         setFundamentalMetricsFields(builder, securityId);
         return builder;
     }
+
     private void setFundamentalMetricsFields(Holding.Builder holdingBuilder, String securityId) {
         Map<String,Object> fetchedMetrics = marketQuoteFetcher.getFundamentals(securityId, getFundamentalMetrics());
         for (OptionalField field : optionalFields) {

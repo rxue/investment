@@ -15,13 +15,9 @@ class HoldingTest {
 
     @Test
     void two_holdings_built_with_the_same_fields_and_values_are_equal() {
-        Holding holding1 = new Holding.Builder(List.of(OptionalField.MARKET_VALUE_IN_EURO))
-                .set(CompulsoryField.COMPANY_ID, "PFE")
-                .set(CompulsoryField.POSITION, 30)
+        Holding holding1 = new Holding.Builder("PFE", 30)
                 .build();
-        Holding holding2 = new Holding.Builder(List.of(OptionalField.MARKET_VALUE_IN_EURO))
-                .set(CompulsoryField.COMPANY_ID, "PFE")
-                .set(CompulsoryField.POSITION, 30)
+        Holding holding2 = new Holding.Builder("PFE", 30)
                 .build();
 
         assertEquals(holding1, holding2);
@@ -30,13 +26,9 @@ class HoldingTest {
 
     @Test
     void holdings_with_different_values_are_not_equal() {
-        Holding holding1 = new Holding.Builder(List.of(OptionalField.MARKET_VALUE_IN_EURO))
-                .set(CompulsoryField.COMPANY_ID, "PFE")
-                .set(CompulsoryField.POSITION, 30)
+        Holding holding1 = new Holding.Builder("PFE", 30)
                 .build();
-        Holding holding2 = new Holding.Builder(List.of(OptionalField.MARKET_VALUE_IN_EURO))
-                .set(CompulsoryField.COMPANY_ID, "STZ")
-                .set(CompulsoryField.POSITION, 4)
+        Holding holding2 = new Holding.Builder("STZ", 4)
                 .build();
 
         assertNotEquals(holding1, holding2);
@@ -44,13 +36,10 @@ class HoldingTest {
 
     @Test
     void calling_set_then_build_twice_on_the_same_builder_produces_two_different_holdings() {
-        Holding.Builder builder = new Holding.Builder(List.of(OptionalField.MARKET_VALUE_IN_EURO))
-                .set(CompulsoryField.COMPANY_ID, "PFE")
-                .set(CompulsoryField.POSITION, 30);
-
-        Holding holding1 = builder.set(OptionalField.MARKET_VALUE_IN_EURO, BigDecimal.valueOf(637.16))
+        Holding.Builder builder = new Holding.Builder("PFE",30);
+        Holding holding1 = builder.set(OptionalField.REPORT_MARKET_VALUE, BigDecimal.valueOf(637.16))
                 .build();
-        Holding holding2 = builder.set(OptionalField.MARKET_VALUE_IN_EURO, BigDecimal.valueOf(634.06))
+        Holding holding2 = builder.set(OptionalField.REPORT_MARKET_VALUE, BigDecimal.valueOf(634.06))
                 .build();
 
         assertNotEquals(holding1, holding2);

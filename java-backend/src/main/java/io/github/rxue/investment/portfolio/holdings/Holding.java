@@ -17,7 +17,6 @@ public class Holding {
 
     @SuppressWarnings("unchecked")
     public <T> T value(Field field) {
-        requireKnownField(fieldValues, field);
         return (T) field.type().cast(fieldValues.get(field));
     }
     @Override
@@ -30,38 +29,36 @@ public class Holding {
         return fieldValues.hashCode();
     }
 
-    private static void requireKnownField(Map<Field, Object> fieldValues, Field field) {
-        if (!fieldValues.containsKey(field)) {
-            throw new IllegalArgumentException("Unknown field: " + field);
-        }
-    }
 
     public static class Builder {
         private final LinkedHashMap<Field, Object> fieldValues;
-        public Builder(List<OptionalField> optionalFields) {
+        public Builder(String companyId, int position) {
             this.fieldValues = new LinkedHashMap<>();
-            for (CompulsoryField field : CompulsoryField.values()) {
-                fieldValues.put(field, null);
-            }
-            for (OptionalField field : optionalFields) {
-                fieldValues.put(field, null);
-            }
+            this.fieldValues.put(CompulsoryField.COMPANY_ID, companyId);
+            this.fieldValues.put(CompulsoryField.POSITION, position);
         }
 
         public Builder set(Field field, Object value) {
-            requireKnownField(fieldValues, field);
+            validateType(field, value);
             fieldValues.put(field, value);
             return this;
         }
 
         @SuppressWarnings("unchecked")
         public <T> T value(Field field) {
-            requireKnownField(fieldValues, field);
             return (T) field.type().cast(fieldValues.get(field));
         }
 
         public Holding build() {
             return new Holding(this);
+        }
+
+        private static void validateType(Field field, Object value) {
+            if (value != null && !field.type().isInstance(value)) {
+                throw new IllegalArgumentException(
+                        "Invalid value for field " + field + ": expected " + field.type().getName()
+                                + " but got " + value.getClass().getName());
+            }
         }
     }
 }

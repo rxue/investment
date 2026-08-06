@@ -16,7 +16,7 @@ import java.util.List;
 record AssumedLiquidation(List<Holding> holdings, BigDecimal remainingCash) {
     CashFlowInput toCashFlowInput() {
         long totalMarketValueInEuroCent = holdings.stream()
-                .mapToLong(h -> Util.toValueInCent(h.value(OptionalField.MARKET_VALUE_IN_EURO)))
+                .mapToLong(h -> Util.toValueInCent(h.value(OptionalField.REPORT_MARKET_VALUE)))
                 .sum() + Util.toValueInCent(remainingCash);
         return new CashFlowInput(LocalDate.now(), CashFlowType.ASSUMED_LIQUIDATION, -totalMarketValueInEuroCent);
     }

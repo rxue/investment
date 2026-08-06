@@ -20,8 +20,8 @@ class HoldingGeneratorDirectorIT {
     @Test
     void direct_to_set_market_value_as_rounded() {
         List<Lot.Buy> unrealizedLots = List.of(new Lot.Buy(LocalDate.of(2025, 8, 27), 30, 62570L));
-        HoldingBuilderDirector out1 = new HoldingBuilderDirector(List.of(OptionalField.MARKET_VALUE_IN_EURO), date, new MarketQuoteFetcher());
+        HoldingBuilderDirector out1 = new HoldingBuilderDirector(List.of(OptionalField.REPORT_MARKET_VALUE), date, new MarketQuoteFetcher());
         Holding holdingOnOneDate = out1.direct(Map.entry("PFE", unrealizedLots)).build();
-        assertEquals(BigDecimal.valueOf(666.03), holdingOnOneDate.<BigDecimal>value(OptionalField.MARKET_VALUE_IN_EURO));
+        assertEquals(BigDecimal.valueOf(666.03), holdingOnOneDate.<BigDecimal>value(OptionalField.REPORT_MARKET_VALUE));
     }
 }

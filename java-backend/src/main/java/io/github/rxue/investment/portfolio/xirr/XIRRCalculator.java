@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XIRRCalculator {
-    private final HoldingsGenerator holdingsGenerator;
+    private final HoldingsGenerator newHoldingsGenerator;
 
     private XIRRCalculator(HoldingsGenerator holdingsGenerator) {
-        this.holdingsGenerator = holdingsGenerator;
+        this.newHoldingsGenerator = holdingsGenerator;
     }
     public XIRRCalculator() {
-        this(new HoldingsGenerator(new TradeLotsMatcher(), new MarketQuoteFetcher()));
+        this(new LegacyHoldingsGenerator(new TradeLotsMatcher(), new MarketQuoteFetcher()));
     }
 
     public XIRRResult calculate(List<Transaction> transactions) {
@@ -47,7 +47,7 @@ public class XIRRCalculator {
                 .filter(Trade.class::isInstance)
                 .map(Trade.class::cast)
                 .toList();
-        List<Holding> holdings = holdingsGenerator.generate(trades, new Fields(List.of(OptionalField.MARKET_VALUE_IN_EURO),null));
+        List<Holding> holdings = newHoldingsGenerator.generate(trades, new Fields(List.of(OptionalField.REPORT_MARKET_VALUE),null));
         BigDecimal remainingCash = transactions.stream()
                 .map(Transaction::moneyAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

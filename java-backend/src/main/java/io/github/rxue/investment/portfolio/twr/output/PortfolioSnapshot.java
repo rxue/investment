@@ -10,7 +10,7 @@ import java.util.List;
 public record PortfolioSnapshot(LocalDate date, long cashInEuroCent, List<Holding> holdings) {
     long valueInEuroCent() {
         return cashInEuroCent + holdings.stream()
-                .mapToLong(holding -> Util.toValueInCent(holding.value(OptionalField.MARKET_VALUE_IN_EURO)))
+                .mapToLong(holding -> Util.toValueInCent(holding.value(OptionalField.REPORT_MARKET_VALUE)))
                 .sum();
     }
 }

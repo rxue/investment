@@ -19,6 +19,11 @@ public class TradeLotsMatchResult {
                 .filter(e -> !e.getValue().unrealizedLots().isEmpty())
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, e -> e.getValue().unrealizedLots()));
     }
+    public Map<String,Integer> getPositions() {
+        return getUnrealizedLotsMap().entrySet().stream()
+                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey,
+                        e -> e.getValue().stream().mapToInt(Lot.Buy::shareAmount).sum()));
+    }
 
     public static class Generator {
         private final Map<String, MatchResult> securityToMatchResult = new HashMap<>();

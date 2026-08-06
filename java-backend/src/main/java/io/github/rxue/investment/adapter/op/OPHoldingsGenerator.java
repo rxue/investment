@@ -18,7 +18,7 @@ public class OPHoldingsGenerator {
         this.holdingsGenerator = holdingsGenerator;
     }
     public OPHoldingsGenerator() {
-        this(new OPTransactionExtractor(), new HoldingsGenerator(new TradeLotsMatcher(), new MarketQuoteFetcher()));
+        this(new OPTransactionExtractor(), new HoldingsFieldsGenerator(new TradeLotsMatcher(), new MarketQuoteFetcher(), null));
     }
 
     public List<Holding> generate(List<InputStream> csvPaths, Set<String> optionalFieldNames, String sortByField) {
@@ -33,6 +33,6 @@ public class OPHoldingsGenerator {
         List<OptionalField> optionalFiels = optionalFieldNames.stream()
                 .map(OptionalField::valueOf)
                 .toList();
-        return new Fields(optionalFiels, OptionalField.valueOf(sortByField));
+        return new Fields(optionalFiels, sortByField == null ? null : OptionalField.valueOf(sortByField));
     }
 }

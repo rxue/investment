@@ -11,4 +11,9 @@ public record Fields(List<OptionalField> optionalFields, Field sortBy) {
                 .filter(((Predicate<OptionalField>) POST_CALCULATED_FIELDS::contains).negate())
                 .toList();
     }
+    List<OptionalField> getPostCalculatedFields() {
+        return optionalFields.stream()
+                .filter(((Predicate<OptionalField>) POST_CALCULATED_FIELDS::contains))
+                .toList();
+    }
 }
