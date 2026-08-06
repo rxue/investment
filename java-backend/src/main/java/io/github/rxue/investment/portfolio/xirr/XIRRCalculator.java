@@ -20,7 +20,7 @@ public class XIRRCalculator {
         this.newHoldingsGenerator = holdingsGenerator;
     }
     public XIRRCalculator() {
-        this(new LegacyHoldingsGenerator(new TradeLotsMatcher(), new MarketQuoteFetcher()));
+        this(new HoldingsFieldsGenerator(new TradeLotsMatcher(), new MarketQuoteFetcher(), null));
     }
 
     public XIRRResult calculate(List<Transaction> transactions) {

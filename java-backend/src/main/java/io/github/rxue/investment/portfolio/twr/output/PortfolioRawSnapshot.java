@@ -3,7 +3,7 @@ package io.github.rxue.investment.portfolio.twr.output;
 import io.github.rxue.investment.lotsmatching.Lot;
 import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
 import io.github.rxue.investment.portfolio.holdings.Holding;
-import io.github.rxue.investment.portfolio.holdings.HoldingBuilderDirector;
+import io.github.rxue.investment.portfolio.holdings.HoldingBuildersDirector;
 import io.github.rxue.investment.portfolio.holdings.OptionalField;
 import io.github.rxue.investment.vo.Util;
 
@@ -16,12 +16,12 @@ public class PortfolioRawSnapshot {
     private final LocalDate date;
     private final BigDecimal cashInEuro;
     private final Map<String, List<Lot.Buy>> unrealizedLots;
-    private final HoldingBuilderDirector hodlingBuilderDirector;
+    private final HoldingBuildersDirector holdingsBuildersDirector;
     public PortfolioRawSnapshot(LocalDate date, BigDecimal cashInEuro, Map<String,List<Lot.Buy>> unrealizedLots, MarketQuoteFetcher marketQuoteFetcher) {
         this.date = date;
         this.cashInEuro = cashInEuro;
         this.unrealizedLots = unrealizedLots;
-        this.hodlingBuilderDirector = new HoldingBuilderDirector(List.of(OptionalField.REPORT_MARKET_VALUE), date, marketQuoteFetcher);
+        this.holdingsBuildersDirector = new HoldingBuildersDirector(marketQuoteFetcher, date);
     }
 
     public BigDecimal getCashInEuro() {
@@ -33,10 +33,7 @@ public class PortfolioRawSnapshot {
     }
 
     public PortfolioSnapshot toSnapshot() {
-        List<Holding> holdings = unrealizedLots.entrySet().stream()
-                .map(hodlingBuilderDirector::direct)
-                .map(Holding.Builder::build)
-                .toList();
+        List<Holding> holdings = holdingsBuildersDirector.direct(unrealizedLots, List.of(OptionalField.REPORT_MARKET_VALUE));
         return new PortfolioSnapshot(date, Util.toValueInCent(cashInEuro), holdings);
     }
 
