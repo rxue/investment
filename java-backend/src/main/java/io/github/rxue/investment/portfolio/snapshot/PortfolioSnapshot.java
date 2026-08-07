@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record PortfolioSnapshot(LocalDate date, BigDecimal cashInEuro, List<Holding> holdings) {
-    public long valueInEuroCent() {
+    public long liquidityInEuroCent() {
         return Util.toValueInCent(cashInEuro) + holdings.stream()
                 .mapToLong(holding -> Util.toValueInCent(holding.value(OptionalField.REPORT_MARKET_VALUE)))
                 .sum();
