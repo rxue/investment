@@ -7,6 +7,7 @@ import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatchResul
 import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatcher;
 import io.github.rxue.investment.portfolio.transaction.Deposit;
 import io.github.rxue.investment.portfolio.transaction.Transaction;
+import io.github.rxue.investment.portfolio.snapshot.PortfolioSnapshot;
 import io.github.rxue.investment.portfolio.twr.output.*;
 
 import java.math.BigDecimal;

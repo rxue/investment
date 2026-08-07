@@ -46,7 +46,7 @@ public class HoldingBuildersDirector {
                             .generate(companyIds);
                 }
             }
-            set(holdingBuilders, optionalField, values);
+            directSet(holdingBuilders, optionalField, values);
         }
         return holdingBuilders.stream()
                 .map(Holding.Builder::build)
@@ -60,7 +60,7 @@ public class HoldingBuildersDirector {
         }
         return holdingBuilders;
     }
-    private static void set(List<Holding.Builder> holdingBuilders, OptionalField field, Map<String,Object> values) {
+    private static void directSet(List<Holding.Builder> holdingBuilders, OptionalField field, Map<String,Object> values) {
         for (Holding.Builder holdingBuilder : holdingBuilders) {
             String companyId = holdingBuilder.value(CompulsoryField.COMPANY_ID);
             holdingBuilder.set(field, values.get(companyId));

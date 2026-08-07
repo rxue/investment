@@ -1,6 +1,7 @@
 package io.github.rxue.investment.portfolio.xirr;
 
 import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
+import io.github.rxue.investment.portfolio.snapshot.PortfolioSnapshot;
 import io.github.rxue.investment.vo.Util;
 import io.github.rxue.investment.portfolio.holdings.*;
 import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatcher;
@@ -10,6 +11,7 @@ import io.github.rxue.investment.portfolio.transaction.Transaction;
 import org.decampo.xirr.Xirr;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +40,11 @@ public class XIRRCalculator {
                 .map(Deposit.class::cast)
                 .map(cf -> new CashFlowInput(cf.date(), CashFlowType.DEPOSIT, Util.toValueInCent(cf.moneyAmount())))
                 .forEach(result::add);
-        result.add(getAssumedLiquidation(transactions).toCashFlowInput());
+        result.add(toCashFlowInput(transactions));
         return result;
     }
 
-    private AssumedLiquidation getAssumedLiquidation(List<Transaction> transactions) {
+    private CashFlowInput toCashFlowInput(List<Transaction> transactions) {
         List<Trade> trades = transactions.stream()
                 .filter(Trade.class::isInstance)
                 .map(Trade.class::cast)
@@ -51,6 +53,7 @@ public class XIRRCalculator {
         BigDecimal remainingCash = transactions.stream()
                 .map(Transaction::moneyAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return new AssumedLiquidation(holdings, remainingCash);
+        PortfolioSnapshot portfolioSnapshot = new PortfolioSnapshot(LocalDate.now(), Util.toValueInCent(remainingCash), holdings);
+        return new CashFlowInput(portfolioSnapshot.date(), CashFlowType.ASSUMED_LIQUIDATION, 0-portfolioSnapshot.valueInEuroCent());
     }
 }

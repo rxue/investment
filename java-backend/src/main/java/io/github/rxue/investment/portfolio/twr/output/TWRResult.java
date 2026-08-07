@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public record TWRResult(List<SubPeriodPortfolioSnapshots> subPeriodPortfoliosSnapshotsList) {
-    double value() {
+    public double value() {
         double[] returns = subPeriodPortfoliosSnapshotsList.stream()
                 .mapToDouble(subPeriodSnapshots -> {
                     Pair<Long,Long> values = subPeriodSnapshots.finalInput();

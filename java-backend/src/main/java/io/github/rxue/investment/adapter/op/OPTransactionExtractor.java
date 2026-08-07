@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-class OPTransactionExtractor {
+public class OPTransactionExtractor {
     private static List<OPTransaction> extractPaths(InputStream inputStream) throws IOException {
         final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         final Charset encoding = Charset.forName("ISO-8859-1");
