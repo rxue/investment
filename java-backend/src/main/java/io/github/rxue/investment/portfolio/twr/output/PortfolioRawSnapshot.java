@@ -6,7 +6,6 @@ import io.github.rxue.investment.portfolio.holdings.Holding;
 import io.github.rxue.investment.portfolio.holdings.HoldingBuildersDirector;
 import io.github.rxue.investment.portfolio.holdings.OptionalField;
 import io.github.rxue.investment.portfolio.snapshot.PortfolioSnapshot;
-import io.github.rxue.investment.vo.Util;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,7 +34,7 @@ public class PortfolioRawSnapshot {
 
     public PortfolioSnapshot toSnapshot() {
         List<Holding> holdings = holdingsBuildersDirector.direct(unrealizedLots, List.of(OptionalField.REPORT_MARKET_VALUE));
-        return new PortfolioSnapshot(date, Util.toValueInCent(cashInEuro), holdings);
+        return new PortfolioSnapshot(date, cashInEuro, holdings);
     }
 
 }

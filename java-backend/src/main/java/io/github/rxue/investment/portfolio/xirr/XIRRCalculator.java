@@ -53,7 +53,7 @@ public class XIRRCalculator {
         BigDecimal remainingCash = transactions.stream()
                 .map(Transaction::moneyAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        PortfolioSnapshot portfolioSnapshot = new PortfolioSnapshot(LocalDate.now(), Util.toValueInCent(remainingCash), holdings);
+        PortfolioSnapshot portfolioSnapshot = new PortfolioSnapshot(LocalDate.now(), remainingCash, holdings);
         return new CashFlowInput(portfolioSnapshot.date(), CashFlowType.ASSUMED_LIQUIDATION, 0-portfolioSnapshot.valueInEuroCent());
     }
 }

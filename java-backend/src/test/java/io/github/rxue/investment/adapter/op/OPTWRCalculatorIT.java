@@ -34,29 +34,29 @@ class OPTWRCalculatorIT {
         List<SubPeriodPortfolioSnapshots> subPeriodSnapshots = result.subPeriodPortfoliosSnapshotsList();
         assertEquals(2, subPeriodSnapshots.size());
 
-        assertEquivalent(new PortfolioSnapshot(LocalDate.of(2025, 7, 21), 7000*100L, List.of()), subPeriodSnapshots.get(0).startSnapshot());
+        assertEquivalent(new PortfolioSnapshot(LocalDate.of(2025, 7, 21), BigDecimal.valueOf(7000*100L, 2), List.of()), subPeriodSnapshots.get(0).startSnapshot());
 
         Holding.Builder pfeHoldingBuilder = new Holding.Builder("PFE", 30);
         Holding pfeHolding1 = pfeHoldingBuilder.set(OptionalField.REPORT_MARKET_VALUE, BigDecimal.valueOf(637.16))
                 .build();
         long expectedFirstSubPeriodEndCash = 7000*100-89999-62570;
-        assertEquivalent(new PortfolioSnapshot(LocalDate.of(2025, 8, 31), expectedFirstSubPeriodEndCash, List.of(pfeHolding1)), subPeriodSnapshots.get(0).endSnapshot());
+        assertEquivalent(new PortfolioSnapshot(LocalDate.of(2025, 8, 31), BigDecimal.valueOf(expectedFirstSubPeriodEndCash, 2), List.of(pfeHolding1)), subPeriodSnapshots.get(0).endSnapshot());
         //
         Holding pfeHolding2Start = pfeHoldingBuilder.set(OptionalField.REPORT_MARKET_VALUE, BigDecimal.valueOf(634.06))
                 .build();
         long expectedSecondPeriodStartCash = expectedFirstSubPeriodEndCash + 8000*100;
-        assertEquivalent(new PortfolioSnapshot(LocalDate.of(2025, 9, 1), expectedSecondPeriodStartCash, List.of(pfeHolding2Start)), subPeriodSnapshots.get(1).startSnapshot());
+        assertEquivalent(new PortfolioSnapshot(LocalDate.of(2025, 9, 1), BigDecimal.valueOf(expectedSecondPeriodStartCash, 2), List.of(pfeHolding2Start)), subPeriodSnapshots.get(1).startSnapshot());
         Holding pfeHolding2End = pfeHoldingBuilder.set(OptionalField.REPORT_MARKET_VALUE, new BigDecimal("638.20"))
                 .build();
         Holding stzHolding = new Holding.Builder("STZ", 4)
                 .set(OptionalField.REPORT_MARKET_VALUE, BigDecimal.valueOf(502.84))
                 .build();
-        assertEquivalent(new PortfolioSnapshot(LocalDate.of(2025, 9, 3), expectedSecondPeriodStartCash - 52566, List.of(stzHolding,pfeHolding2End)), subPeriodSnapshots.get(1).endSnapshot());
+        assertEquivalent(new PortfolioSnapshot(LocalDate.of(2025, 9, 3), BigDecimal.valueOf(expectedSecondPeriodStartCash - 52566, 2), List.of(stzHolding,pfeHolding2End)), subPeriodSnapshots.get(1).endSnapshot());
 
     }
     private void assertEquivalent(PortfolioSnapshot expected, PortfolioSnapshot actual) {
         assertEquals(expected.date(), actual.date());
-        assertEquals(expected.cashInEuroCent(), actual.cashInEuroCent());
+        assertEquals(0, expected.cashInEuro().compareTo(actual.cashInEuro()));
         assertEquals(sortedByCompanyId(expected.holdings()), sortedByCompanyId(actual.holdings()));
     }
 
