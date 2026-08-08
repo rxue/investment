@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public enum OptionalField implements Field {
     PRICE(Price.class, null),
-    PRICE_IN_EURO(Price.class, null),
+    REPORT_PRICE(Price.class, null),
     REPORT_MARKET_VALUE(BigDecimal.class, null),
     COST(BigDecimal.class, null),
     TRAILING_PE(BigDecimal.class, "trailingPE"),
@@ -17,7 +17,7 @@ public enum OptionalField implements Field {
     private final Class<?> type;
     private final String yahooMetricName;
 
-    private OptionalField(Class<?> type, String yahooMetricName) {
+    OptionalField(Class<?> type, String yahooMetricName) {
         this.type = type;
         this.yahooMetricName = yahooMetricName;
     }

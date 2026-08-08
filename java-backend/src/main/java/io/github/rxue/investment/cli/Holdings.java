@@ -78,7 +78,7 @@ class Holdings implements Runnable {
                             Price price = (Price) value;
                             yield price.value().setScale(2, RoundingMode.HALF_UP) + " " + price.currency();
                         }
-                        case OptionalField.PRICE_IN_EURO -> ((Price) value).value().setScale(2, RoundingMode.HALF_UP);
+                        case OptionalField.REPORT_PRICE -> ((Price) value).value().setScale(2, RoundingMode.HALF_UP);
                         default -> switch (value) {
                             case null -> " - ";
                             case Percentage percentage -> percentage.presentedValue();

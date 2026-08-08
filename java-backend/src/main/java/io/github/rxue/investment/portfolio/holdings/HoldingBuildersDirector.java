@@ -2,10 +2,7 @@ package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.lotsmatching.Lot;
 import io.github.rxue.investment.marketquote.MarketQuoteFetcher;
-import io.github.rxue.investment.portfolio.holdings.fieldgenerator.FieldValuesGenerator;
-import io.github.rxue.investment.portfolio.holdings.fieldgenerator.PortfolioWeightsGenerator;
-import io.github.rxue.investment.portfolio.holdings.fieldgenerator.PricesGenerator;
-import io.github.rxue.investment.portfolio.holdings.fieldgenerator.ReportMarketValuesGenerator;
+import io.github.rxue.investment.portfolio.holdings.fieldgenerator.*;
 import io.github.rxue.investment.portfolio.tradelotsmatching.TradeLotsMatchResult;
 
 import java.math.BigDecimal;
@@ -24,7 +21,7 @@ public class HoldingBuildersDirector {
     }
 
     public List<Holding> direct(Map<String, List<Lot.Buy>> readyLotsMatchResult, List<OptionalField> optionalFields) {
-        Map<String, Integer> positions = TradeLotsMatchResult.toPositions(readyLotsMatchResult);
+        final Map<String, Integer> positions = TradeLotsMatchResult.toPositions(readyLotsMatchResult);
         List<String> companyIds = List.copyOf(positions.keySet());
         List<Holding.Builder> holdingBuilders = initHoldingBuilders(positions);
         Map<String, BigDecimal> reportMarketValues = Map.of();
@@ -35,15 +32,26 @@ public class HoldingBuildersDirector {
                     values = new PricesGenerator(date, marketQuoteFetcher)
                             .generate(companyIds);
                 }
+                case OptionalField.REPORT_PRICE -> {
+                    values = new ReportPricesGenerator(date, marketQuoteFetcher)
+                            .generate(companyIds);
+                }
+                case OptionalField.COST -> {
+                    values = new CostsGenerator(readyLotsMatchResult)
+                            .generate(companyIds);
+                }
                 case OptionalField.REPORT_MARKET_VALUE -> {
-                    reportMarketValues = new ReportMarketValuesGenerator(date, marketQuoteFetcher, positions)
-                            .generateGeneric(companyIds);
+                    if (reportMarketValues.isEmpty())
+                        reportMarketValues = new ReportMarketValuesGenerator(date, marketQuoteFetcher, positions)
+                                .generateGeneric(companyIds);
                     values = FieldValuesGenerator.toNonGeneric(reportMarketValues);
                 }
                 case OptionalField.PORTFOLIO_WEIGHT -> {
-                    values = new PortfolioWeightsGenerator(reportMarketValues,
-                            new ReportMarketValuesGenerator(date, marketQuoteFetcher, positions))
+                    PortfolioWeightsGenerator portfolioWeightsGenerator = new PortfolioWeightsGenerator(reportMarketValues,
+                            new ReportMarketValuesGenerator(date, marketQuoteFetcher, positions));
+                    values = portfolioWeightsGenerator
                             .generate(companyIds);
+                    reportMarketValues = portfolioWeightsGenerator.getMarketValuesInEuro();
                 }
             }
             directSet(holdingBuilders, optionalField, values);
