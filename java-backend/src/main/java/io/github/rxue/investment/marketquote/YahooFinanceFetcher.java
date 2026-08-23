@@ -2,7 +2,6 @@ package io.github.rxue.investment.marketquote;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.rxue.investment.vo.Percentage;
 import io.github.rxue.investment.vo.Price;
 
 import java.io.IOException;
@@ -30,11 +29,13 @@ class YahooFinanceFetcher {
     private static final String CRUMB_URL = "https://query2.finance.yahoo.com/v1/test/getcrumb";
     private static final String MOZILLA_5_0 = "Mozilla/5.0";
 
-    public static final String REGULAR_MARKET_CHANGE_PERCENT = "regularMarketChangePercent";
+    static final String REGULAR_MARKET_CHANGE_PERCENT = "regularMarketChangePercent";
+    static final String RETURN_ON_EQUITY = "returnOnEquity";
+    public static final String DIVIDEND_YIELD = "dividendYield";
     private static final Map<String, String> FUNDAMENTAL_METRIC_TO_SECTION = Map.of(
             "trailingPE", "summaryDetail",
-            "dividendYield", "summaryDetail",
-            "returnOnEquity", "financialData",
+            DIVIDEND_YIELD, "summaryDetail",
+            RETURN_ON_EQUITY, "financialData",
             REGULAR_MARKET_CHANGE_PERCENT, "price"
     );
 
@@ -141,7 +142,7 @@ class YahooFinanceFetcher {
         return crumbResponse.body();
     }
 
-    private long toCentValue(BigDecimal price) {
+    private static long toCentValue(BigDecimal price) {
         return price.movePointRight(2).setScale(0, RoundingMode.HALF_UP).longValueExact();
     }
 
@@ -165,7 +166,6 @@ class YahooFinanceFetcher {
     }
 
     private Map<String, Object> parseFundamentals(JsonNode result, Collection<String> metricNames) {
-        final Set<String> percentageMetrics = Set.of(REGULAR_MARKET_CHANGE_PERCENT);
 
         Map<String, Object> values = new LinkedHashMap<>();
         for (String metricName : metricNames) {
@@ -176,8 +176,8 @@ class YahooFinanceFetcher {
                 values.put(metricName, null);
                 continue;
             }
-            BigDecimal value = valueNode.decimalValue();
-            values.put(metricName, percentageMetrics.contains(metricName) ? new Percentage(value) : value);
+            double value = valueNode.doubleValue();
+            values.put(metricName, value);
         }
         return values;
     }
