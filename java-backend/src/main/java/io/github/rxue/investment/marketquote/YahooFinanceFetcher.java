@@ -72,6 +72,12 @@ class YahooFinanceFetcher {
         return parseCurrentPrice(resultNode);
     }
 
+    /**
+     *
+     * @param symbol
+     * @param metricNames
+     * @return map from metric name to its value, which is the raw value, mostly double
+     */
     public Map<String, Object> getFundamentals(String symbol, Collection<String> metricNames) {
         if (metricNames.isEmpty()) {
             return Map.of();
