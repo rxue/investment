@@ -2,12 +2,9 @@ package io.github.rxue.investment.marketquote;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.rxue.investment.vo.Price;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.CookieManager;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -19,7 +16,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,7 +44,7 @@ class YahooFinanceFetcher {
                 .build();
         this.objectMapper = new ObjectMapper();
     }
-    public Price getCurrentPrice(String companySymbol) {
+    public RawPrice getCurrentPrice(String companySymbol) {
         JsonNode resultNode;
         try {
             String crumb = getCrumb();
@@ -76,9 +72,9 @@ class YahooFinanceFetcher {
      *
      * @param symbol
      * @param metricNames
-     * @return map from metric name to its value, which is the raw value, mostly double
+     * @return map from metric name to its raw value, or null if the metric is not present in the response
      */
-    public Map<String, Object> getFundamentals(String symbol, Collection<String> metricNames) {
+    public Map<String, Double> getFundamentalMetrics(String symbol, Collection<String> metricNames) {
         if (metricNames.isEmpty()) {
             return Map.of();
         }
@@ -107,7 +103,7 @@ class YahooFinanceFetcher {
         return parseFundamentals(resultNode, metricNames);
     }
 
-    public Price getClosePrice(String symbol, LocalDate date) {
+    public RawPrice getClosePrice(String symbol, LocalDate date) {
         JsonNode resultNode;
         try {
             String crumb = getCrumb();
@@ -148,10 +144,6 @@ class YahooFinanceFetcher {
         return crumbResponse.body();
     }
 
-    private static long toCentValue(BigDecimal price) {
-        return price.movePointRight(2).setScale(0, RoundingMode.HALF_UP).longValueExact();
-    }
-
     private HttpResponse<String> send(HttpRequest request) throws IOException {
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -161,19 +153,17 @@ class YahooFinanceFetcher {
         }
     }
 
-    private Price parseCurrentPrice(JsonNode result) {
+    private RawPrice parseCurrentPrice(JsonNode result) {
         JsonNode meta = result.path("meta");
         String currency = meta.path("currency").asText();
-        BigDecimal price = meta.path("regularMarketPrice").decimalValue();
-        JsonNode regularMarketTime = meta.path("regularMarketTime");
-        ZonedDateTime timestamp = Instant.ofEpochSecond(regularMarketTime.asLong())
-                .atZone(ZoneId.of(meta.path("exchangeTimezoneName").asText()));
-        return new Price(toCentValue(price), currency, timestamp);
+        double price = meta.path("regularMarketPrice").doubleValue();
+        long timestamp = meta.path("regularMarketTime").asLong();
+        return new RawPrice(price, currency, timestamp);
     }
 
-    private Map<String, Object> parseFundamentals(JsonNode result, Collection<String> metricNames) {
+    private Map<String, Double> parseFundamentals(JsonNode result, Collection<String> metricNames) {
 
-        Map<String, Object> values = new LinkedHashMap<>();
+        Map<String, Double> values = new LinkedHashMap<>();
         for (String metricName : metricNames) {
             JsonNode valueNode = result.path(FUNDAMENTAL_METRIC_TO_SECTION.get(metricName))
                     .path(metricName)
@@ -188,7 +178,7 @@ class YahooFinanceFetcher {
         return values;
     }
 
-    private Price parseHistoricalPrice(JsonNode result, String symbol, LocalDate date) {
+    private RawPrice parseHistoricalPrice(JsonNode result, String symbol, LocalDate date) {
         String currency = result.path("meta").path("currency").asText();
         ZoneId exchangeZone = ZoneId.of(result.path("meta").path("exchangeTimezoneName").asText());
         JsonNode timestamps = result.path("timestamp");
@@ -204,8 +194,8 @@ class YahooFinanceFetcher {
         if (latestIndex < 0) {
             throw new IllegalArgumentException("No historical price found for company symbol " + symbol + " on or before " + date);
         }
-        BigDecimal price = closes.get(latestIndex).decimalValue();
-        ZonedDateTime timestamp = Instant.ofEpochSecond(timestamps.get(latestIndex).asLong()).atZone(exchangeZone);
-        return new Price(toCentValue(price), currency, timestamp);
+        double price = closes.get(latestIndex).doubleValue();
+        long timestamp = timestamps.get(latestIndex).asLong();
+        return new RawPrice(price, currency, timestamp);
     }
 }

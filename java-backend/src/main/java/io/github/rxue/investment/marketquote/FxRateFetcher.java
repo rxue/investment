@@ -2,7 +2,6 @@ package io.github.rxue.investment.marketquote;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.rxue.investment.vo.FxRate;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -13,7 +12,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.AbstractMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class FxRateFetcher {
     public class FXRateFetcher {
@@ -30,9 +31,9 @@ public class FxRateFetcher {
             this.objectMapper = new ObjectMapper();
         }
 
-        public FxRate fetchFXRateFromEuro(String currency, LocalDate date) {
+        public Map.Entry<String, BigDecimal> getFXRateFromEuro(String currency, LocalDate date) {
             if ("EUR".equals(currency)) {
-                return new FxRate(BigDecimal.ONE, date);
+                return new AbstractMap.SimpleImmutableEntry<>(date.format(DateTimeFormatter.ISO_LOCAL_DATE), BigDecimal.ONE);
             }
             try {
                 HttpResponse<String> response = send(buildRequest(currency.trim().toUpperCase(), date));
@@ -67,7 +68,7 @@ public class FxRateFetcher {
             }
         }
 
-        private FxRate parseLatestRate(String json) throws IOException {
+        private Map.Entry<String, BigDecimal> parseLatestRate(String json) throws IOException {
             JsonNode root = objectMapper.readTree(json);
             JsonNode series = root.path("dataSets").get(0).path("series");
             Iterator<String> seriesKeys = series.fieldNames();
@@ -83,18 +84,18 @@ public class FxRateFetcher {
                 throw new IllegalStateException("No exchange rate observations found in ECB response");
             }
             BigDecimal value = observations.path(String.valueOf(latestIndex)).get(0).decimalValue();
-            LocalDate observationDate = resolveObservationDate(root, latestIndex);
-            return new FxRate(value, observationDate);
+            String observationDateText = resolveObservationDateText(root, latestIndex);
+            return new AbstractMap.SimpleImmutableEntry<>(observationDateText, value);
         }
 
-        private LocalDate resolveObservationDate(JsonNode root, int observationIndex) {
+        private String resolveObservationDateText(JsonNode root, int observationIndex) {
             for (JsonNode dimension : root.path("structure").path("dimensions").path("observation")) {
                 if ("TIME_PERIOD".equals(dimension.path("id").asText())) {
                     JsonNode timePeriodValue = dimension.path("values").get(observationIndex);
                     if (timePeriodValue == null) {
                         throw new IllegalStateException("No TIME_PERIOD value found for observation index " + observationIndex);
                     }
-                    return LocalDate.parse(timePeriodValue.path("id").asText());
+                    return timePeriodValue.path("id").asText();
                 }
             }
             throw new IllegalStateException("No TIME_PERIOD dimension found in ECB response");
