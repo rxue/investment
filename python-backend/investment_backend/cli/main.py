@@ -9,7 +9,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Sequence
 
-from investment.op.transaction import load_transactions
+from investment_backend.op.transaction import load_transactions
 
 
 class Command(StrEnum):
@@ -39,7 +39,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         csv_paths = [str(path) for path in sorted(Path(args.csv_directory).glob("*.csv"))]
         transactions = load_transactions(csv_paths)
         for tr in transactions:
-            print(tr)
+            print(tr.to_transaction())
     else:  # pragma: no cover - guarded by argparse's `required=True`
         parser.error(f"Unknown command: {args.command}")
 
