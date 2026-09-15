@@ -5,8 +5,9 @@ from decimal import Decimal
 from itertools import chain
 from typing import NamedTuple
 
-from investment.portfolio.transaction import Action, Deposit, Dividend, Expense, Trade, Transaction
-from investment_backend.op._ticker_symbol_repository import find_yahoo_ticker_symbol
+from investment.portfolio.transaction import Action, Deposit, Dividend, Trade, Transaction, InvestmentExpense, \
+    NonInvestmentExpense
+from investment_backend.transaction._op._ticker_symbol_repository import find_yahoo_ticker_symbol
 
 # Matches the "O:<ticker> /<shares>" (buy) / "M:<ticker> /<shares>" (sell) prefix OP puts
 # in a trade's message, e.g. "O:PFE US /30" or "M:MRNA /20 578876374313".
@@ -57,7 +58,9 @@ class _OPTransaction(NamedTuple):
             return Deposit(date=self.value_date, money=Decimal(str(self.amount_in_euro)))
         elif self.category == "710" and self.explanation == "ARVOPAPERIT":
             return get_dividend()
-        return Expense(date=self.value_date, money=Decimal(str(self.amount_in_euro)))
+        elif self.category == "730":
+            return InvestmentExpense(date=self.value_date, money=Decimal(str(self.amount_in_euro)))
+        return NonInvestmentExpense(date=self.value_date, money=Decimal(str(self.amount_in_euro)))
 
 def load_transactions(csv_paths:list[str]) -> list[_OPTransaction]:
     def load_from_single_csv(csv_path:str) -> list[_OPTransaction]:

@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from investment.portfolio.transaction import Action, Deposit, Dividend, Trade
 
-from investment_backend.op.transaction import _OPTransaction
+from investment_backend.transaction._op.transaction import _OPTransaction
 
 
 def test_to_transaction_deposit():

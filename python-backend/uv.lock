@@ -395,7 +395,7 @@ wheels = [
 
 [[package]]
 name = "investment-python"
-version = "0.1.0b1"
+version = "0.1.0b7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "matplotlib" },
@@ -403,9 +403,9 @@ dependencies = [
     { name = "requests" },
     { name = "yfinance" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/08/12/28e0e5e6a83f99a50374170a0e6e63b19b09bcce0490def395975f02bbfb/investment_python-0.1.0b1.tar.gz", hash = "sha256:de4acfa6c69f5a19eb5deddbc7ec9f332774af0412ee892eccf1a253861de4c1", size = 15791, upload-time = "2026-09-02T09:40:59.446Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6e/36/b5274325722423d8fa6aa609b4a21da3fd3cd9b5995beedc625efbc49fb6/investment_python-0.1.0b7.tar.gz", hash = "sha256:51cc20a63cb654702d41ac33236fdb0589cb3206952ca04b2e0cf7c2476aa756", size = 18689, upload-time = "2026-09-12T16:51:45.258Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4e/79/cd27bfa6f7315f6f1152619bbebfd66c98ecc30540f657216a229d0f9fa0/investment_python-0.1.0b1-py3-none-any.whl", hash = "sha256:1f10b3e1c2336f2f6df8d08c5fb0b69194174460cb5a575e94f257efe4b29807", size = 24234, upload-time = "2026-09-02T09:40:57.964Z" },
+    { url = "https://files.pythonhosted.org/packages/90/60/655aaa19c39fb2e51c15bb0d20e861a7b762d18651a58396d7877f4761c8/investment_python-0.1.0b7-py3-none-any.whl", hash = "sha256:1484c54a9fe8065acc4086fd214dc2765612fb25c788d4a977376419c30d443d", size = 28315, upload-time = "2026-09-12T16:51:43.899Z" },
 ]
 
 [[package]]
@@ -757,6 +757,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pandas-stubs"
+version = "3.0.5.260730"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c2/d2/dea4a3a56b7b5f69c5fbca9f14625fcf28e1a39a657e9833d4a10bcac593/pandas_stubs-3.0.5.260730.tar.gz", hash = "sha256:f70a232c57d93a5a2c81f8a53953e10891a5374bc92652277deb325e2e4d0ff3", size = 114631, upload-time = "2026-07-30T14:31:42.271Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/60/c2/959caec5c46f484b5f8bb6def4b0cf7a45ba6acda26f12b75142d98cc5ae/pandas_stubs-3.0.5.260730-py3-none-any.whl", hash = "sha256:60e90e3e1eda6937e337e243cbe6217e151c11137cd7eddf832af537c7310bfd", size = 174807, upload-time = "2026-07-30T14:31:41.17Z" },
+]
+
+[[package]]
 name = "peewee"
 version = "4.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -909,6 +921,9 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "investment-python" },
+    { name = "matplotlib" },
+    { name = "pandas" },
+    { name = "pandas-stubs" },
 ]
 
 [package.dev-dependencies]
@@ -917,7 +932,12 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "investment-python", specifier = ">=0.1.0b1" }]
+requires-dist = [
+    { name = "investment-python", specifier = ">=0.1.0b7" },
+    { name = "matplotlib", specifier = ">=3.11.1" },
+    { name = "pandas", specifier = ">=3.0.5" },
+    { name = "pandas-stubs", specifier = "~=3.0.5" },
+]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=9.1.1" }]

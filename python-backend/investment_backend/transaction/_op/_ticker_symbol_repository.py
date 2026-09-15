@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-_CSV_PATH = Path(__file__).parents[2] / "data" / "companies.csv"
+_CSV_PATH = Path(__file__).parents[3] / "data" / "companies.csv"
 
 
 def _load_op_to_yahoo_ticker_symbols() -> dict[str, str]:
