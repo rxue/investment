@@ -1,4 +1,4 @@
-package io.github.rxue.investment.marketquote;
+package io.github.rxue.investment.marketquote.yahoofinance;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,9 +12,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.BiFunction;
 
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.*;
 
 public class QuoteSummaryFetcher {
     private static final String MOZILLA_5_0 = "Mozilla/5.0";
@@ -26,28 +25,37 @@ public class QuoteSummaryFetcher {
         this.httpClient = httpClient;
         this.objectMapper = new ObjectMapper();
     }
-    private static String getModule(List<YahooMetric> metrics) {
-        return metrics.stream().findFirst()
-                .get()
-                .getModule();
+
+    /**
+     * Get values of the given Yahoo Metrics from modules of quoteSummary endpoint
+     *
+     * @param yahooTickerSymbol
+     * @param yahooMetrics
+     * @return
+     */
+    public YahooMetricValues getValues(String yahooTickerSymbol, Collection<YahooMetric<?>> yahooMetrics) {
+        Metrics metrics = new Metrics(yahooMetrics);
+        JsonNode fullQuotesNode = getFullQuotesNode(yahooTickerSymbol, metrics.modules());
+        Map<String,List<YahooMetric<?>>> metricByModule = metrics.groupByModule();
+        List<Map<YahooMetric<?>,Object>> result = new ArrayList<>();
+        metricByModule.forEach((module, yahooMetricList) -> {
+            JsonNode moduleNode = fullQuotesNode.path(module);
+            result.add(parseModule(moduleNode, yahooMetricList));
+        });
+        Map<YahooMetric<?>,Object> finalResult = result.stream()
+                .map(Map::entrySet)
+                .flatMap(Set::stream)
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return new YahooMetricValues(finalResult);
     }
 
-    public Map<YahooMetric,Object> getMetrics(String yahooTickerSymbol, Collection<YahooMetric> yahooMetrics) {
-        Map<String,List<YahooMetric>> metricsByModule = yahooMetrics.stream()
-                .collect(groupingBy(YahooMetric::getModule));
-        Map<YahooMetric,Object> result = new HashMap<>();
-        metricsByModule.values()
-                .forEach(metrics -> result.putAll(getModuleQuotes(yahooTickerSymbol, metrics)));
-        return Collections.unmodifiableMap(result);
-    }
-
-    private Map<YahooMetric,Object> getModuleQuotes(String yahooTickerSymbol, List<YahooMetric> metrics) {
+    private JsonNode getFullQuotesNode(String yahooTickerSymbol, String commaDelimitedModules) {
         JsonNode resultNode;
         try {
             String crumb = getCrumb();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create("https://query1.finance.yahoo.com/v10/finance/quoteSummary" + "/" + yahooTickerSymbol + "?"
-                            + "modules=" + getModule(metrics) + "&crumb=" + URLEncoder.encode(crumb, StandardCharsets.UTF_8)))
+                            + "modules=" + commaDelimitedModules + "&crumb=" + URLEncoder.encode(crumb, StandardCharsets.UTF_8)))
                     .header("User-Agent", MOZILLA_5_0)
                     .GET()
                     .build();
@@ -56,33 +64,15 @@ public class QuoteSummaryFetcher {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        return parse(resultNode, metrics);
+        return resultNode.path("quoteSummary")
+                .path("result")
+                .get(0);
     }
 
-    private static Map<YahooMetric,Object> parse(JsonNode jsonNode, List<YahooMetric> metrics) {
-        BiFunction<JsonNode,String,Object> getFieldValue= (moduleNode,attribute) -> {
-            JsonNode attributeNode = moduleNode.path(attribute);
-            if (!attributeNode.isValueNode()) {
-                JsonNode subNode = attributeNode.path("raw");
-                if (subNode.isNumber()) {
-                    return subNode.decimalValue();
-                }
-                return subNode.asText();
-            } else if (attributeNode.isInt()) {
-                return attributeNode.longValue();
-            }
-            return attributeNode.textValue();
-        };
-        final String module = metrics.stream()
-                .findFirst()
-                .get()
-                .getModule();
-        final JsonNode priceNode = jsonNode.path("quoteSummary")
-                .path("result")
-                .get(0).path(module);
-        Map<YahooMetric,Object> result = new HashMap<>();
-        for (YahooMetric metric : metrics) {
-            result.put(metric, getFieldValue.apply(priceNode, metric.getName()));
+    private static Map<YahooMetric<?>,Object> parseModule(JsonNode moduleNode, List<YahooMetric<?>> metrics) {
+        Map<YahooMetric<?>,Object> result = new HashMap<>();
+        for (YahooMetric<?> metric : metrics) {
+            result.put(metric, metric.parser().apply(moduleNode));
         }
         return Collections.unmodifiableMap(result);
     }
@@ -109,5 +99,20 @@ public class QuoteSummaryFetcher {
             throw new IOException("HTTP request interrupted", e);
         }
     }
-
+    private record Metrics(Collection<YahooMetric<?>> values) {
+        Map<String,List<YahooMetric<?>>> groupByModule() {
+            return values.stream()
+                    .collect(groupingBy(YahooMetric::v10Module));
+        }
+        /**
+         *
+         * @return modules separated by comma
+         */
+        String modules() {
+            return values.stream()
+                    .map(YahooMetric::v10Module)
+                    .distinct()
+                    .collect(joining(","));
+        }
+    }
 }
