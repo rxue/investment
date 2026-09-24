@@ -41,7 +41,7 @@ public class MetricsCommand implements Callable<Integer> {
         if (sortingMetric != null && !metrics.contains(sortingMetric)) {
             throw new IllegalArgumentException("Sorting metric " + sortByArg + " is not one of the given metrics");
         }
-        List<MetricValues> values = new Repository().getMetrics(tickerSymbols, metrics);
+        List<MetricValues> values = new Repository("EUR").getMetrics(tickerSymbols, metrics);
         if (sortingMetric != null) {
             values = values.stream()
                     .sorted(byMetric(sortingMetric))

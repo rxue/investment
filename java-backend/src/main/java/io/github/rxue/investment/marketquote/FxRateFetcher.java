@@ -37,7 +37,7 @@ class FxRateFetcher {
             return new AbstractMap.SimpleImmutableEntry<>(date, BigDecimal.ONE);
         }
         try {
-            HttpResponse<String> response = send(buildRequest(currency.trim().toUpperCase(), date));
+            HttpResponse<String> response = send(buildRequest(currency.trim().toUpperCase(), date, 7));
             if (response.statusCode() == 404) {
                 throw new IllegalStateException("No ECB exchange rate found for " + currency + " up to " + date);
             }
@@ -47,10 +47,10 @@ class FxRateFetcher {
         }
     }
 
-    private static HttpRequest buildRequest(String currency, LocalDate date) {
+    private static HttpRequest buildRequest(String currency, LocalDate date, long daysBackward) {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
         String url = String.format(EXR_DATA_URL, currency)
-                + "?startPeriod=" + date.minusDays(7).format(formatter)
+                + "?startPeriod=" + date.minusDays(daysBackward).format(formatter)
                 + "&endPeriod=" + date.format(formatter)
                 + "&format=jsondata";
         return HttpRequest.newBuilder()

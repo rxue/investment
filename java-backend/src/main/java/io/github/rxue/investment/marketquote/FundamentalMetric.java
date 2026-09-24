@@ -7,11 +7,12 @@ import java.util.Set;
 import static io.github.rxue.investment.marketquote.yahoofinance.YahooMetric.*;
 
 public enum FundamentalMetric implements Metric {
-    LATEST_PRICE("Latest Price", Set.of(REGULAR_MARKET_PRICE, CURRENCY, REGULAR_MARKET_TIME, GMT_OFFSET_IN_MILLISECONDS));
-    private final String descriptiveName;
+    LATEST_PRICE("Latest Price", Set.of(REGULAR_MARKET_PRICE, CURRENCY)),
+    LATEST_PRICE_IN_REPORT_CURRENCY("Latest Price in Report Currency", Set.of(REGULAR_MARKET_PRICE, CURRENCY));
+    private final String label;
     private final Set<YahooMetric> dependentYahooMetricCS;
-    private FundamentalMetric(String descriptiveName, Set<YahooMetric> dependentYahooMetricCS) {
-        this.descriptiveName = descriptiveName;
+    private FundamentalMetric(String label, Set<YahooMetric> dependentYahooMetricCS) {
+        this.label = label;
         this.dependentYahooMetricCS = dependentYahooMetricCS;
     }
 

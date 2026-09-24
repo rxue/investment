@@ -11,7 +11,8 @@ public enum YahooMetric implements Metric {
     REGULAR_MARKET_TIME("price", "Regular Market Time", jsonNode -> jsonNode.path("regularMarketTime").longValue()),
     REGULAR_MARKET_CHANGE("price", "Regular Market Change", jsonNode -> toNumber(jsonNode.path("regularMarketChange"))),
     REGULAR_MARKET_CHANGE_PERCENT("price", "Regular Market Change Percent", jsonNode -> toNumber(jsonNode.path("regularMarketChangePercent"))),
-    GMT_OFFSET_IN_MILLISECONDS("quoteType", "GMT Offset in Milliseconds", jsonNode -> jsonNode.path("gmtOffSetMilliseconds").longValue());
+    GMT_OFFSET_IN_MILLISECONDS("quoteType", "GMT Offset in Milliseconds", jsonNode -> jsonNode.path("gmtOffSetMilliseconds").longValue()),
+    DIVIDEND_YIELD("summaryDetail", "Dividend Yield", jsonNode -> toNumber(jsonNode.path("dividendYield")));
 
     private final String v10Module;
     private final String descriptiveName;
