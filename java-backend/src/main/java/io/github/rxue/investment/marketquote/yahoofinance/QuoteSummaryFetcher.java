@@ -33,20 +33,20 @@ public class QuoteSummaryFetcher {
      * @param yahooMetrics
      * @return
      */
-    public YahooMetricValues getValues(String yahooTickerSymbol, Collection<YahooMetric<?>> yahooMetrics) {
+    public YahooMetricValues getValues(String yahooTickerSymbol, Collection<YahooMetric> yahooMetrics) {
         Metrics metrics = new Metrics(yahooMetrics);
         JsonNode fullQuotesNode = getFullQuotesNode(yahooTickerSymbol, metrics.modules());
-        Map<String,List<YahooMetric<?>>> metricByModule = metrics.groupByModule();
-        List<Map<YahooMetric<?>,Object>> result = new ArrayList<>();
+        Map<String,List<YahooMetric>> metricByModule = metrics.groupByModule();
+        List<Map<YahooMetric,Comparable<?>>> result = new ArrayList<>();
         metricByModule.forEach((module, yahooMetricList) -> {
             JsonNode moduleNode = fullQuotesNode.path(module);
             result.add(parseModule(moduleNode, yahooMetricList));
         });
-        Map<YahooMetric<?>,Object> finalResult = result.stream()
+        Map<YahooMetric,Comparable<?>> resultMap =  result.stream()
                 .map(Map::entrySet)
                 .flatMap(Set::stream)
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-        return new YahooMetricValues(finalResult);
+        return new YahooMetricValues(resultMap);
     }
 
     private JsonNode getFullQuotesNode(String yahooTickerSymbol, String commaDelimitedModules) {
@@ -69,9 +69,9 @@ public class QuoteSummaryFetcher {
                 .get(0);
     }
 
-    private static Map<YahooMetric<?>,Object> parseModule(JsonNode moduleNode, List<YahooMetric<?>> metrics) {
-        Map<YahooMetric<?>,Object> result = new HashMap<>();
-        for (YahooMetric<?> metric : metrics) {
+    private static Map<YahooMetric,Comparable<?>> parseModule(JsonNode moduleNode, List<YahooMetric> metrics) {
+        Map<YahooMetric,Comparable<?>> result = new HashMap<>();
+        for (YahooMetric metric : metrics) {
             result.put(metric, metric.parser().apply(moduleNode));
         }
         return Collections.unmodifiableMap(result);
@@ -99,8 +99,8 @@ public class QuoteSummaryFetcher {
             throw new IOException("HTTP request interrupted", e);
         }
     }
-    private record Metrics(Collection<YahooMetric<?>> values) {
-        Map<String,List<YahooMetric<?>>> groupByModule() {
+    private record Metrics(Collection<YahooMetric> values) {
+        Map<String,List<YahooMetric>> groupByModule() {
             return values.stream()
                     .collect(groupingBy(YahooMetric::v10Module));
         }

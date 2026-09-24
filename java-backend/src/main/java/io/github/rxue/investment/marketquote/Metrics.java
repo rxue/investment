@@ -7,20 +7,20 @@ import java.util.*;
 import static java.util.stream.Collectors.toSet;
 
 record Metrics(Collection<Metric> metrics) {
-    Set<YahooMetric<?>> yahooMetrics() {
+    Set<YahooMetric> yahooMetrics() {
         return metrics.stream()
-                .filter(m -> m instanceof YahooMetric<?>)
-                .map(m -> (YahooMetric<?>) m)
+                .filter(m -> m instanceof YahooMetric)
+                .map(m -> (YahooMetric) m)
                 .collect(toSet());
     }
-    Set<YahooMetric<?>> allNeededYahooMetrics() {
-        Set<YahooMetric<?>> yahooMetrics = new HashSet<>(yahooMetrics());
-        Set<YahooMetric<?>> dependentYahooMetrics = (Set<YahooMetric<?>>) fundamentalMetrics().stream()
+    Set<YahooMetric> allNeededYahooMetrics() {
+        Set<YahooMetric> yahooMetricCS = new HashSet<>(yahooMetrics());
+        Set<YahooMetric> dependentYahooMetricCS = (Set<YahooMetric>) fundamentalMetrics().stream()
                 .map(FundamentalMetric::dependentYahooMetrics)
                 .flatMap(Set::stream)
                 .collect(toSet());
-        yahooMetrics.addAll(dependentYahooMetrics);
-        return Collections.unmodifiableSet(yahooMetrics);
+        yahooMetricCS.addAll(dependentYahooMetricCS);
+        return Collections.unmodifiableSet(yahooMetricCS);
     }
     List<FundamentalMetric> fundamentalMetrics() {
         return metrics.stream()

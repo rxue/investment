@@ -7,8 +7,7 @@ import java.net.CookieManager;
 import java.net.http.HttpClient;
 import java.util.List;
 
-import static io.github.rxue.investment.marketquote.yahoofinance.YahooMetric.CURRENCY;
-import static io.github.rxue.investment.marketquote.yahoofinance.YahooMetric.REGULAR_MARKET_PRICE;
+import static io.github.rxue.investment.marketquote.yahoofinance.YahooMetric.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuoteSummaryFetcherIT {
@@ -19,8 +18,7 @@ class QuoteSummaryFetcherIT {
                 .build();
         QuoteSummaryFetcher fetcher = new QuoteSummaryFetcher(httpClient);
         YahooMetricValues result = fetcher.getValues("PFE", List.of(CURRENCY, REGULAR_MARKET_PRICE));
-        String currencyValue = result.get(CURRENCY);
-        assertEquals("USD", currencyValue);
-        assertInstanceOf(BigDecimal.class, result.get(REGULAR_MARKET_PRICE));
+        assertEquals("USD", result.get(CURRENCY));
+        assertInstanceOf(BigDecimal.class, result.get(REGULAR_MARKET_PRICE, YahooNumber.class).raw());
     }
 }

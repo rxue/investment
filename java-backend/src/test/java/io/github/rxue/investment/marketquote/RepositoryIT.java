@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.github.rxue.investment.marketquote.FundamentalMetric.LATEST_PRICE;
-import static io.github.rxue.investment.marketquote.yahoofinance.YahooMetric.REGULAR_MARKET_TIME;
+import static io.github.rxue.investment.marketquote.yahoofinance.YahooMetric.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RepositoryIT {
