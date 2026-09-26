@@ -1,5 +1,6 @@
 package io.github.rxue.investment.marketquote;
 
+import io.github.rxue.investment.vo.MetricValues;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

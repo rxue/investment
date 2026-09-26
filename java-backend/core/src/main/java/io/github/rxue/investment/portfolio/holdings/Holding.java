@@ -1,10 +1,8 @@
 package io.github.rxue.investment.portfolio.holdings;
 
-import io.github.rxue.investment.portfolio.holdings.transactions.Trade;
+import io.github.rxue.investment.portfolio.transactions.Trade;
 
-import java.util.*;
-
-import static io.github.rxue.investment.portfolio.holdings.transactions.Trade.Type.BUY;
+import static io.github.rxue.investment.portfolio.transactions.Trade.Type.BUY;
 
 public record Holding(String tickerSymbol, int position) {
     Holding combine(Trade trade) {
@@ -14,6 +12,7 @@ public record Holding(String tickerSymbol, int position) {
             return new Holding(tickerSymbol, position - trade.shareAmount());
         }
     }
+
 /*    static class Builder {
         private Map<String,Holding> holdingsByTickerSymbol;
 

@@ -4,6 +4,8 @@ import io.github.rxue.investment.marketquote.yahoofinance.QuoteSummaryFetcher;
 import io.github.rxue.investment.marketquote.yahoofinance.YahooMetric;
 import io.github.rxue.investment.marketquote.yahoofinance.YahooMetricValues;
 import io.github.rxue.investment.marketquote.yahoofinance.YahooNumber;
+import io.github.rxue.investment.vo.Metric;
+import io.github.rxue.investment.vo.MetricValues;
 import io.github.rxue.investment.vo.Price;
 
 import java.math.BigDecimal;

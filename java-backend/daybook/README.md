@@ -21,3 +21,5 @@ When double would be fine: if this rate were only ever used for display/estimati
 
 Recommendation: revert the return type of fetchFXRateFromEuro (and FxRate.value) to BigDecimal, matching the codebase's existing convention, and drop the now-genuinely-needed MathContext/BigDecimal imports back into real use (e.g., observations.path(...).get(0).decimalValue()).
 ```
+# Yahoo Finance
+

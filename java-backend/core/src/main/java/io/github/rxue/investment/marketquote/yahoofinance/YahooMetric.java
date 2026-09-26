@@ -1,7 +1,7 @@
 package io.github.rxue.investment.marketquote.yahoofinance;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.rxue.investment.marketquote.Metric;
+import io.github.rxue.investment.vo.Metric;
 
 import java.util.function.Function;
 

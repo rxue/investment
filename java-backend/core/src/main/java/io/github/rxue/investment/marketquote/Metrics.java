@@ -1,6 +1,7 @@
 package io.github.rxue.investment.marketquote;
 
 import io.github.rxue.investment.marketquote.yahoofinance.YahooMetric;
+import io.github.rxue.investment.vo.Metric;
 
 import java.util.*;
 

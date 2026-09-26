@@ -4,10 +4,10 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.ColumnData;
 import io.github.rxue.investment.marketquote.FundamentalMetric;
-import io.github.rxue.investment.marketquote.Metric;
-import io.github.rxue.investment.marketquote.MetricValues;
+import io.github.rxue.investment.vo.Metric;
 import io.github.rxue.investment.marketquote.Repository;
 import io.github.rxue.investment.marketquote.yahoofinance.YahooMetric;
+import io.github.rxue.investment.vo.MetricValues;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -49,7 +49,7 @@ public class MetricsCommand implements Callable<Integer> {
         }
 
         List<ColumnData<MetricValues>> columns = new ArrayList<>();
-        columns.add(new Column().header("Ticker Symbol").with(MetricValues::yahooTickerSymbol));
+        columns.add(new Column().header("Ticker Symbol").with(MetricValues::tickerSymbol));
         for (Metric metric : metrics) {
             columns.add(new Column().header(metric.name())
                     .with(mv -> String.valueOf(mv.values().get(metric))));
