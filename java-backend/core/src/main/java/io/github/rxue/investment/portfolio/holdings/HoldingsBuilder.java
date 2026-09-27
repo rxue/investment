@@ -20,7 +20,12 @@ public class HoldingsBuilder {
         if (existing == null) {
             holdingsByTickerSymbol.put(tickerSymbol, new Holding(tickerSymbol, trade.shareAmount()));
         } else {
-            holdingsByTickerSymbol.put(tickerSymbol, existing.combine(trade));
+            Holding combinedHolding = existing.combine(trade);
+            if (combinedHolding == null) {
+                holdingsByTickerSymbol.remove(tickerSymbol);
+            } else {
+                holdingsByTickerSymbol.put(tickerSymbol, combinedHolding);
+            }
         }
         return this;
     }

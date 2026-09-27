@@ -9,7 +9,8 @@ public record Holding(String securityId, int position) {
         if (trade.type() == BUY) {
             return new Holding(securityId, position + trade.shareAmount());
         } else {
-            return new Holding(securityId, position - trade.shareAmount());
+            int remainingPosition = position - trade.shareAmount();
+            return remainingPosition == 0 ? null : new Holding(securityId, remainingPosition);
         }
     }
 }
