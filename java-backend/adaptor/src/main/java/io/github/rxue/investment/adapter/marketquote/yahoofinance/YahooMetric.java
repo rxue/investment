@@ -1,6 +1,8 @@
-package io.github.rxue.investment.adaptor.marketquote.yahoofinance;
+package io.github.rxue.investment.adapter.marketquote.yahoofinance;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.rxue.investment.marketquote.QuoteMetric;
+import io.github.rxue.investment.vo.FormattedNumber;
 
 import java.util.function.Function;
 
@@ -28,7 +30,18 @@ public enum YahooMetric {
         return parser;
     }
 
-    private static YahooNumber toNumber(JsonNode numberNode) {
-        return new YahooNumber(numberNode.path("raw").decimalValue(), numberNode.path("fmt").textValue());
+    private static FormattedNumber toNumber(JsonNode numberNode) {
+        JsonNode raw = numberNode.path("raw");
+        return raw.isNumber() ? new FormattedNumber(raw.decimalValue(), numberNode.path("fmt").textValue()) : null;
+    }
+    static YahooMetric of(QuoteMetric quoteMetric) {
+        return switch(quoteMetric) {
+            case REGULAR_MARKET_PRICE -> REGULAR_MARKET_PRICE;
+            case CURRENCY -> CURRENCY;
+            case REGULAR_MARKET_TIME -> REGULAR_MARKET_TIME;
+            case REGULAR_MARKET_CHANGE -> REGULAR_MARKET_CHANGE;
+            case REGULAR_MARKET_CHANGE_PERCENT -> REGULAR_MARKET_CHANGE_PERCENT;
+            case DIVIDEND_YIELD -> DIVIDEND_YIELD;
+        };
     }
 }

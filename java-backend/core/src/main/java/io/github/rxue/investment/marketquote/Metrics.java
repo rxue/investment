@@ -1,6 +1,5 @@
 package io.github.rxue.investment.marketquote;
 
-import io.github.rxue.investment.marketquote.yahoofinance.YahooMetric;
 import io.github.rxue.investment.vo.Metric;
 
 import java.util.*;
@@ -8,25 +7,25 @@ import java.util.*;
 import static java.util.stream.Collectors.toSet;
 
 record Metrics(Collection<Metric> metrics) {
-    Set<YahooMetric> yahooMetrics() {
+    public Set<QuoteMetric> quoteMetrics() {
         return metrics.stream()
-                .filter(m -> m instanceof YahooMetric)
-                .map(m -> (YahooMetric) m)
+                .filter(m -> m instanceof QuoteMetric)
+                .map(m -> (QuoteMetric) m)
                 .collect(toSet());
     }
-    Set<YahooMetric> allNeededYahooMetrics() {
-        Set<YahooMetric> yahooMetricCS = new HashSet<>(yahooMetrics());
-        Set<YahooMetric> dependentYahooMetricCS = (Set<YahooMetric>) fundamentalMetrics().stream()
-                .map(FundamentalMetric::dependentYahooMetrics)
+    public Set<QuoteMetric> allNeededQuoteMetrics() {
+        Set<QuoteMetric> quoteMetricCS = new HashSet<>(quoteMetrics());
+        Set<QuoteMetric> dependentQuoteMetricCS = derivedMetrics().stream()
+                .map(DerivedMetric::dependentQuoteMetrics)
                 .flatMap(Set::stream)
                 .collect(toSet());
-        yahooMetricCS.addAll(dependentYahooMetricCS);
-        return Collections.unmodifiableSet(yahooMetricCS);
+        quoteMetricCS.addAll(dependentQuoteMetricCS);
+        return Collections.unmodifiableSet(quoteMetricCS);
     }
-    List<FundamentalMetric> fundamentalMetrics() {
+    public List<DerivedMetric> derivedMetrics() {
         return metrics.stream()
-                .filter(FundamentalMetric.class::isInstance)
-                .map(FundamentalMetric.class::cast)
+                .filter(DerivedMetric.class::isInstance)
+                .map(DerivedMetric.class::cast)
                 .toList();
     }
 }

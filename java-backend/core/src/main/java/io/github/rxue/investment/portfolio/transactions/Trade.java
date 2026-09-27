@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public record Trade(String tickerSymbol, LocalDate date, int shareAmount, Type type, long cents) implements Transaction {
     public Trade {
-        Objects.requireNonNull(tickerSymbol, "tickerSymbol");
+        Objects.requireNonNull(tickerSymbol, "securityId");
         Objects.requireNonNull(type, "type");
         if (shareAmount <= 0) {
             throw new IllegalArgumentException("shareAmount must be positive: " + shareAmount);

@@ -1,7 +1,6 @@
-package io.github.rxue.investment.adaptor;
+package io.github.rxue.investment.adapter;
 
-import io.github.rxue.investment.adaptor.transaction.csv.op.OPTransactionLoader;
-import io.github.rxue.investment.adaptor.transaction.csv.op.QualifiedTickerRepository;
+import io.github.rxue.investment.adapter.transaction.csv.op.OPTransactionLoader;
 import io.github.rxue.investment.portfolio.transactions.Transaction;
 
 import java.nio.file.Path;

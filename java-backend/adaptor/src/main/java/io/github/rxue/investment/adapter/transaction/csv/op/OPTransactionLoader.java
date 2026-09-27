@@ -1,6 +1,6 @@
-package io.github.rxue.investment.adaptor.transaction.csv.op;
+package io.github.rxue.investment.adapter.transaction.csv.op;
 
-import io.github.rxue.investment.adaptor.TransactionLoader;
+import io.github.rxue.investment.adapter.TransactionLoader;
 import io.github.rxue.investment.portfolio.transactions.Transaction;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -9,7 +9,6 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static io.github.rxue.investment.adaptor.Account.OP;
+import static io.github.rxue.investment.adapter.Account.OP;
 
 public class OPTransactionLoader implements TransactionLoader {
     private final QualifiedTickerRepository qualifiedTickerRepository;

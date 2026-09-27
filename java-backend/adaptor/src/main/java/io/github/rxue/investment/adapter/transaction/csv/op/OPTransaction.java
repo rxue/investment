@@ -1,4 +1,4 @@
-package io.github.rxue.investment.adaptor.transaction.csv.op;
+package io.github.rxue.investment.adapter.transaction.csv.op;
 
 import io.github.rxue.investment.portfolio.transactions.Trade;
 import io.github.rxue.investment.portfolio.transactions.Transaction;

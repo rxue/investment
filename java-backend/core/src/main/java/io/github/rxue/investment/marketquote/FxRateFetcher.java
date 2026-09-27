@@ -16,13 +16,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-class FxRateFetcher {
+public class FxRateFetcher {
 
     private static final String EXR_DATA_URL = "https://data-api.ecb.europa.eu/service/data/EXR/D.%s.EUR.SP00.A";
 
     private final HttpClient httpClient;
 
-    FxRateFetcher(HttpClient httpClient) {
+    public FxRateFetcher(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
 

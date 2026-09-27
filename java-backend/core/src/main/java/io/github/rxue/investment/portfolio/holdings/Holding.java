@@ -4,30 +4,12 @@ import io.github.rxue.investment.portfolio.transactions.Trade;
 
 import static io.github.rxue.investment.portfolio.transactions.Trade.Type.BUY;
 
-public record Holding(String tickerSymbol, int position) {
+public record Holding(String securityId, int position) {
     Holding combine(Trade trade) {
         if (trade.type() == BUY) {
-            return new Holding(tickerSymbol, position + trade.shareAmount());
+            return new Holding(securityId, position + trade.shareAmount());
         } else {
-            return new Holding(tickerSymbol, position - trade.shareAmount());
+            return new Holding(securityId, position - trade.shareAmount());
         }
     }
-
-/*    static class Builder {
-        private Map<String,Holding> holdingsByTickerSymbol;
-
-        public Builder() {
-            this.holdingsByTickerSymbol = new HashMap<>();
-        }
-
-        public Builder apply(Trade trade) {
-            String tickerSymbol = trade.tickerSymbol();
-            Holding existingHolding = holdingsByTickerSymbol.get(tickerSymbol);
-
-            return this;
-        }
-        List<Holding> build() {
-            return List.copyOf(holdingsByTickerSymbol.values());
-        }
-    }*/
 }

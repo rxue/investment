@@ -1,4 +1,4 @@
-package io.github.rxue.investment.adaptor;
+package io.github.rxue.investment.adapter;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;

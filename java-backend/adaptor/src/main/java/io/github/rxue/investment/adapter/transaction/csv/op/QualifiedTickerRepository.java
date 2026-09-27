@@ -1,4 +1,4 @@
-package io.github.rxue.investment.adaptor.transaction.csv.op;
+package io.github.rxue.investment.adapter.transaction.csv.op;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;

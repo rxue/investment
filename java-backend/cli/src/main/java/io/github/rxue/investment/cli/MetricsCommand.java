@@ -3,10 +3,10 @@ package io.github.rxue.investment.cli;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.ColumnData;
-import io.github.rxue.investment.marketquote.FundamentalMetric;
+import io.github.rxue.investment.adapter.marketquote.yahoofinance.YahooFinanceRepository;
+import io.github.rxue.investment.marketquote.DerivedMetric;
+import io.github.rxue.investment.marketquote.QuoteMetric;
 import io.github.rxue.investment.vo.Metric;
-import io.github.rxue.investment.marketquote.Repository;
-import io.github.rxue.investment.marketquote.yahoofinance.YahooMetric;
 import io.github.rxue.investment.vo.MetricValues;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -41,17 +41,17 @@ public class MetricsCommand implements Callable<Integer> {
         if (sortingMetric != null && !metrics.contains(sortingMetric)) {
             throw new IllegalArgumentException("Sorting metric " + sortByArg + " is not one of the given metrics");
         }
-        List<MetricValues> values = new Repository("EUR").getMetrics(tickerSymbols, metrics);
+        List<MetricValues> values = new YahooFinanceRepository("EUR").getMetrics(tickerSymbols, metrics);
         if (sortingMetric != null) {
             values = values.stream()
-                    .sorted(byMetric(sortingMetric))
+                    .sorted(comparatorByMetric(sortingMetric))
                     .toList();
         }
 
         List<ColumnData<MetricValues>> columns = new ArrayList<>();
-        columns.add(new Column().header("Ticker Symbol").with(MetricValues::tickerSymbol));
+        columns.add(new Column().header("Ticker Symbol").with(MetricValues::securityId));
         for (Metric metric : metrics) {
-            columns.add(new Column().header(metric.name())
+            columns.add(new Column().header(metric.label())
                     .with(mv -> String.valueOf(mv.values().get(metric))));
         }
         System.out.println(AsciiTable.getTable(values, columns));
@@ -59,20 +59,19 @@ public class MetricsCommand implements Callable<Integer> {
         return 0;
     }
     private static List<Metric> getMetrics(String metricNames) {
-        List<String> metricNameList = Arrays.stream(metricNames.split(","))
+        return Arrays.stream(metricNames.split(","))
+                .map(MetricsCommand::toMetric)
                 .toList();
-        return metricNameList.stream()
-                .map(MetricsCommand::toMetric).toList();
     }
     private static Metric toMetric(String name) {
-        return Stream.of(YahooMetric.values(), FundamentalMetric.values())
+        return Stream.of(QuoteMetric.values(), DerivedMetric.values())
                 .flatMap(Arrays::stream)
                 .filter(m -> m.name().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unknown metric: " + name));
     }
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static Comparator<MetricValues> byMetric(Metric metric) {
+    private static Comparator<MetricValues> comparatorByMetric(Metric metric) {
         return Comparator.comparing(
                 (MetricValues mv) -> (Comparable) mv.values().get(metric),
                 Comparator.nullsLast(Comparator.naturalOrder()));

@@ -3,8 +3,8 @@ package io.github.rxue.investment.cli;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.ColumnData;
-import io.github.rxue.investment.adaptor.Account;
-import io.github.rxue.investment.adaptor.CSVTransactionLoader;
+import io.github.rxue.investment.adapter.Account;
+import io.github.rxue.investment.adapter.CSVTransactionLoader;
 import io.github.rxue.investment.portfolio.holdings.Holding;
 import io.github.rxue.investment.portfolio.holdings.HoldingsBuilder;
 import io.github.rxue.investment.portfolio.transactions.Trade;
@@ -45,7 +45,7 @@ public class HoldingsCommand implements Callable<Integer> {
                 .apply(trades)
                 .build();
         List<ColumnData<Holding>> columns = List.of(
-                new Column().header("Ticker Symbol").with(Holding::tickerSymbol),
+                new Column().header("Ticker Symbol").with(Holding::securityId),
                 new Column().header("Position").with(h -> String.valueOf(h.position())));
         spec.commandLine().getOut().println(AsciiTable.getTable(holdings, columns));
         return 0;
