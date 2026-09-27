@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>io.github.rxue.investment</groupId>
-            <artifactId>adaptor</artifactId>
+            <artifactId>adapter</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
