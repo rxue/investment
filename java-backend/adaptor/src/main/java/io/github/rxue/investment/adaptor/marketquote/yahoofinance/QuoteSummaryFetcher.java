@@ -1,4 +1,4 @@
-package io.github.rxue.investment.marketquote.yahoofinance;
+package io.github.rxue.investment.adaptor.marketquote.yahoofinance;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,11 +30,11 @@ public class QuoteSummaryFetcher {
      * Get values of the given Yahoo Metrics from modules of quoteSummary endpoint
      *
      * @param yahooTickerSymbol
-     * @param yahooMetrics
+     * @param quoteMetrics
      * @return
      */
-    public YahooMetricValues getValues(String yahooTickerSymbol, Collection<YahooMetric> yahooMetrics) {
-        Metrics metrics = new Metrics(yahooMetrics);
+    public YahooMetricValues getValues(String yahooTickerSymbol, Collection<YahooMetric> quoteMetrics) {
+        Metrics metrics = new Metrics(quoteMetrics);
         JsonNode fullQuotesNode = getFullQuotesNode(yahooTickerSymbol, metrics.modules());
         Map<String,List<YahooMetric>> metricByModule = metrics.groupByModule();
         List<Map<YahooMetric,Comparable<?>>> result = new ArrayList<>();

@@ -7,7 +7,8 @@
 Comment: the *immutable objects* is thread-safe
 
 # Practical Tips
-## `BigDecimal` over `double` in case of money value calculation, e.g. the foreign exchange rate
+## Java
+### `BigDecimal` over `double` in case of money value calculation, e.g. the foreign exchange rate
 Reasoning from *Claude Code*:
 ```
 Why BigDecimal wins for an FX rate:
@@ -21,5 +22,4 @@ When double would be fine: if this rate were only ever used for display/estimati
 
 Recommendation: revert the return type of fetchFXRateFromEuro (and FxRate.value) to BigDecimal, matching the codebase's existing convention, and drop the now-genuinely-needed MathContext/BigDecimal imports back into real use (e.g., observations.path(...).get(0).decimalValue()).
 ```
-# Yahoo Finance
-
+Collectors.toMap and toUnmodifiableMap does not accept neither null key nor null value input
