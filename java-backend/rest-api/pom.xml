@@ -30,6 +30,11 @@
             <artifactId>core</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.github.rxue.investment</groupId>
+            <artifactId>adapter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>

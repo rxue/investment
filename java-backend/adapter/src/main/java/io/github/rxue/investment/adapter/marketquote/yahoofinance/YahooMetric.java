@@ -1,7 +1,7 @@
 package io.github.rxue.investment.adapter.marketquote.yahoofinance;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.rxue.investment.marketquote.QuoteMetric;
+import io.github.rxue.investment.marketquote.BaseQuoteMetric;
 import io.github.rxue.investment.vo.FormattedNumber;
 
 import java.util.function.Function;
@@ -34,7 +34,7 @@ public enum YahooMetric {
         JsonNode raw = numberNode.path("raw");
         return raw.isNumber() ? new FormattedNumber(raw.decimalValue(), numberNode.path("fmt").textValue()) : null;
     }
-    static YahooMetric of(QuoteMetric quoteMetric) {
+    static YahooMetric of(BaseQuoteMetric quoteMetric) {
         return switch(quoteMetric) {
             case REGULAR_MARKET_PRICE -> REGULAR_MARKET_PRICE;
             case CURRENCY -> CURRENCY;

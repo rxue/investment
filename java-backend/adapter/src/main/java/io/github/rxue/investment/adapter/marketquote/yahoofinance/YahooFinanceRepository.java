@@ -1,8 +1,8 @@
 package io.github.rxue.investment.adapter.marketquote.yahoofinance;
 
 import io.github.rxue.investment.marketquote.*;
-import io.github.rxue.investment.vo.Metric;
-import io.github.rxue.investment.vo.MetricValues;
+import io.github.rxue.investment.vo.metric.Metric;
+import io.github.rxue.investment.vo.metric.MetricValues;
 
 import java.net.CookieManager;
 import java.net.http.HttpClient;
@@ -21,15 +21,15 @@ public class YahooFinanceRepository extends AbstractRepository {
     }
 
     @Override
-    protected MetricValues getQuoteMetrics(String securityId, Set<QuoteMetric> quoteMetrics) {
-        Set<YahooMetric> yahooMetrics = quoteMetrics.stream()
+    protected MetricValues getBaseMetrics(String securityId, Set<BaseQuoteMetric> baseQuoteMetrics) {
+        Set<YahooMetric> yahooMetrics = baseQuoteMetrics.stream()
                 .map(YahooMetric::of)
                 .collect(Collectors.toSet());
         Map<YahooMetric,Comparable<?>> yahooMetricValues = quoteSummaryFetcher.getValues(securityId, yahooMetrics);
-        Map<Metric,Comparable<?>> result = new HashMap<>();
-        for(QuoteMetric quoteMetric : quoteMetrics)
-            result.put(quoteMetric, yahooMetricValues.get(YahooMetric.of(quoteMetric)));
-        return new MetricValues(securityId, Collections.unmodifiableMap(result));
+        SequencedMap<Metric,Comparable<?>> result = new LinkedHashMap<>();
+        for(BaseQuoteMetric baseQuoteMetric : baseQuoteMetrics)
+            result.put(baseQuoteMetric, yahooMetricValues.get(YahooMetric.of(baseQuoteMetric)));
+        return new MetricValues(securityId, Collections.unmodifiableSequencedMap(result));
     }
 
 }

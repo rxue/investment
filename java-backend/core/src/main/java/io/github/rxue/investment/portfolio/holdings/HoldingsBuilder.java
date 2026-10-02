@@ -2,10 +2,7 @@ package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.portfolio.transactions.Trade;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class HoldingsBuilder {
@@ -35,5 +32,8 @@ public class HoldingsBuilder {
     }
     public Collection<Holding> build() {
         return holdingsByTickerSymbol.values();
+    }
+    public Map<String,Holding> buildMap() {
+        return Collections.unmodifiableMap(holdingsByTickerSymbol);
     }
 }

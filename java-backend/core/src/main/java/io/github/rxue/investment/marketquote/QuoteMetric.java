@@ -1,21 +1,16 @@
 package io.github.rxue.investment.marketquote;
 
-import io.github.rxue.investment.vo.Metric;
+import io.github.rxue.investment.vo.metric.Metric;
 
-public enum QuoteMetric implements Metric {
-    REGULAR_MARKET_PRICE("Regular Market Price"),
-    CURRENCY("Currency"),
-    REGULAR_MARKET_TIME("Regular Market Time"),
-    REGULAR_MARKET_CHANGE("Regular Market Change"),
-    REGULAR_MARKET_CHANGE_PERCENT("Regular Market Change Percent"),
-    DIVIDEND_YIELD("Dividend Yield");
-    private final String label;
-    QuoteMetric(String label) {
-        this.label = label;
-    }
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-    @Override
-    public String label() {
-        return label;
+public interface QuoteMetric extends Metric {
+    static Set<QuoteMetric> all() {
+        Set<QuoteMetric> allQuoteMetrics = new HashSet<>();
+        allQuoteMetrics.addAll(Set.of(BaseQuoteMetric.values()));
+        allQuoteMetrics.addAll(Set.of(DerivedQuoteMetric.values()));
+        return Collections.unmodifiableSet(allQuoteMetrics);
     }
 }
