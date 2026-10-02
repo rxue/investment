@@ -6,8 +6,8 @@ import java.util.*;
 
 public interface Repository {
 
-    List<MetricValues> getMetricValues(Collection<String> securityIds, Collection<QuoteMetric> requiredMetrics);
-    default Map<String,MetricValues> getMetricValuesBySecurityId(Collection<String> securityIds, Collection<QuoteMetric> requiredMetrics) {
+    List<MetricValues> getMetricValues(Set<String> securityIds, Collection<QuoteMetric> requiredMetrics);
+    default Map<String,MetricValues> getMetricValuesBySecurityId(Set<String> securityIds, Collection<QuoteMetric> requiredMetrics) {
         Map<String,MetricValues> securityIdsToMetricValues = new LinkedHashMap<>();
         for (MetricValues metricValues : getMetricValues(securityIds, requiredMetrics)) {
             securityIdsToMetricValues.put(metricValues.securityId(), metricValues);

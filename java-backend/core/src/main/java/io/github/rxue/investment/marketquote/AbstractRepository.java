@@ -24,7 +24,7 @@ public abstract class AbstractRepository implements Repository {
     }
 
     @Override
-    public final List<MetricValues> getMetricValues(Collection<String> securityIds, Collection<QuoteMetric> quoteMetrics) {
+    public final List<MetricValues> getMetricValues(Set<String> securityIds, Collection<QuoteMetric> quoteMetrics) {
         List<MetricValues> metricValuesList = new ArrayList<>();
         for (String securityId : securityIds) {
             SequencedMap<Metric,Comparable<?>> metricValues = getSingleStockMetrics(securityId, new QuoteMetrics(quoteMetrics));
