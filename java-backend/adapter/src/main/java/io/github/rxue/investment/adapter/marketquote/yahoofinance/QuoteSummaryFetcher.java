@@ -17,10 +17,9 @@ import static java.util.stream.Collectors.*;
 
 public class QuoteSummaryFetcher {
     private static final String MOZILLA_5_0 = "Mozilla/5.0";
-
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-
+    private String crumb;
     public QuoteSummaryFetcher(HttpClient httpClient) {
         this.httpClient = httpClient;
         this.objectMapper = new ObjectMapper();
@@ -77,18 +76,28 @@ public class QuoteSummaryFetcher {
         return Collections.unmodifiableMap(result);
     }
 
-    private String getCrumb() throws IOException {
-        send(HttpRequest.newBuilder()
-                .uri(URI.create("https://fc.yahoo.com/"))
-                .header("User-Agent", MOZILLA_5_0)
-                .GET()
-                .build());
-        HttpResponse<String> crumbResponse = send(HttpRequest.newBuilder()
-                .uri(URI.create("https://query2.finance.yahoo.com/v1/test/getcrumb"))
-                .header("User-Agent", MOZILLA_5_0)
-                .GET()
-                .build());
-        return crumbResponse.body();
+    private String getCrumb() {
+        if (crumb == null)
+            crumb = doGetCrumb();
+        return crumb;
+    }
+
+    private String doGetCrumb() {
+        try {
+            send(HttpRequest.newBuilder()
+                    .uri(URI.create("https://fc.yahoo.com/"))
+                    .header("User-Agent", MOZILLA_5_0)
+                    .GET()
+                    .build());
+            HttpResponse<String> crumbResponse = send(HttpRequest.newBuilder()
+                    .uri(URI.create("https://query2.finance.yahoo.com/v1/test/getcrumb"))
+                    .header("User-Agent", MOZILLA_5_0)
+                    .GET()
+                    .build());
+            return crumbResponse.body();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private HttpResponse<String> send(HttpRequest request) throws IOException {

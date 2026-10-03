@@ -7,10 +7,17 @@ import io.github.rxue.investment.adapter.marketquote.yahoofinance.YahooFinanceRe
 import io.github.rxue.investment.marketquote.QuoteMetric;
 import io.github.rxue.investment.vo.metric.Metric;
 import io.github.rxue.investment.vo.metric.MetricValues;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +33,7 @@ public class QuotesCommand implements Callable<Integer> {
     @Parameters(index = "0", description = "Comma-delimited metric names, e.g. LATEST_TIME,CURRENCY")
     private String metricsArg;
 
-    @Parameters(index = "1", description = "Comma-delimited Yahoo ticker symbols, e.g. AAPL,MSFT")
+    @Parameters(index = "1", description = "Either comma-delimited Yahoo ticker symbols, e.g. AAPL,MSFT, or a csv file path")
     private String yahooTickerSymbolsArg;
 
     @Option(names = "--sort-by", description = "Metric name to sort the rows by (ascending), must be one of the given metrics")
@@ -38,8 +45,7 @@ public class QuotesCommand implements Callable<Integer> {
     @Override
     public Integer call() {
         List<QuoteMetric> metrics = getMetrics(metricsArg);
-        List<String> tickerSymbols = Arrays.stream(yahooTickerSymbolsArg.split(","))
-                .toList();
+        List<String> tickerSymbols = getTickerSymbols(yahooTickerSymbolsArg);
         Map<String,Long> duplicates = getDuplicates(tickerSymbols);
         if (!duplicates.isEmpty()) {
             throw new IllegalArgumentException("Duplicate ticker symbols: " + String.join(", ", duplicates.keySet()));
@@ -64,6 +70,25 @@ public class QuotesCommand implements Callable<Integer> {
         }
         printMetricValues(metrics.stream().map(Metric.class::cast).toList(), values);
         return 0;
+    }
+    private static List<String> getTickerSymbols(String symbolsOrCsvPath) {
+        if (symbolsOrCsvPath.contains(",") || !symbolsOrCsvPath.endsWith(".csv")) {
+            return Arrays.stream(symbolsOrCsvPath.split(","))
+                    .toList();
+        }
+        CSVFormat format = CSVFormat.DEFAULT.builder()
+                .setHeader()
+                .setSkipHeaderRecord(true)
+                .get();
+        try (CSVParser parser = CSVParser.parse(Path.of(symbolsOrCsvPath), StandardCharsets.UTF_8, format)) {
+            List<String> tickerSymbols = new ArrayList<>();
+            for (CSVRecord record : parser) {
+                tickerSymbols.add(record.get("yahoo_ticker_symbol"));
+            }
+            return Collections.unmodifiableList(tickerSymbols);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Cannot read " + symbolsOrCsvPath, e);
+        }
     }
     private Map<String,Long> getDuplicates(List<String> tickerSymbols) {
         Map<String,Long> tickerSymbolsByCounter = tickerSymbols.stream()
