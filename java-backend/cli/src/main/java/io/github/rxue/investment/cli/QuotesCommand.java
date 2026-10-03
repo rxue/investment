@@ -13,13 +13,15 @@ import picocli.CommandLine.Parameters;
 
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
 
 @Command(name = "quotes", description = "Fetch metrics for ticker symbols (atm the Yahoo ticker symbol)",
         mixinStandardHelpOptions = true)
-public class QuoteCommand implements Callable<Integer> {
+public class QuotesCommand implements Callable<Integer> {
 
     @Parameters(index = "0", description = "Comma-delimited metric names, e.g. LATEST_TIME,CURRENCY")
     private String metricsArg;
@@ -29,6 +31,9 @@ public class QuoteCommand implements Callable<Integer> {
 
     @Option(names = "--sort-by", description = "Metric name to sort the rows by (ascending), must be one of the given metrics")
     private String sortByArg;
+
+    @Option(names = "--threads", description = "Amount of threads to use in the fetch of quote")
+    private int nThreads = 1;
 
     @Override
     public Integer call() {
@@ -44,7 +49,14 @@ public class QuoteCommand implements Callable<Integer> {
         if (sortingMetric != null && !metrics.contains(sortingMetric)) {
             throw new IllegalArgumentException("Sorting metric " + sortByArg + " is not one of the given metrics");
         }
-        List<MetricValues> values = new YahooFinanceRepository("EUR").getMetricValues(tickerSymbols.stream().collect(toSet()), metrics);
+        List<MetricValues> values;
+        try(ExecutorService executorService = Executors.newFixedThreadPool(nThreads)) {
+            long start = System.nanoTime();
+            YahooFinanceRepository repository = new YahooFinanceRepository(executorService, "EUR");
+            values = repository.getMetricValues(tickerSymbols.stream().collect(toSet()), metrics);
+            System.out.println("getMetricValues took " + (System.nanoTime() - start) / 1_000_000 + " ms");
+        }
+
         if (sortingMetric != null) {
             values = values.stream()
                     .sorted(comparatorByMetric(sortingMetric))
@@ -73,7 +85,7 @@ public class QuoteCommand implements Callable<Integer> {
 
     private static List<QuoteMetric> getMetrics(String metricNames) {
         return Arrays.stream(metricNames.split(","))
-                .map(QuoteCommand::toMetric)
+                .map(QuotesCommand::toMetric)
                 .toList();
     }
     static QuoteMetric toMetric(String name) {

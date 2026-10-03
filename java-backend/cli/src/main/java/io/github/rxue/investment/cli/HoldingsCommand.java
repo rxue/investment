@@ -9,6 +9,7 @@ import io.github.rxue.investment.portfolio.transactions.Trade;
 import io.github.rxue.investment.portfolio.transactions.Transaction;
 import io.github.rxue.investment.vo.metric.Metric;
 import io.github.rxue.investment.vo.metric.MetricValues;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Parameters;
@@ -17,9 +18,10 @@ import picocli.CommandLine.Spec;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static io.github.rxue.investment.cli.QuoteCommand.printMetricValues;
+import static io.github.rxue.investment.cli.QuotesCommand.printMetricValues;
 
 @Command(name = "holdings", description = "Fetch holdings from a given csv file or directory storing csv files",
         mixinStandardHelpOptions = true)
@@ -34,6 +36,9 @@ public class HoldingsCommand implements Callable<Integer> {
     @Parameters(index = "2", description = "The Path of the CSV file or directory")
     private String csvFileOrDirectoryPath;
 
+    @CommandLine.Option(names = "--threads", description = "Amount of threads to use in the fetch of quote")
+    private int nThreads;
+
     @Spec
     private CommandSpec spec;
 
@@ -46,7 +51,7 @@ public class HoldingsCommand implements Callable<Integer> {
                 .filter(Trade.class::isInstance)
                 .map(Trade.class::cast)
                 .toList();
-        MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceRepository("EUR"), trades);
+        MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceRepository(Executors.newFixedThreadPool(nThreads),"EUR"), trades);
         SequencedSet<Metric> metrics = getMetrics(metricNames);
         List<MetricValues> metricValuesList = director.construct(metrics);
         printMetricValues(metrics.stream().toList(), metricValuesList);
@@ -65,7 +70,7 @@ public class HoldingsCommand implements Callable<Integer> {
                 .findFirst();
         if (holdingMetricOptional.isPresent())
             return holdingMetricOptional.get();
-        return QuoteCommand.toMetric(name);
+        return QuotesCommand.toMetric(name);
     }
 
 }

@@ -21,7 +21,7 @@ public class MarketQuoteController {
 
     @GetMapping("/marketquote/{securityId}")
     public MetricValues getLatestPrice(@PathVariable("securityId") String securityId) {
-        List<MetricValues> metricValues = marketQuoteRepository.getMetricValues(List.of(securityId), Set.of(LATEST_PRICE));
+        List<MetricValues> metricValues = marketQuoteRepository.getMetricValues(Set.of(securityId), Set.of(LATEST_PRICE));
         return metricValues.get(0);
     }
 }

@@ -7,13 +7,15 @@ import io.github.rxue.investment.vo.metric.MetricValues;
 import java.net.CookieManager;
 import java.net.http.HttpClient;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 
 public class YahooFinanceRepository extends AbstractRepository {
     private final QuoteSummaryFetcher quoteSummaryFetcher;
-    public YahooFinanceRepository(String reportCurrency) {
-        super(new FxRateFetcher(HttpClient.newHttpClient()), reportCurrency);
+    public YahooFinanceRepository(ExecutorService executorService, String reportCurrency) {
+        super(executorService, new FxRateFetcher(HttpClient.newHttpClient()), reportCurrency);
         HttpClient httpClient = HttpClient.newBuilder()
                 .cookieHandler(new CookieManager())
                 .build();
