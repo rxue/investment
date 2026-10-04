@@ -9,6 +9,11 @@ public record MetricValues(String securityId, SequencedMap<Metric,Comparable<?>>
     public Comparable<?> get(Metric metric) {
         return values.get(metric);
     }
+
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
     public static class Builder {
         private final String securityId;
         private final SequencedMap<Metric,Comparable<?>> values;

@@ -51,7 +51,7 @@ public class HoldingsCommand implements Callable<Integer> {
                 .filter(Trade.class::isInstance)
                 .map(Trade.class::cast)
                 .toList();
-        MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceRepository(Executors.newFixedThreadPool(nThreads),"EUR"), trades);
+        MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceRepository("EUR"), trades);
         SequencedSet<Metric> metrics = getMetrics(metricNames);
         List<MetricValues> metricValuesList = director.construct(metrics);
         printMetricValues(metrics.stream().toList(), metricValuesList);

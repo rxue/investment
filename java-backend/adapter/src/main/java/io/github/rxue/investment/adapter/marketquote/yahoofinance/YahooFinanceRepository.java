@@ -7,15 +7,13 @@ import io.github.rxue.investment.vo.metric.MetricValues;
 import java.net.CookieManager;
 import java.net.http.HttpClient;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 
 public class YahooFinanceRepository extends AbstractRepository {
     private final QuoteSummaryFetcher quoteSummaryFetcher;
-    public YahooFinanceRepository(ExecutorService executorService, String reportCurrency) {
-        super(executorService, new FxRateFetcher(HttpClient.newHttpClient()), reportCurrency);
+    public YahooFinanceRepository(String reportCurrency) {
+        super(new FxRateFetcher(HttpClient.newHttpClient()), reportCurrency);
         HttpClient httpClient = HttpClient.newBuilder()
                 .cookieHandler(new CookieManager())
                 .build();
@@ -28,6 +26,9 @@ public class YahooFinanceRepository extends AbstractRepository {
                 .map(YahooMetric::of)
                 .collect(Collectors.toSet());
         Map<YahooMetric,Comparable<?>> yahooMetricValues = quoteSummaryFetcher.getValues(securityId, yahooMetrics);
+        if (yahooMetricValues.isEmpty()) {
+            return new MetricValues(securityId, Collections.unmodifiableSequencedMap(new LinkedHashMap<>()));
+        }
         SequencedMap<Metric,Comparable<?>> result = new LinkedHashMap<>();
         for(BaseQuoteMetric baseQuoteMetric : baseQuoteMetrics)
             result.put(baseQuoteMetric, yahooMetricValues.get(YahooMetric.of(baseQuoteMetric)));

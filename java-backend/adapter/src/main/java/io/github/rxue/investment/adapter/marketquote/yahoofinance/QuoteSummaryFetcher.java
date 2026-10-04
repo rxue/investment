@@ -13,15 +13,18 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static java.util.stream.Collectors.*;
 
 public class QuoteSummaryFetcher {
     private static final String MOZILLA_5_0 = "Mozilla/5.0";
     private final HttpClient httpClient;
+    private final ThreadLocal<String> threadLocalCrumb;
     private final ObjectMapper objectMapper;
-    private String crumb;
     public QuoteSummaryFetcher(HttpClient httpClient) {
         this.httpClient = httpClient;
+        threadLocalCrumb = new ThreadLocal<>();
         this.objectMapper = new ObjectMapper();
     }
 
@@ -35,6 +38,7 @@ public class QuoteSummaryFetcher {
     public Map<YahooMetric,Comparable<?>> getValues(String yahooTickerSymbol, Collection<YahooMetric> quoteMetrics) {
         Metrics metrics = new Metrics(quoteMetrics);
         JsonNode fullQuotesNode = getFullQuotesNode(yahooTickerSymbol, metrics.modules());
+        if (fullQuotesNode == null) return Map.of();
         Map<String,List<YahooMetric>> metricByModule = metrics.groupByModule();
         List<Map<YahooMetric,Comparable<?>>> result = new ArrayList<>();
         metricByModule.forEach((module, yahooMetricList) -> {
@@ -48,17 +52,29 @@ public class QuoteSummaryFetcher {
                 .collect(toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    /**
+     *
+     * @param yahooTickerSymbol
+     * @param commaDelimitedModules
+     * @return null if the yahooTickerSymbol does not exist
+     */
     private JsonNode getFullQuotesNode(String yahooTickerSymbol, String commaDelimitedModules) {
         JsonNode resultNode;
+        setCrumb();
         try {
-            String crumb = getCrumb();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create("https://query1.finance.yahoo.com/v10/finance/quoteSummary" + "/" + yahooTickerSymbol + "?"
-                            + "modules=" + commaDelimitedModules + "&crumb=" + URLEncoder.encode(crumb, StandardCharsets.UTF_8)))
+                            + "modules=" + commaDelimitedModules + "&crumb=" + URLEncoder.encode(threadLocalCrumb.get(), StandardCharsets.UTF_8)))
                     .header("User-Agent", MOZILLA_5_0)
                     .GET()
                     .build();
             HttpResponse<String> response = send(request);
+            if (response.statusCode() == HTTP_NOT_FOUND) {
+                return null;
+            }
+            if (response.statusCode() == HTTP_UNAUTHORIZED) {
+                System.out.println("Invalid crumb!!!!!");
+            }
             resultNode = objectMapper.readTree(response.body());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -76,10 +92,9 @@ public class QuoteSummaryFetcher {
         return Collections.unmodifiableMap(result);
     }
 
-    private String getCrumb() {
-        if (crumb == null)
-            crumb = doGetCrumb();
-        return crumb;
+    private void setCrumb() {
+        if (threadLocalCrumb.get() == null)
+            threadLocalCrumb.set(doGetCrumb());
     }
 
     private String doGetCrumb() {

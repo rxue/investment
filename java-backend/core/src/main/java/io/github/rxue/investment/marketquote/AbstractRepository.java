@@ -10,20 +10,16 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import static io.github.rxue.investment.marketquote.DerivedQuoteMetric.LATEST_PRICE;
 import static io.github.rxue.investment.marketquote.DerivedQuoteMetric.LATEST_PRICE_IN_REPORT_CURRENCY;
 import static io.github.rxue.investment.marketquote.BaseQuoteMetric.*;
 
 public abstract class AbstractRepository implements Repository {
-    private final ExecutorService executorService;
     private final FxRateFetcher fxRateFetcher;
     private final String reportCurrency;
-    public AbstractRepository(ExecutorService executorService, FxRateFetcher fxRateFetcher, String reportCurrency) {
-        this.executorService = executorService;
+
+    public AbstractRepository(FxRateFetcher fxRateFetcher, String reportCurrency) {
         this.fxRateFetcher = fxRateFetcher;
         this.reportCurrency = reportCurrency;
     }
@@ -31,22 +27,9 @@ public abstract class AbstractRepository implements Repository {
     @Override
     public final List<MetricValues> getMetricValues(Set<String> securityIds, Collection<QuoteMetric> quoteMetrics) {
         QuoteMetrics metrics = new QuoteMetrics(quoteMetrics);
-        List<Future<MetricValues>> futures = new ArrayList<>();
-        for (String securityId : securityIds) {
-            futures.add(executorService.submit(() -> new MetricValues(securityId, getSingleStockMetrics(securityId, metrics))));
-        }
         List<MetricValues> metricValuesList = new ArrayList<>();
-        try {
-            for (Future<MetricValues> future : futures) {
-                metricValuesList.add(future.get());
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException("Interrupted while fetching metric values", e);
-        } catch (ExecutionException e) {
-            throw new IllegalStateException("Failed to fetch metric values", e.getCause());
-        } finally {
-            futures.forEach(future -> future.cancel(true));
+        for (String securityId : securityIds) {
+            metricValuesList.add(new MetricValues(securityId, getSingleStockMetrics(securityId, metrics)));
         }
         return Collections.unmodifiableList(metricValuesList);
     }
@@ -54,6 +37,7 @@ public abstract class AbstractRepository implements Repository {
     private SequencedMap<Metric,Comparable<?>> getSingleStockMetrics(String securityId, QuoteMetrics metric) {
         Set<BaseQuoteMetric> allNeededQuoteMetrics = metric.allBaseQuoteMetrics();
         MetricValues quoteMetricValues = getBaseMetrics(securityId, allNeededQuoteMetrics);
+        if (quoteMetricValues.isEmpty()) return Collections.unmodifiableSequencedMap(new LinkedHashMap<>());
         SequencedMap<Metric,Comparable<?>> result = new LinkedHashMap<>();
         for (DerivedQuoteMetric derivedQuoteMetric : metric.derivedMetrics()) {
             if (derivedQuoteMetric == LATEST_PRICE) {

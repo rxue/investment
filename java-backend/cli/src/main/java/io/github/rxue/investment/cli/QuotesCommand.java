@@ -1,9 +1,12 @@
 package io.github.rxue.investment.cli;
 
+import com.fasterxml.jackson.core.util.RecyclerPool;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.ColumnData;
 import io.github.rxue.investment.adapter.marketquote.yahoofinance.YahooFinanceRepository;
+import io.github.rxue.investment.adapter.marketquote.yahoofinance.YahooMetric;
+import io.github.rxue.investment.marketquote.ParallelRepository;
 import io.github.rxue.investment.marketquote.QuoteMetric;
 import io.github.rxue.investment.vo.metric.Metric;
 import io.github.rxue.investment.vo.metric.MetricValues;
@@ -56,19 +59,24 @@ public class QuotesCommand implements Callable<Integer> {
             throw new IllegalArgumentException("Sorting metric " + sortByArg + " is not one of the given metrics");
         }
         List<MetricValues> values;
+        long start = System.nanoTime();
         try(ExecutorService executorService = Executors.newFixedThreadPool(nThreads)) {
-            long start = System.nanoTime();
-            YahooFinanceRepository repository = new YahooFinanceRepository(executorService, "EUR");
-            values = repository.getMetricValues(tickerSymbols.stream().collect(toSet()), metrics);
-            System.out.println("getMetricValues took " + (System.nanoTime() - start) / 1_000_000 + " ms");
+            List<YahooFinanceRepository> repositories = new ArrayList<>();
+            for (int i = 0; i < nThreads; i++) {
+                repositories.add(new YahooFinanceRepository("EUR"));
+            }
+            values = new ParallelRepository<>(repositories, executorService)
+                    .getMetricValues(tickerSymbols.stream().collect(toSet()), metrics);
         }
+        System.out.println("getMetricValues took " + (System.nanoTime() - start) / 1_000_000 + " ms");
 
         if (sortingMetric != null) {
             values = values.stream()
                     .sorted(comparatorByMetric(sortingMetric))
                     .toList();
         }
-        printMetricValues(metrics.stream().map(Metric.class::cast).toList(), values);
+        printMetricValues(metrics.stream().map(Metric.class::cast).toList(), values.stream().filter(mv -> ! mv.isEmpty()).toList());
+        System.out.println("The following securities did not find quotes: " + values.stream().filter(MetricValues::isEmpty).map(MetricValues::securityId).toList());
         return 0;
     }
     private static List<String> getTickerSymbols(String symbolsOrCsvPath) {
