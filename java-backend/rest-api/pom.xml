@@ -25,7 +25,7 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
+        <!--ependency>
             <groupId>io.github.rxue.investment</groupId>
             <artifactId>core</artifactId>
         </dependency>
@@ -33,6 +33,11 @@
             <groupId>io.github.rxue.investment</groupId>
             <artifactId>adapter</artifactId>
             <version>${project.version}</version>
+        </dependency-->
+        <dependency>
+            <groupId>io.github.rxue</groupId>
+            <artifactId>investment</artifactId>
+            <version>1.0-beta</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
