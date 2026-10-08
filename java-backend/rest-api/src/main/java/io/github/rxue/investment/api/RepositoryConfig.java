@@ -23,4 +23,8 @@ public class RepositoryConfig {
                 .build();
         return new YahooFinanceRepository(httpClient);
     }
+    @Bean
+    public JobRepository jobRepository() {
+        return new JobRepository(marketQuoteRepository());
+    }
 }
