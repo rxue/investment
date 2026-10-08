@@ -2,7 +2,6 @@ package io.github.rxue.investment.api;
 
 import io.github.rxue.investment.marketquote.QuoteMetric;
 import io.github.rxue.investment.marketquote.Repository;
-import io.github.rxue.investment.vo.MetricValuesList;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -19,11 +18,11 @@ public class QuoteService {
         this.jobRepository = jobRepository;
     }
     public UUID createQueryJob(Set<String> securityIds, Set<QuoteMetric> quoteMetrics) {
-        UUID jobId = UUID.randomUUID();
+        UUID jobId = jobRepository.create();
         jobRepository.query(jobId, securityIds, quoteMetrics);
         return jobId;
     }
-    public MetricValuesList findMetricValues(UUID jobId) {
+    public QuoteJob findJob(UUID jobId) {
         return jobRepository.find(jobId);
     }
     public Map<QuoteMetric,Comparable<?>> getQuote(String securityId, Set<QuoteMetric> quoteMetrics) {
