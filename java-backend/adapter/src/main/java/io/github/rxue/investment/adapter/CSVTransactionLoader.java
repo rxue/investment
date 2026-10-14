@@ -1,7 +1,7 @@
 package io.github.rxue.investment.adapter;
 
+import io.github.rxue.investment.vo.bankaccount.transaction.Transaction;
 import io.github.rxue.investment.adapter.transaction.csv.op.OPTransactionLoader;
-import io.github.rxue.investment.portfolio.transactions.Transaction;
 
 import java.nio.file.Path;
 import java.util.List;

@@ -13,8 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class QualifiedTickerRepository {
-    private static final Map<String,String> TICKER_CACHE = loadTickers("/companies.csv");
-    private static Map<String,String> loadTickers(String resource) {
+    private static final Map<String,String> TICKER_CACHE = loadTickers("/companies.csv", "op_security_id");
+    private static final Map<String,String> TICKER_BY_ISIN_CACHE = loadTickers("/companies.csv", "isin");
+    private static Map<String,String> loadTickers(String resource, String keyColumn) {
         CSVFormat format = CSVFormat.DEFAULT.builder()
                 .setDelimiter(',')
                 .setHeader()                 // read column names from the first line
@@ -27,7 +28,7 @@ public class QualifiedTickerRepository {
         try (CSVParser parser = CSVParser.parse(url, StandardCharsets.UTF_8, format)) {
             Map<String,String> tickers = new HashMap<>();
             for (CSVRecord record: parser) {
-                tickers.put(record.get("op_security_id"), record.get("yahoo_qualified_ticker"));
+                tickers.put(record.get(keyColumn), record.get("yahoo_qualified_ticker"));
             }
             return Collections.unmodifiableMap(tickers);
         } catch (IOException ex) {
@@ -36,5 +37,8 @@ public class QualifiedTickerRepository {
     }
     String findQualifiedTicker(String opSecurityIdentifier) {
         return TICKER_CACHE.get(opSecurityIdentifier);
+    }
+    String findQualifiedTickerByIsin(String isin) {
+        return TICKER_BY_ISIN_CACHE.get(isin);
     }
 }

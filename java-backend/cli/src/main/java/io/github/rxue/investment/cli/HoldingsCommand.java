@@ -1,27 +1,33 @@
 package io.github.rxue.investment.cli;
 
+import com.github.freva.asciitable.AsciiTable;
+import com.github.freva.asciitable.Column;
+import com.github.freva.asciitable.ColumnData;
+import io.github.rxue.investment.marketquote.QuoteMetric;
+import io.github.rxue.investment.marketquote.yahoofinance.YahooFinanceSearchService;
+import io.github.rxue.investment.vo.Metric;
+import io.github.rxue.investment.vo.MetricValues;
+import io.github.rxue.investment.vo.bankaccount.transaction.Trade;
+import io.github.rxue.investment.vo.bankaccount.transaction.Transaction;
 import io.github.rxue.investment.adapter.Account;
 import io.github.rxue.investment.adapter.CSVTransactionLoader;
-import io.github.rxue.investment.adapter.marketquote.yahoofinance.YahooFinanceRepository;
 import io.github.rxue.investment.portfolio.holdings.HoldingMetric;
 import io.github.rxue.investment.portfolio.holdings.MetricValuesBuildersDirector;
-import io.github.rxue.investment.portfolio.transactions.Trade;
-import io.github.rxue.investment.portfolio.transactions.Transaction;
-import io.github.rxue.investment.vo.metric.Metric;
-import io.github.rxue.investment.vo.metric.MetricValues;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Spec;
 
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.http.HttpClient;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static io.github.rxue.investment.cli.QuotesCommand.printMetricValues;
 
 @Command(name = "holdings", description = "Fetch holdings from a given csv file or directory storing csv files",
         mixinStandardHelpOptions = true)
@@ -51,11 +57,25 @@ public class HoldingsCommand implements Callable<Integer> {
                 .filter(Trade.class::isInstance)
                 .map(Trade.class::cast)
                 .toList();
-        MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceRepository("EUR"), trades);
+        HttpClient httpClient = HttpClient.newBuilder()
+                .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
+        MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceSearchService(httpClient,"EUR"), trades);
         SequencedSet<Metric> metrics = getMetrics(metricNames);
         List<MetricValues> metricValuesList = director.construct(metrics);
-        printMetricValues(metrics.stream().toList(), metricValuesList);
+        printMetricValues(metrics, metricValuesList);
         return 0;
+    }
+    private static void printMetricValues(SequencedSet<Metric> metrics, List<MetricValues> values) {
+        List<ColumnData<MetricValues>> columns = new ArrayList<>();
+        columns.add(new Column().header("Ticker Symbol").with(MetricValues::securityId));
+        for (Metric metric : metrics) {
+            columns.add(new Column().header(metric.label())
+                    .with(mv -> String.valueOf(mv.get(metric))));
+        }
+        System.out.println(AsciiTable.getTable(values, columns));
     }
 
     private static SequencedSet<Metric> getMetrics(String metricNames) {
@@ -70,7 +90,12 @@ public class HoldingsCommand implements Callable<Integer> {
                 .findFirst();
         if (holdingMetricOptional.isPresent())
             return holdingMetricOptional.get();
-        return QuotesCommand.toMetric(name);
+        return toQuoteMetric(name);
     }
-
+    static QuoteMetric toQuoteMetric(String name) {
+        return Arrays.stream(QuoteMetric.values())
+                .filter(m -> m.name().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown metric: " + name));
+    }
 }

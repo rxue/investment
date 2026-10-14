@@ -1,6 +1,9 @@
 package io.github.rxue.investment.portfolio.holdings;
 
-import io.github.rxue.investment.portfolio.transactions.Trade;
+
+
+
+import io.github.rxue.investment.vo.bankaccount.transaction.Trade;
 
 import java.util.*;
 
@@ -12,7 +15,7 @@ public class HoldingsBuilder {
         this.holdingsByTickerSymbol = new HashMap<>();
     }
     HoldingsBuilder apply(Trade trade) {
-        String tickerSymbol = trade.tickerSymbol();
+        String tickerSymbol = trade.securityId();
         Holding existing = holdingsByTickerSymbol.get(tickerSymbol);
         if (existing == null) {
             holdingsByTickerSymbol.put(tickerSymbol, new Holding(tickerSymbol, trade.shareAmount()));

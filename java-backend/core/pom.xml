@@ -14,8 +14,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>io.github.rxue</groupId>
+            <artifactId>investment</artifactId>
+            <version>1.0.5-beta</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

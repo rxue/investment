@@ -1,10 +1,12 @@
 package io.github.rxue.investment.portfolio.holdings;
 
+import io.github.rxue.investment.marketquote.SearchService;
+import io.github.rxue.investment.vo.MetricValues;
+import io.github.rxue.investment.vo.MetricValuesList;
+import io.github.rxue.investment.vo.QuotePrice;
+import io.github.rxue.investment.vo.bankaccount.transaction.Trade;
 import io.github.rxue.investment.marketquote.QuoteMetric;
-import io.github.rxue.investment.marketquote.Repository;
-import io.github.rxue.investment.portfolio.transactions.Trade;
-import io.github.rxue.investment.vo.metric.Metric;
-import io.github.rxue.investment.vo.metric.MetricValues;
+import io.github.rxue.investment.vo.Metric;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -13,15 +15,15 @@ import java.util.Map;
 import java.util.SequencedSet;
 import java.util.Set;
 
-import static io.github.rxue.investment.marketquote.DerivedQuoteMetric.LATEST_PRICE_IN_REPORT_CURRENCY;
+import static io.github.rxue.investment.marketquote.QuoteMetric.LATEST_MARKET_PRICE_IN_REPORT_CURRENCY;
 
 public class MetricValuesBuildersDirector {
-    private final Repository marketQuoteRepository;
+    private final SearchService marketQuoteSearchService;
     private final Map<String,Holding> holdings;
     private final Map<String,MetricValues.Builder> metricValuesBuilders;
-    private Map<String,MetricValues> allQuoteMetricValues;
-    public MetricValuesBuildersDirector(Repository marketQuoteRepository, List<Trade> trades) {
-        this.marketQuoteRepository = marketQuoteRepository;
+    private MetricValuesList quoteMetricValuesList;
+    public MetricValuesBuildersDirector(SearchService marketQuoteSearchService, List<Trade> trades) {
+        this.marketQuoteSearchService = marketQuoteSearchService;
         this.holdings = new HoldingsBuilder()
                 .apply(trades)
                 .buildMap();
@@ -32,7 +34,7 @@ public class MetricValuesBuildersDirector {
         final Set<QuoteMetric> allQuoteMetrics = new HoldingMetrics(metrics)
                 .allQuoteMetrics();
         final Set<String> securityIds = holdings.keySet();
-        allQuoteMetricValues = marketQuoteRepository.getMetricValuesBySecurityId(securityIds, allQuoteMetrics);
+        quoteMetricValuesList = marketQuoteSearchService.findMetricValues(securityIds, allQuoteMetrics);
         for (Metric metric : metrics) {
             securityIds.forEach(securityId -> {
                 MetricValues.Builder metricValuesBuilder = metricValuesBuilders.computeIfAbsent(securityId, secId -> new MetricValues.Builder(secId));
@@ -48,11 +50,10 @@ public class MetricValuesBuildersDirector {
         return switch(metric) {
             case HoldingMetric.POSITION -> Integer.valueOf(position);
             case HoldingMetric.LATEST_MARKET_VALUE_IN_REPORT_CURRENCY -> {
-                BigDecimal latestPriceInReportCurrency = allQuoteMetricValues.get(securityId)
-                        .get(LATEST_PRICE_IN_REPORT_CURRENCY, BigDecimal.class);
-                yield latestPriceInReportCurrency.multiply(BigDecimal.valueOf(position));
+                QuotePrice latestPriceInReportCurrency = quoteMetricValuesList.getMetricValue(securityId, LATEST_MARKET_PRICE_IN_REPORT_CURRENCY, QuotePrice.class);
+                yield latestPriceInReportCurrency.value().multiply(BigDecimal.valueOf(position));
             }
-            case QuoteMetric quoteMetric -> allQuoteMetricValues.get(securityId).get(quoteMetric);
+            case QuoteMetric quoteMetric -> quoteMetricValuesList.getMetricValue(securityId, quoteMetric, Comparable.class);
             default -> throw new IllegalStateException("Unexpected value: " + metric);
         };
     }

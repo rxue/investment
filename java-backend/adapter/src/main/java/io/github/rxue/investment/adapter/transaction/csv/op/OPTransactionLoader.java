@@ -1,7 +1,5 @@
 package io.github.rxue.investment.adapter.transaction.csv.op;
 
-import io.github.rxue.investment.adapter.TransactionLoader;
-import io.github.rxue.investment.portfolio.transactions.Transaction;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -16,7 +14,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.github.rxue.investment.vo.bankaccount.transaction.Transaction;
+import io.github.rxue.investment.adapter.TransactionLoader;
+
+
 import static io.github.rxue.investment.adapter.Account.OP;
+
 
 public class OPTransactionLoader implements TransactionLoader {
     private final QualifiedTickerRepository qualifiedTickerRepository;

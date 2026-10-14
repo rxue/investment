@@ -1,7 +1,7 @@
 package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.marketquote.QuoteMetric;
-import io.github.rxue.investment.vo.metric.Metric;
+import io.github.rxue.investment.vo.Metric;
 
 import java.util.Collection;
 import java.util.Collections;

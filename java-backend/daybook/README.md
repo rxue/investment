@@ -23,3 +23,6 @@ When double would be fine: if this rate were only ever used for display/estimati
 Recommendation: revert the return type of fetchFXRateFromEuro (and FxRate.value) to BigDecimal, matching the codebase's existing convention, and drop the now-genuinely-needed MathContext/BigDecimal imports back into real use (e.g., observations.path(...).get(0).decimalValue()).
 ```
 Collectors.toMap and toUnmodifiableMap does not accept neither null key nor null value input
+## OAuth2
+I asked: is OAuth2 3rd-party authentication?
+Answer: no, it is not 3rd-party authentication but 3rd-party authorization (delegated access)

@@ -1,5 +1,7 @@
 package io.github.rxue.investment.api;
 
+import io.github.rxue.investment.fx.FxRateFetcher;
+import io.github.rxue.investment.fx.ecb.ECBFxRateFetcher;
 import io.github.rxue.investment.marketquote.Repository;
 import io.github.rxue.investment.marketquote.yahoofinance.YahooFinanceRepository;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +23,8 @@ public class RepositoryConfig {
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
-        return new YahooFinanceRepository(httpClient);
+        FxRateFetcher fxRateFetcher = new ECBFxRateFetcher(httpClient);
+        return new YahooFinanceRepository(fxRateFetcher, httpClient);
     }
     @Bean
     public JobRepository jobRepository() {

@@ -1,14 +1,13 @@
 package io.github.rxue.investment.portfolio.holdings;
 
 import io.github.rxue.investment.marketquote.QuoteMetric;
-import io.github.rxue.investment.vo.metric.Metric;
+import io.github.rxue.investment.vo.Metric;
 
 import java.util.Set;
 
-import static io.github.rxue.investment.marketquote.DerivedQuoteMetric.LATEST_PRICE_IN_REPORT_CURRENCY;
 
 public enum HoldingMetric implements Metric {
-    POSITION("Position"),LATEST_MARKET_VALUE_IN_REPORT_CURRENCY("Latest Market Value in Report Currency", Set.of(LATEST_PRICE_IN_REPORT_CURRENCY));
+    POSITION("Position"),LATEST_MARKET_VALUE_IN_REPORT_CURRENCY("Latest Market Value in Report Currency", Set.of(QuoteMetric.LATEST_MARKET_PRICE_IN_REPORT_CURRENCY));
     private final String label;
     private final Set<QuoteMetric> dependentQuoteMetrics;
     HoldingMetric(String label) {
