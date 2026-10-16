@@ -16,6 +16,7 @@ import static io.github.rxue.investment.vo.bankaccount.transaction.Action.*;
 
 record OPTransaction(String bookingDate, String amountInEuro, String category, String explanation, String message) {
     private static final Pattern TRADE_PATTERN = Pattern.compile("^\\s*([OM]):(.+?)\\s*/(\\d+)");
+    public static final Pattern DIVIDEND_PAYMENT_PATTERN = Pattern.compile("([A-Z]{2}[A-Z0-9]{9}\\d)\\s+Osinkotuotto.*?Omistettu määrä\\s+(\\d+)\\s*Kpl");
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("d.M.yyyy");
 
     Transaction toTransaction(QualifiedTickerRepository qualifiedTickerRepository) {
@@ -65,7 +66,7 @@ record OPTransaction(String bookingDate, String amountInEuro, String category, S
         throw new IllegalStateException();
     }
     private Dividend toDividend(QualifiedTickerRepository qualifiedTickerRepository, LocalDate date, long cents) {
-        Matcher m = Pattern.compile("([A-Z]{2}[A-Z0-9]{9}\\d)\\s+Osinkotuotto.*?Omistettu määrä\\s+(\\d+)\\s*Kpl").matcher(message);
+        Matcher m = DIVIDEND_PAYMENT_PATTERN.matcher(message);
         if (m.find()) {
             String isin = m.group(1);
             int shareAmount = Integer.parseInt(m.group(2));    // "Omistettu määrä" = amount of shares held
