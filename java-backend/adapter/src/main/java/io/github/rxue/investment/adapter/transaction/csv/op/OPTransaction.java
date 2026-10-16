@@ -15,6 +15,7 @@ import static io.github.rxue.investment.vo.bankaccount.transaction.Action.*;
 
 
 record OPTransaction(String bookingDate, String amountInEuro, String category, String explanation, String message) {
+    private static final Pattern TRADE_PATTERN = Pattern.compile("^\\s*([OM]):(.+?)\\s*/(\\d+)");
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("d.M.yyyy");
 
     Transaction toTransaction(QualifiedTickerRepository qualifiedTickerRepository) {
@@ -48,7 +49,7 @@ record OPTransaction(String bookingDate, String amountInEuro, String category, S
         };
     }
     private Trade toTrade(QualifiedTickerRepository qualifiedTickerRepository, LocalDate date, long cents) {
-        Matcher m = Pattern.compile("^\\s*([OM]):(.+?)\\s*/(\\d+)").matcher(message);
+        Matcher m = TRADE_PATTERN.matcher(message);
         if (m.lookingAt()) {                     // like Python's re.match
             String action   = m.group(1);          // "O" (osto = buy) or "M" (myynti = sell)
             String opSecurityId = m.group(2);          // security name, trailing spaces excluded
