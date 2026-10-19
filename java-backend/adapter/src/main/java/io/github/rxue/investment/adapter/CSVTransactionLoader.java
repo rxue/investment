@@ -2,6 +2,7 @@ package io.github.rxue.investment.adapter;
 
 import io.github.rxue.investment.vo.bankaccount.transaction.Transaction;
 import io.github.rxue.investment.adapter.transaction.csv.op.OPTransactionLoader;
+import io.github.rxue.investment.vo.bankaccount.transaction.TransactionList;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -15,7 +16,7 @@ public class CSVTransactionLoader implements TransactionLoader {
     }
 
     @Override
-    public List<Transaction> load() {
+    public TransactionList load() {
         return switch (account) {
             case OP -> new OPTransactionLoader(csvOrDirectoryPath).load();
             case NORDNET -> throw new UnsupportedOperationException("Loading " + account + " transactions is not supported yet");

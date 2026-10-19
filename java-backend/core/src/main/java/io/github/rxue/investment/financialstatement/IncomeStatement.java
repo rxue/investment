@@ -1,22 +1,23 @@
 package io.github.rxue.investment.financialstatement;
 
-import io.github.rxue.investment.vo.bankaccount.transaction.Dividend;
-import io.github.rxue.investment.vo.bankaccount.transaction.Expense;
-import io.github.rxue.investment.vo.bankaccount.transaction.Period;
-import io.github.rxue.investment.vo.bankaccount.transaction.Transaction;
+import io.github.rxue.investment.lotsmatching.SellMatch;
+import io.github.rxue.investment.lotsmatching.TradeMatcher;
+import io.github.rxue.investment.vo.bankaccount.transaction.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import static io.github.rxue.investment.financialstatement.Util.*;
 
 public class IncomeStatement {
     private final Period period;
-    private final List<Transaction> transactions;
-
-    public IncomeStatement(Period period, List<Transaction> transactions) {
+    private final TradeMatcher tradeMatcher;
+    private final TransactionList transactionList;
+    public IncomeStatement(Period period, TransactionList transactionList) {
         this.period = period;
-        this.transactions = transactionsWithin(period.endDate(), transactions);
+        this.tradeMatcher = new TradeMatcher();
+        this.transactionList = transactionList.transactionsBy(period.endDate());
     }
 
     public Period period() {
@@ -24,30 +25,40 @@ public class IncomeStatement {
     }
 
     private long dividendIncomeCents() {
-        List<Dividend> dividends = transactions.stream()
-                .filter(tr -> period.includes(tr.date()))
-                .filter(Dividend.class::isInstance)
-                .map(Dividend.class::cast)
-                .toList();
-        return sumCents(dividends);
+        return sumCents(transactionList.dividendsSince(period.startDate()));
     }
-
-    public BigDecimal dividendIncome() {
-        return toBaseUnit(dividendIncomeCents());
+    private long realizedGainCents() {
+        List<Trade> trades = transactionList.trades();
+        Map<String,List<SellMatch>> realizedGains = tradeMatcher.matchInFIFO(trades)
+                .sellMatchesSince(period.startDate());
+        return realizedGains.values().stream()
+                .flatMap(List::stream)
+                .mapToLong(SellMatch::gainInCent)
+                .sum();
     }
-
-    private long totalExpensesCents() {
-        List<Expense> expenses = transactions.stream()
-                .filter(tr -> period.includes(tr.date()))
-                .filter(Expense.class::isInstance)
-                .map(Expense.class::cast)
-                .toList();
-        return sumCents(expenses);
+    private long expensesInCent() {
+        return sumCents(transactionList.expensesSince(period.endDate()));
     }
     public BigDecimal totalExpenses() {
-        return toBaseUnit(totalExpensesCents());
+        return toBaseUnit(expensesInCent());
     }
-    public BigDecimal profit() {
-        return toBaseUnit(dividendIncomeCents() + totalExpensesCents());
+    public FinancialIncome financialIncome() {
+        return new FinancialIncome(dividendIncomeCents(), realizedGainCents());
     }
+    public BigDecimal totalProfit() {
+        FinancialIncome financialIncome = financialIncome();
+        return toBaseUnit(financialIncome.sum() - expensesInCent());
+    }
+    public record FinancialIncome(long dividendInCent, long realizedGainsInCent) {
+        public BigDecimal dividend() {
+            return toBaseUnit(dividendInCent);
+        }
+        public BigDecimal gains() {
+            return toBaseUnit(realizedGainsInCent);
+        }
+        public long sum() {
+            return dividendInCent + realizedGainsInCent;
+        }
+    }
+
 }

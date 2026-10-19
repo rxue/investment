@@ -1,5 +1,6 @@
 package io.github.rxue.investment.adapter.transaction.csv.op;
 
+import io.github.rxue.investment.vo.bankaccount.transaction.TransactionList;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -55,7 +56,7 @@ public class OPTransactionLoader implements TransactionLoader {
         }
     }
     @Override
-    public List<Transaction> load() {
+    public TransactionList load() {
         if (Files.isDirectory(csvDirectoryPath)) {
             List<Path> csvPaths = new ArrayList<>();
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(csvDirectoryPath, "*.{csv,CSV}")) {
@@ -64,15 +65,17 @@ public class OPTransactionLoader implements TransactionLoader {
                 throw new UncheckedIOException("Cannot list " + csvDirectoryPath, ex);
             }
             Collections.sort(csvPaths); // directory order is not guaranteed
-            return csvPaths.stream()
+            List<Transaction> transactions = csvPaths.stream()
                     .map(OPTransactionLoader::loadOPTransactions)
                     .flatMap(List::stream)
                     .map(opTr -> opTr.toTransaction(qualifiedTickerRepository))
                     .toList();
+            return new TransactionList(transactions);
         } else {
-            return loadOPTransactions(csvDirectoryPath).stream()
+            List<Transaction> transactions = loadOPTransactions(csvDirectoryPath).stream()
                     .map(opTr -> opTr.toTransaction(qualifiedTickerRepository))
                     .toList();
+            return new TransactionList(transactions);
         }
     }
 }

@@ -4,12 +4,12 @@ import com.github.freva.asciitable.AsciiTable;
 import io.github.rxue.investment.financialstatement.balancesheet.BalanceSheet;
 import io.github.rxue.investment.pdfgeneration.BalanceSheetGenerator;
 import io.github.rxue.investment.vo.bankaccount.transaction.Period;
-import io.github.rxue.investment.vo.bankaccount.transaction.Transaction;
 import io.github.rxue.investment.financialstatement.Type;
 import io.github.rxue.investment.financialstatement.IncomeStatement;
 import io.github.rxue.investment.adapter.Account;
 import io.github.rxue.investment.adapter.CSVTransactionLoader;
 import io.github.rxue.investment.pdfgeneration.IncomeStatementGenerator;
+import io.github.rxue.investment.vo.bankaccount.transaction.TransactionList;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.ITypeConverter;
 import picocli.CommandLine.Option;
@@ -19,7 +19,6 @@ import picocli.CommandLine.TypeConversionException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 @Command(name = "financial-statements", description = "Generate a financial statement from a directory storing csv files",
@@ -44,7 +43,7 @@ public class FinancialStatementsCommand implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        List<Transaction> transactions = new CSVTransactionLoader(account, csvDirectoryPath).load();
+        TransactionList transactions = new CSVTransactionLoader(account, csvDirectoryPath).load();
         switch (type) {
             case INCOME_STATEMENT -> {
                 IncomeStatement incomeStatement = new IncomeStatement(period, transactions);
@@ -55,7 +54,7 @@ public class FinancialStatementsCommand implements Callable<Integer> {
                 }
             }
             case BALANCE_SHEET -> {
-                BalanceSheet balanceSheet = new BalanceSheet(period.endDate(), transactions);
+                BalanceSheet balanceSheet = new BalanceSheet(period.endDate(), transactions.transactionList());
                 if (pdfPath == null) {
                     printBalanceSheet(balanceSheet);
                 } else {
@@ -70,7 +69,7 @@ public class FinancialStatementsCommand implements Callable<Integer> {
         Period period = incomeStatement.period();
         String[] headers = {"Income statement " + period.startDate() + " - " + period.endDate(), "EUR"};
         String[][] rows = {
-                {"Dividend income", incomeStatement.dividendIncome().toPlainString()},
+                {"Dividend income", incomeStatement.financialIncome().dividend().toPlainString()},
                 {"Total expenses", incomeStatement.totalExpenses().toPlainString()}
         };
         System.out.println(AsciiTable.getTable(headers, rows));
