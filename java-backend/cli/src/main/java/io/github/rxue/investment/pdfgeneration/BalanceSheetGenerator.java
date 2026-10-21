@@ -72,8 +72,8 @@ public class BalanceSheetGenerator {
     private static PdfPTable equityTable(Equity equity) {
         PdfPTable table = headerTable("", "Amount (EUR)");
         addRow(table, "Capital paid by owner", equity.capitalPaidByOwner().toPlainString());
-        BigDecimal profit = equity.profit();
-        addRow(table, "profit/loss", profit.toPlainString());
+        BigDecimal profit = equity.profitForTheYear();
+        addRow(table, "profitForTheYear/loss", profit.toPlainString());
         BigDecimal totalEquity = equity.total();
         addTotalRow(table, "Total equity", totalEquity);
         BigDecimal totalLiabilities = BigDecimal.ZERO.setScale(totalEquity.scale());

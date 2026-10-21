@@ -1,5 +1,6 @@
 package io.github.rxue.investment.financialstatement.balancesheet;
 
+import io.github.rxue.investment.lotsmatching.SellMatches;
 import io.github.rxue.investment.lotsmatching.TradeMatchResult;
 import io.github.rxue.investment.lotsmatching.TradeMatcher;
 import io.github.rxue.investment.vo.bankaccount.transaction.*;
@@ -9,24 +10,18 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static io.github.rxue.investment.financialstatement.Util.toBaseUnit;
-import static io.github.rxue.investment.financialstatement.Util.transactionsWithin;
 
 public class BalanceSheet {
     private final LocalDate date;
-    private final List<Transaction> transactionList;
+    private final TransactionList transactionList;
     private final TradeMatchResult tradeMatchResult;
-    public BalanceSheet(LocalDate date, List<Transaction> allTransactionList) {
+    public BalanceSheet(LocalDate date, TransactionList transactionList) {
         this.date = date;
-        this.transactionList = transactionsWithin(date, allTransactionList);
-        this.tradeMatchResult = new TradeMatcher()
-                .matchInFIFO(trades(transactionList));
+        this.transactionList = transactionList.transactionsBy(date);
+        this.tradeMatchResult = tradeMatchResult();
     }
-
-    private static List<Trade> trades(List<Transaction> transactionList) {
-        return transactionList.stream()
-                .filter(Trade.class::isInstance)
-                .map(Trade.class::cast)
-                .toList();
+    private TradeMatchResult tradeMatchResult() {
+        return new TradeMatcher().matchInFIFO(transactionList.trades());
     }
 
     public LocalDate date() {
@@ -35,24 +30,48 @@ public class BalanceSheet {
 
     public Assets assets() {
         BigDecimal sharesAtCost = toBaseUnit(tradeMatchResult.totalOpenLotsCostInCent());
-        long cashInCent = transactionList.stream()
+        long cashInCent = transactionList.transactionList().stream()
                 .mapToLong(Transaction::cents)
                 .sum();
         return new Assets(sharesAtCost, toBaseUnit(cashInCent));
     }
     public Equity equity() {
-        long totalDeposits = transactionList.stream()
-                .filter(Deposit.class::isInstance)
+        long totalDeposits = transactionList.deposits().stream()
+                .mapToLong(Deposit::cents)
+                .sum();
+        return new Equity(toBaseUnit(totalDeposits), toBaseUnit(profitInCentForTheYear()), toBaseUnit(retainedEarningsInCent()));
+    }
+    private long retainedEarningsInCent() {
+        LocalDate startDate = startDate();
+        SellMatches sellMatchesBeforeCurrentYear = tradeMatchResult
+                .sellMatches()
+                .before(startDate);
+        return sellMatchesBeforeCurrentYear.totalGainInCent()
+            + sumInCentBefore(transactionList.dividends(), startDate)
+            + sumInCentBefore(transactionList.expenses(), startDate);
+    }
+    private LocalDate startDate() {
+        return LocalDate.of(date.getYear(), 1, 1);
+    }
+    public long profitInCentForTheYear() {
+        LocalDate startDate = startDate();
+        SellMatches sellMatches = tradeMatchResult
+                .sellMatches()
+                .since(startDate);
+        long dividendsInCent = sumInCentSince(transactionList.dividends(), startDate());
+        long expensesInCent = sumInCentSince(transactionList.expenses(), startDate());
+        return sellMatches.totalGainInCent() + dividendsInCent + expensesInCent;
+    }
+    private static long sumInCentSince(List<? extends Transaction> transactions, LocalDate inclusiveStartDate) {
+        return transactions.stream()
+                .filter(tr -> !tr.date().isBefore(inclusiveStartDate))
                 .mapToLong(Transaction::cents)
                 .sum();
-        long dividends = transactionList.stream()
-                .filter(Dividend.class::isInstance)
+    }
+    private static long sumInCentBefore(List<? extends Transaction> transactions, LocalDate date) {
+        return transactions.stream()
+                .filter(tr -> tr.date().isBefore(date))
                 .mapToLong(Transaction::cents)
                 .sum();
-        long expenses = transactionList.stream()
-                .filter(Expense.class::isInstance)
-                .mapToLong(Transaction::cents)
-                .sum();
-        return new Equity(toBaseUnit(totalDeposits), toBaseUnit(dividends+expenses));
     }
 }

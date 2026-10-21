@@ -1,7 +1,9 @@
 package io.github.rxue.investment.cli;
 
 import com.github.freva.asciitable.AsciiTable;
+import io.github.rxue.investment.financialstatement.balancesheet.Assets;
 import io.github.rxue.investment.financialstatement.balancesheet.BalanceSheet;
+import io.github.rxue.investment.financialstatement.balancesheet.Equity;
 import io.github.rxue.investment.pdfgeneration.BalanceSheetGenerator;
 import io.github.rxue.investment.vo.bankaccount.transaction.Period;
 import io.github.rxue.investment.financialstatement.Type;
@@ -54,7 +56,7 @@ public class FinancialStatementsCommand implements Callable<Integer> {
                 }
             }
             case BALANCE_SHEET -> {
-                BalanceSheet balanceSheet = new BalanceSheet(period.endDate(), transactions.transactionList());
+                BalanceSheet balanceSheet = new BalanceSheet(period.endDate(), transactions);
                 if (pdfPath == null) {
                     printBalanceSheet(balanceSheet);
                 } else {
@@ -75,7 +77,27 @@ public class FinancialStatementsCommand implements Callable<Integer> {
         System.out.println(AsciiTable.getTable(headers, rows));
     }
     private static void printBalanceSheet(BalanceSheet balanceSheet) {
-
+        LocalDate date = balanceSheet.date();
+        System.out.println("Balance Sheet on " + date);
+        //Asset section
+        String[] headers = {"Asset"};
+        Assets assets = balanceSheet.assets();
+        String[][] rows = {
+                {"Shares as cost", assets.listedSharesAtCost().toPlainString()},
+                {"Cash", assets.cash().toPlainString()},
+                {"Total", assets.total().toPlainString()}
+        };
+        System.out.println(AsciiTable.getTable(headers, rows));
+        //Equity and liabilities section
+        String[] EquityHeader = {"Equity"};
+        Equity equity = balanceSheet.equity();
+        String[][] equityRows = {
+                {"Capital Paid by Owner", equity.capitalPaidByOwner().toPlainString()},
+                {"Reatained Earnings", equity.retainedEarnings().toPlainString()},
+                {"Profit for the year", equity.profitForTheYear().toPlainString()},
+                {"Total", equity.total().toPlainString()}
+        };
+        System.out.println(AsciiTable.getTable(EquityHeader, equityRows));
     }
 
     static class PeriodConverter implements ITypeConverter<Period> {

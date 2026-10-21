@@ -16,9 +16,14 @@ public class Util {
     public static BigDecimal toBaseUnit(long cents) {
         return BigDecimal.valueOf(cents, 2);
     }
-    public static List<Transaction> transactionsWithin(LocalDate date, List<Transaction> allTransactions) {
-        return allTransactions.stream()
-                .filter(tr -> !tr.date().isAfter(date))
+    public static List<? extends Transaction> before(List<? extends Transaction> transactions, LocalDate exclusiveDate) {
+        return transactions.stream()
+                .filter(tr -> tr.date().isBefore(exclusiveDate))
+                .toList();
+    }
+    public static List<? extends Transaction> since(List<? extends Transaction> transactions, LocalDate inclusiveStartDate) {
+        return transactions.stream()
+                .filter(tr -> tr.date().isBefore(inclusiveStartDate))
                 .toList();
     }
 }

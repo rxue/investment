@@ -1,62 +1,54 @@
 package io.github.rxue.investment.financialstatement;
-
-import io.github.rxue.investment.lotsmatching.SellMatch;
-import io.github.rxue.investment.lotsmatching.TradeMatcher;
 import io.github.rxue.investment.vo.bankaccount.transaction.*;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 
 import static io.github.rxue.investment.financialstatement.Util.*;
 
 public class IncomeStatement {
     private final Period period;
-    private final TradeMatcher tradeMatcher;
-    private final TransactionList transactionList;
+    private final IncomeElements incomeElements;
     public IncomeStatement(Period period, TransactionList transactionList) {
-        this.period = period;
-        this.tradeMatcher = new TradeMatcher();
-        this.transactionList = transactionList.transactionsBy(period.endDate());
+        this(period, new IncomeElements(transactionList));
     }
+    public IncomeStatement(Period period, IncomeElements incomeElements) {
+        this.period = period;
+        this.incomeElements = incomeElements;
+    }
+
 
     public Period period() {
         return period;
     }
 
-    private long dividendIncomeCents() {
-        return sumCents(transactionList.dividendsSince(period.startDate()));
-    }
     private long realizedGainCents() {
-        List<Trade> trades = transactionList.trades();
-        Map<String,List<SellMatch>> realizedGains = tradeMatcher.matchInFIFO(trades)
-                .sellMatchesSince(period.startDate());
-        return realizedGains.values().stream()
-                .flatMap(List::stream)
-                .mapToLong(SellMatch::gainInCent)
-                .sum();
+        return incomeElements.tradeMatchResult()
+                .sellMatches()
+                .since(period.startDate())
+                .totalGainInCent();
     }
     private long expensesInCent() {
-        return sumCents(transactionList.expensesSince(period.endDate()));
+        return sumCents(incomeElements.expensesSince(period.startDate()));
     }
     public BigDecimal totalExpenses() {
         return toBaseUnit(expensesInCent());
     }
     public FinancialIncome financialIncome() {
-        return new FinancialIncome(dividendIncomeCents(), realizedGainCents());
+        long dividendIncomeInCent = sumCents(incomeElements.dividendsSince(period.startDate()));
+        return new FinancialIncome(dividendIncomeInCent, realizedGainCents());
     }
     public BigDecimal totalProfit() {
         FinancialIncome financialIncome = financialIncome();
-        return toBaseUnit(financialIncome.sum() - expensesInCent());
+        return toBaseUnit(financialIncome.totalInCent() - expensesInCent());
     }
     public record FinancialIncome(long dividendInCent, long realizedGainsInCent) {
         public BigDecimal dividend() {
             return toBaseUnit(dividendInCent);
         }
-        public BigDecimal gains() {
+        public BigDecimal capitalGains() {
             return toBaseUnit(realizedGainsInCent);
         }
-        public long sum() {
+        public long totalInCent() {
             return dividendInCent + realizedGainsInCent;
         }
     }

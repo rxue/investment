@@ -60,7 +60,7 @@ public class IncomeStatementGenerator {
 
     private static PdfPTable summaryTable(IncomeStatement incomeStatement) {
         PdfPTable table = headerTable("", "Amount (EUR)");
-        addRow(table, "Dividend income", incomeStatement.dividendIncome().toPlainString());
+        //addRow(table, "Dividend income", incomeStatement..toPlainString());
         addRow(table, "Total expenses", incomeStatement.totalExpenses().toPlainString());
         BigDecimal profit = incomeStatement.totalProfit();
         table.addCell(new PdfPCell(new Paragraph("Loss/Profit", TOTAL_FONT)));

@@ -52,7 +52,7 @@ public class HoldingsCommand implements Callable<Integer> {
     public Integer call() {
         Account account = Account.valueOf(accountName);
         CSVTransactionLoader transactionLoader = new CSVTransactionLoader(account, Path.of(csvFileOrDirectoryPath));
-        List<Transaction> transactions = transactionLoader.load();
+        List<Transaction> transactions = transactionLoader.load().transactionList();
         List<Trade> trades = transactions.stream()
                 .filter(Trade.class::isInstance)
                 .map(Trade.class::cast)
