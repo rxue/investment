@@ -6,6 +6,10 @@
 ## Item 80 Prefer executors, tasks, and streams to threads
 **Key takeaways**
 - *Executor Framework*
+    - critical question: what is the sense of using `newSingleThreadExecutor`
+        - answer: there is a *work queue* to achieve the goal of asynchronous execution on the task
+    - `ExecutorService`
+        - blocking methods: `invokeAny`, `invokeAll`
 
 - `Runnable` vs `Callable`
     - `Runnable` - `void run()`
