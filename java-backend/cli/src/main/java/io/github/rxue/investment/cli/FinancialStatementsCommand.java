@@ -70,9 +70,13 @@ public class FinancialStatementsCommand implements Callable<Integer> {
     private static void printIncomeStatement(IncomeStatement incomeStatement) {
         Period period = incomeStatement.period();
         String[] headers = {"Income statement " + period.startDate() + " - " + period.endDate(), "EUR"};
+        IncomeStatement.FinancialIncome financialIncome = incomeStatement.financialIncome();
         String[][] rows = {
-                {"Dividend income", incomeStatement.financialIncome().dividend().toPlainString()},
-                {"Total expenses", incomeStatement.totalExpenses().toPlainString()}
+                {"Dividend income", financialIncome.dividend().toPlainString()},
+                {"Capital gains", financialIncome.capitalGains().toPlainString()},
+                {"Total expenses", incomeStatement.totalExpenses().toPlainString()},
+                {"Profit/loss", incomeStatement.totalProfit().toPlainString()},
+
         };
         System.out.println(AsciiTable.getTable(headers, rows));
     }

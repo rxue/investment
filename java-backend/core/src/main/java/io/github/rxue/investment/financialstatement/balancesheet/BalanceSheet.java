@@ -7,8 +7,9 @@ import io.github.rxue.investment.vo.bankaccount.transaction.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
 
+import static io.github.rxue.investment.financialstatement.Util.sumCents;
 import static io.github.rxue.investment.financialstatement.Util.toBaseUnit;
 
 public class BalanceSheet {
@@ -17,7 +18,7 @@ public class BalanceSheet {
     private final TradeMatchResult tradeMatchResult;
     public BalanceSheet(LocalDate date, TransactionList transactionList) {
         this.date = date;
-        this.transactionList = transactionList.transactionsBy(date);
+        this.transactionList = transactionList.by(date);
         this.tradeMatchResult = tradeMatchResult();
     }
     private TradeMatchResult tradeMatchResult() {
@@ -46,9 +47,10 @@ public class BalanceSheet {
         SellMatches sellMatchesBeforeCurrentYear = tradeMatchResult
                 .sellMatches()
                 .before(startDate);
+        TransactionList transactionsBeforePeriod = transactionList.by(startDate.minus(1, ChronoUnit.DAYS));
         return sellMatchesBeforeCurrentYear.totalGainInCent()
-            + sumInCentBefore(transactionList.dividends(), startDate)
-            + sumInCentBefore(transactionList.expenses(), startDate);
+            + sumCents(transactionsBeforePeriod.dividends())
+            + sumCents(transactionsBeforePeriod.expenses());
     }
     private LocalDate startDate() {
         return LocalDate.of(date.getYear(), 1, 1);
@@ -58,20 +60,9 @@ public class BalanceSheet {
         SellMatches sellMatches = tradeMatchResult
                 .sellMatches()
                 .since(startDate);
-        long dividendsInCent = sumInCentSince(transactionList.dividends(), startDate());
-        long expensesInCent = sumInCentSince(transactionList.expenses(), startDate());
+        TransactionList transactionsWithinPeriod = transactionList.since(startDate);
+        long dividendsInCent = sumCents(transactionsWithinPeriod.dividends());
+        long expensesInCent = sumCents(transactionsWithinPeriod.expenses());
         return sellMatches.totalGainInCent() + dividendsInCent + expensesInCent;
-    }
-    private static long sumInCentSince(List<? extends Transaction> transactions, LocalDate inclusiveStartDate) {
-        return transactions.stream()
-                .filter(tr -> !tr.date().isBefore(inclusiveStartDate))
-                .mapToLong(Transaction::cents)
-                .sum();
-    }
-    private static long sumInCentBefore(List<? extends Transaction> transactions, LocalDate date) {
-        return transactions.stream()
-                .filter(tr -> tr.date().isBefore(date))
-                .mapToLong(Transaction::cents)
-                .sum();
     }
 }
