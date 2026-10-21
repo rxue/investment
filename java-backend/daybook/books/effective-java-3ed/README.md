@@ -5,12 +5,16 @@
 # Chapter 11 Concurrency
 ## Item 80 Prefer executors, tasks, and streams to threads
 **Key takeaways**
-- *Executor Framework*
+- *Executor Framework* - essence: *unit of work*, i.e. the *task*, and the execution mechanism are separated
     - critical question: what is the sense of using `newSingleThreadExecutor`
         - answer: there is a *work queue* to achieve the goal of asynchronous execution on the task
-    - `ExecutorService`
+    - `ExecutorService` - the essence of it is *thread pool*
         - blocking methods: `invokeAny`, `invokeAll`
-
-- `Runnable` vs `Callable`
-    - `Runnable` - `void run()`
-    - `Callable<V>` - `V call() throws Exception`
+        - types of pools, i.e. concrete class of `ExecutorService`
+            - `Executors.newScheduledThreadPool` returns `ScheduledExecutorService`
+            - `Executors.newCachedThreadPool` returns the thread pool  where **sumitted tasks are note queued but immediately handed off to a thread for execution** => use case: lightly loaded server
+            - `Executors.newFixedThreadPool` => use case: heavily loaded production server
+    - *tasks*
+        - `Runnable` vs `Callable`
+            - `Runnable` - `void run()`
+            - `Callable<V>` - `V call() throws Exception`
