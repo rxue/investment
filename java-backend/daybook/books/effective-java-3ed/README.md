@@ -5,8 +5,8 @@
 # Chapter 11 Concurrency
 ## Item 80 Prefer executors, tasks, and streams to threads
 **Key takeaways**
-* *Executor Framework*
+- *Executor Framework*
 
 - `Runnable` vs `Callable`
- - `Runnable` - `void run()`
- - `Callable<V>` - `V call() throws Exception`
+    - `Runnable` - `void run()`
+    - `Callable<V>` - `V call() throws Exception`
