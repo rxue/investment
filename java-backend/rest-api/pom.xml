@@ -25,11 +25,11 @@
     </dependencyManagement>
 
     <dependencies>
-        <!--ependency>
+        <dependency>
             <groupId>io.github.rxue.investment</groupId>
             <artifactId>core</artifactId>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>io.github.rxue.investment</groupId>
             <artifactId>adapter</artifactId>
             <version>${project.version}</version>

@@ -1,6 +1,7 @@
 package io.github.rxue.investment.api;
 
-import io.github.rxue.investment.vo.MetricValues;
+
+import io.github.rxue.investmentutility.vo.MetricValues;
 
 import java.util.List;
 

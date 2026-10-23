@@ -1,6 +1,6 @@
 package io.github.rxue.investment.api;
 
-import io.github.rxue.investment.marketquote.QuoteMetric;
+import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

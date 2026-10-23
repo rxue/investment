@@ -2,9 +2,9 @@ package io.github.rxue.investment.api;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.github.rxue.investment.marketquote.QuoteMetric;
-import io.github.rxue.investment.marketquote.Repository;
-import io.github.rxue.investment.vo.MetricValues;
+import io.github.rxue.investmentutility.marketquote.QuoteFetcher;
+import io.github.rxue.investmentutility.marketquote.QuoteMetric;
+import io.github.rxue.investmentutility.vo.MetricValues;
 import org.springframework.scheduling.annotation.Async;
 
 import java.time.Duration;
@@ -19,10 +19,10 @@ public class JobRepository {
             .expireAfterWrite(Duration.ofMinutes(5))
             .maximumSize(1_000)
             .build();
-    private final Repository marketQuoteRepository;
+    private final QuoteFetcher marketQuoteFetcher;
 
-    public JobRepository(Repository marketQuoteRepository) {
-        this.marketQuoteRepository = marketQuoteRepository;
+    public JobRepository(QuoteFetcher marketQuoteFetcher) {
+        this.marketQuoteFetcher = marketQuoteFetcher;
     }
 
     public UUID create() {
@@ -36,8 +36,10 @@ public class JobRepository {
         List<MetricValues> metricValuesResult = new ArrayList<>();
         try {
             for (String securityId : securityIds) {
-                Map<QuoteMetric,Comparable<?>> metricValues = marketQuoteRepository.findMetricValues(securityId, quoteMetrics);
-                metricValuesResult.add(new MetricValues(securityId, Collections.unmodifiableMap(metricValues)));
+                Map<QuoteMetric,Comparable<?>> metricValueMap = marketQuoteFetcher.fetch(securityId, quoteMetrics);
+                MetricValues metricValues = new MetricValues.Builder(securityId)
+                        .addAll(Collections.unmodifiableMap(metricValueMap)).build();
+                metricValuesResult.add(metricValues);
                 jobs.put(jobId, new QuoteJob(RUNNING, List.copyOf(metricValuesResult), null));
             }
             jobs.put(jobId, new QuoteJob(DONE, List.copyOf(metricValuesResult), null));
