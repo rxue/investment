@@ -1,9 +1,9 @@
 package io.github.rxue.investment.financialstatement.balancesheet;
 
-import io.github.rxue.investment.vo.bankaccount.transaction.Deposit;
-import io.github.rxue.investment.vo.bankaccount.transaction.ServiceCharge;
-import io.github.rxue.investment.vo.bankaccount.transaction.Transaction;
-import io.github.rxue.investment.vo.bankaccount.transaction.TransactionList;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Deposit;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.ServiceCharge;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Transaction;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.TransactionList;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

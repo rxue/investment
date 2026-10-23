@@ -15,8 +15,8 @@
     <dependencies>
         <dependency>
             <groupId>io.github.rxue</groupId>
-            <artifactId>investment</artifactId>
-            <version>1.0.7-beta</version>
+            <artifactId>investment-utility</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

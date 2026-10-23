@@ -1,11 +1,13 @@
 package io.github.rxue.investment.portfolio.holdings;
 
-import io.github.rxue.investment.vo.bankaccount.transaction.Trade;
+
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Trade;
 
 import java.util.AbstractMap;
 import java.util.Map;
 
-import static io.github.rxue.investment.vo.bankaccount.transaction.Action.BUY;
+import static io.github.rxue.investmentutility.vo.bankaccount.transaction.Action.BUY;
+
 
 public record Holding(String securityId, int position) {
     Map.Entry<String,Holding> toMapEntry() {

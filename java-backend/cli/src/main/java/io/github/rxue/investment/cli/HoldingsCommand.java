@@ -3,17 +3,16 @@ package io.github.rxue.investment.cli;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.ColumnData;
-import io.github.rxue.investment.marketquote.QuoteMetric;
-import io.github.rxue.investment.marketquote.yahoofinance.YahooFinanceSearchService;
-import io.github.rxue.investment.vo.Metric;
-import io.github.rxue.investment.vo.MetricValues;
-import io.github.rxue.investment.vo.bankaccount.transaction.Trade;
-import io.github.rxue.investment.vo.bankaccount.transaction.Transaction;
 import io.github.rxue.investment.adapter.Account;
 import io.github.rxue.investment.adapter.CSVTransactionLoader;
 import io.github.rxue.investment.portfolio.holdings.HoldingMetric;
 import io.github.rxue.investment.portfolio.holdings.MetricValuesBuildersDirector;
-import picocli.CommandLine;
+import io.github.rxue.investmentutility.marketquote.QuoteMetric;
+import io.github.rxue.investmentutility.marketquote.yahoofinance.YahooFinanceQuoteFetcher;
+import io.github.rxue.investmentutility.vo.Metric;
+import io.github.rxue.investmentutility.vo.MetricValues;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Trade;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Transaction;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Parameters;
@@ -42,9 +41,6 @@ public class HoldingsCommand implements Callable<Integer> {
     @Parameters(index = "2", description = "The Path of the CSV file or directory")
     private String csvFileOrDirectoryPath;
 
-    @CommandLine.Option(names = "--threads", description = "Amount of threads to use in the fetch of quote")
-    private int nThreads;
-
     @Spec
     private CommandSpec spec;
 
@@ -62,7 +58,7 @@ public class HoldingsCommand implements Callable<Integer> {
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
-        MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceSearchService(httpClient,"EUR"), trades);
+        MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceQuoteFetcher(httpClient,"EUR"), trades);
         SequencedSet<Metric> metrics = getMetrics(metricNames);
         List<MetricValues> metricValuesList = director.construct(metrics);
         printMetricValues(metrics, metricValuesList);

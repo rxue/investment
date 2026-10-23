@@ -9,7 +9,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import io.github.rxue.investment.financialstatement.IncomeStatement;
-import io.github.rxue.investment.vo.bankaccount.transaction.Period;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Period;
 
 import java.io.IOException;
 import java.io.OutputStream;

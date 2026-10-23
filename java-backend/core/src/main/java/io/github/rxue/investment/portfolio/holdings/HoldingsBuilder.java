@@ -3,7 +3,7 @@ package io.github.rxue.investment.portfolio.holdings;
 
 
 
-import io.github.rxue.investment.vo.bankaccount.transaction.Trade;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Trade;
 
 import java.util.*;
 

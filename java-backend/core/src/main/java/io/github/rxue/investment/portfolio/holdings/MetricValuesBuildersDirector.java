@@ -1,12 +1,13 @@
 package io.github.rxue.investment.portfolio.holdings;
 
-import io.github.rxue.investment.marketquote.SearchService;
-import io.github.rxue.investment.vo.MetricValues;
-import io.github.rxue.investment.vo.MetricValuesList;
-import io.github.rxue.investment.vo.QuotePrice;
-import io.github.rxue.investment.vo.bankaccount.transaction.Trade;
-import io.github.rxue.investment.marketquote.QuoteMetric;
-import io.github.rxue.investment.vo.Metric;
+
+import io.github.rxue.investmentutility.marketquote.QuoteFetcher;
+import io.github.rxue.investmentutility.marketquote.QuoteMetric;
+import io.github.rxue.investmentutility.vo.Metric;
+import io.github.rxue.investmentutility.vo.MetricValues;
+import io.github.rxue.investmentutility.vo.MetricValuesList;
+import io.github.rxue.investmentutility.vo.QuotePrice;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Trade;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -15,14 +16,15 @@ import java.util.Map;
 import java.util.SequencedSet;
 import java.util.Set;
 
-import static io.github.rxue.investment.marketquote.QuoteMetric.LATEST_MARKET_PRICE_IN_REPORT_CURRENCY;
+import static io.github.rxue.investmentutility.marketquote.QuoteMetric.LATEST_MARKET_PRICE_IN_REPORT_CURRENCY;
+
 
 public class MetricValuesBuildersDirector {
-    private final SearchService marketQuoteSearchService;
+    private final QuoteFetcher marketQuoteSearchService;
     private final Map<String,Holding> holdings;
-    private final Map<String,MetricValues.Builder> metricValuesBuilders;
+    private final Map<String, MetricValues.Builder> metricValuesBuilders;
     private MetricValuesList quoteMetricValuesList;
-    public MetricValuesBuildersDirector(SearchService marketQuoteSearchService, List<Trade> trades) {
+    public MetricValuesBuildersDirector(QuoteFetcher marketQuoteSearchService, List<Trade> trades) {
         this.marketQuoteSearchService = marketQuoteSearchService;
         this.holdings = new HoldingsBuilder()
                 .apply(trades)
@@ -34,7 +36,7 @@ public class MetricValuesBuildersDirector {
         final Set<QuoteMetric> allQuoteMetrics = new HoldingMetrics(metrics)
                 .allQuoteMetrics();
         final Set<String> securityIds = holdings.keySet();
-        quoteMetricValuesList = marketQuoteSearchService.findMetricValues(securityIds, allQuoteMetrics);
+        quoteMetricValuesList = marketQuoteSearchService.fetchAll(securityIds, allQuoteMetrics);
         for (Metric metric : metrics) {
             securityIds.forEach(securityId -> {
                 MetricValues.Builder metricValuesBuilder = metricValuesBuilders.computeIfAbsent(securityId, secId -> new MetricValues.Builder(secId));

@@ -1,9 +1,11 @@
 package io.github.rxue.investment.financialstatement.balancesheet;
 
-import io.github.rxue.investment.lotsmatching.SellMatches;
-import io.github.rxue.investment.lotsmatching.TradeMatchResult;
-import io.github.rxue.investment.lotsmatching.TradeMatcher;
-import io.github.rxue.investment.vo.bankaccount.transaction.*;
+import io.github.rxue.investmentutility.lotsmatching.SellMatches;
+import io.github.rxue.investmentutility.lotsmatching.TradeMatchResult;
+import io.github.rxue.investmentutility.lotsmatching.TradeMatcher;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Deposit;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Transaction;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.TransactionList;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

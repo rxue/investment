@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Service
 public class QuoteService {
+    private final SearchService searchService;
     private final Repository marketQuoteRepository;
     private final JobRepository jobRepository;
 

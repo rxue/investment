@@ -1,13 +1,13 @@
 package io.github.rxue.investment.portfolio.holdings;
 
-import io.github.rxue.investment.vo.bankaccount.transaction.Trade;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Trade;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static io.github.rxue.investment.vo.bankaccount.transaction.Action.BUY;
-import static io.github.rxue.investment.vo.bankaccount.transaction.Action.SELL;
+import static io.github.rxue.investmentutility.vo.bankaccount.transaction.Action.BUY;
+import static io.github.rxue.investmentutility.vo.bankaccount.transaction.Action.SELL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

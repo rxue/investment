@@ -1,6 +1,7 @@
 package io.github.rxue.investment.financialstatement;
 
-import io.github.rxue.investment.vo.bankaccount.transaction.Transaction;
+
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

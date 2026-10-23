@@ -1,6 +1,6 @@
 package io.github.rxue.investment.adapter.transaction.csv.op;
 
-import io.github.rxue.investment.vo.bankaccount.transaction.TransactionList;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.TransactionList;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import io.github.rxue.investment.vo.bankaccount.transaction.Transaction;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Transaction;
 import io.github.rxue.investment.adapter.TransactionLoader;
 
 

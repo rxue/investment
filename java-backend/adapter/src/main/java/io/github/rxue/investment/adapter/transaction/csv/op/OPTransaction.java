@@ -2,7 +2,9 @@ package io.github.rxue.investment.adapter.transaction.csv.op;
 
 
 
-import io.github.rxue.investment.vo.bankaccount.transaction.*;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.*;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Deposit;
+import io.github.rxue.investmentutility.vo.bankaccount.transaction.Transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,7 +13,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static io.github.rxue.investment.vo.bankaccount.transaction.Action.*;
+import static io.github.rxue.investmentutility.vo.bankaccount.transaction.Action.BUY;
+import static io.github.rxue.investmentutility.vo.bankaccount.transaction.Action.SELL;
+
 
 
 record OPTransaction(String bookingDate, String amountInEuro, String category, String explanation, String message) {
