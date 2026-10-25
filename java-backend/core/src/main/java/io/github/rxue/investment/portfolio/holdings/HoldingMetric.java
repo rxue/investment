@@ -7,7 +7,8 @@ import java.util.Set;
 
 
 public enum HoldingMetric implements Metric {
-    POSITION("Position"),LATEST_MARKET_VALUE_IN_REPORT_CURRENCY("Latest Market Value in Report Currency", Set.of(QuoteMetric.LATEST_MARKET_PRICE_IN_REPORT_CURRENCY));
+    POSITION("Position"),LATEST_MARKET_VALUE_IN_REPORT_CURRENCY("Latest Market Value in Report Currency", Set.of(QuoteMetric.LATEST_MARKET_PRICE_IN_REPORT_CURRENCY)),
+    COST("Cost in report currency");
     private final String label;
     private final Set<QuoteMetric> dependentQuoteMetrics;
     HoldingMetric(String label) {

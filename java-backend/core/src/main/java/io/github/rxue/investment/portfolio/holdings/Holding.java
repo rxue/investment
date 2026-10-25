@@ -1,24 +1,17 @@
 package io.github.rxue.investment.portfolio.holdings;
 
 
-import io.github.rxue.investmentutility.vo.bankaccount.transaction.Trade;
+import io.github.rxue.investmentutility.lotsmatching.OpenLots;
 
 import java.util.AbstractMap;
 import java.util.Map;
 
-import static io.github.rxue.investmentutility.vo.bankaccount.transaction.Action.BUY;
-
-
-public record Holding(String securityId, int position) {
+public record Holding(String securityId, int position, long costInCent) {
+    static Holding of(OpenLots openLots) {
+        return new Holding(openLots.securityId(), openLots.shareAmount(), openLots.costInCent());
+    }
     Map.Entry<String,Holding> toMapEntry() {
         return new AbstractMap.SimpleImmutableEntry<>(securityId, this);
     }
-    Holding combine(Trade trade) {
-        if (trade.action() == BUY) {
-            return new Holding(securityId, position + trade.shareAmount());
-        } else {
-            int remainingPosition = position - trade.shareAmount();
-            return remainingPosition == 0 ? null : new Holding(securityId, remainingPosition);
-        }
-    }
+
 }

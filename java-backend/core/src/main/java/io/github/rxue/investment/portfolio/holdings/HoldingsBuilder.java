@@ -3,40 +3,33 @@ package io.github.rxue.investment.portfolio.holdings;
 
 
 
+import io.github.rxue.investmentutility.lotsmatching.OpenLots;
+import io.github.rxue.investmentutility.lotsmatching.TradeMatcher;
 import io.github.rxue.investmentutility.vo.bankaccount.transaction.Trade;
 
 import java.util.*;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toMap;
 
 
 public class HoldingsBuilder {
-    private Map<String,Holding> holdingsByTickerSymbol;
-
+    private final TradeMatcher tradeMatcher;
+    private List<OpenLots> openLotsList;
     public HoldingsBuilder() {
-        this.holdingsByTickerSymbol = new HashMap<>();
-    }
-    HoldingsBuilder apply(Trade trade) {
-        String tickerSymbol = trade.securityId();
-        Holding existing = holdingsByTickerSymbol.get(tickerSymbol);
-        if (existing == null) {
-            holdingsByTickerSymbol.put(tickerSymbol, new Holding(tickerSymbol, trade.shareAmount()));
-        } else {
-            Holding combinedHolding = existing.combine(trade);
-            if (combinedHolding == null) {
-                holdingsByTickerSymbol.remove(tickerSymbol);
-            } else {
-                holdingsByTickerSymbol.put(tickerSymbol, combinedHolding);
-            }
-        }
-        return this;
+        this.tradeMatcher = new TradeMatcher();
     }
     public HoldingsBuilder apply(List<Trade> trades) {
-        trades.forEach(this::apply);
+        openLotsList = tradeMatcher.matchInFIFO(trades).openLotsList();
         return this;
     }
     public Collection<Holding> build() {
-        return holdingsByTickerSymbol.values();
+        return openLotsList.stream()
+                .map(Holding::of)
+                .toList();
     }
     public Map<String,Holding> buildMap() {
-        return Collections.unmodifiableMap(holdingsByTickerSymbol);
+        return build().stream()
+                .collect(toMap(Holding::securityId, Function.identity()));
     }
 }

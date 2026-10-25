@@ -10,7 +10,7 @@ import static io.github.rxue.investmentutility.vo.bankaccount.transaction.Action
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HoldingTest {
-    @Test
+/*    @Test
     public void combine_buy() {
         Holding holding = new Holding("PFE", 10);
         Trade trade = new Trade(LocalDate.of(2025,5,1), BUY, "PFE", 5, 16000);
@@ -21,5 +21,5 @@ public class HoldingTest {
         Holding holding = new Holding("PFE", 10);
         Trade sellTrade = new Trade(LocalDate.of(2025,5,1), SELL, "PFE", 5, 16000);
         assertEquals(new Holding("PFE", 5), holding.combine(sellTrade));
-    }
+    }*/
 }

@@ -1,12 +1,12 @@
 package io.github.rxue.investment.cli;
 
 import com.github.freva.asciitable.AsciiTable;
+import io.github.rxue.investment.financialstatement.FinancialStatements;
 import io.github.rxue.investment.financialstatement.balancesheet.Assets;
 import io.github.rxue.investment.financialstatement.balancesheet.BalanceSheet;
 import io.github.rxue.investment.financialstatement.balancesheet.Equity;
 import io.github.rxue.investment.pdfgeneration.BalanceSheetGenerator;
 import io.github.rxue.investmentutility.vo.bankaccount.transaction.Period;
-import io.github.rxue.investment.financialstatement.Type;
 import io.github.rxue.investment.financialstatement.IncomeStatement;
 import io.github.rxue.investment.adapter.Account;
 import io.github.rxue.investment.adapter.CSVTransactionLoader;
@@ -27,14 +27,11 @@ import java.util.concurrent.Callable;
         mixinStandardHelpOptions = true)
 public class FinancialStatementsCommand implements Callable<Integer> {
 
-    @Parameters(index = "0", description = "The type of the statement, possible values: ${COMPLETION-CANDIDATES}")
-    private Type type;
-
-    @Parameters(index = "1", converter = PeriodConverter.class,
+    @Parameters(index = "0", converter = PeriodConverter.class,
             description = "The period in format startDate:endDate, both dates included, e.g. 2025-07-21:2025-12-31")
     private Period period;
 
-    @Parameters(index = "2", description = "The Path of the directory storing csv files")
+    @Parameters(index = "1", description = "The Path of the directory storing csv files")
     private Path csvDirectoryPath;
 
     @Option(names = "--account", description = "The portfolio bank account, possible values: ${COMPLETION-CANDIDATES}, default: ${DEFAULT-VALUE}")
@@ -46,24 +43,10 @@ public class FinancialStatementsCommand implements Callable<Integer> {
     @Override
     public Integer call() {
         TransactionList transactions = new CSVTransactionLoader(account, csvDirectoryPath).load();
-        switch (type) {
-            case INCOME_STATEMENT -> {
-                IncomeStatement incomeStatement = new IncomeStatement(period, transactions);
-                if (pdfPath == null) {
-                    printIncomeStatement(incomeStatement);
-                } else {
-                    new IncomeStatementGenerator(incomeStatement).generate(pdfPath);
-                }
-            }
-            case BALANCE_SHEET -> {
-                BalanceSheet balanceSheet = new BalanceSheet(period.endDate(), transactions);
-                if (pdfPath == null) {
-                    printBalanceSheet(balanceSheet);
-                } else {
-                    new BalanceSheetGenerator(balanceSheet).generate(pdfPath);
-                }
-            }
-        }
+        FinancialStatements financialStatements = FinancialStatements.generate(period, transactions);
+        IncomeStatement incomeStatement = financialStatements.incomeStatement();
+        printIncomeStatement(incomeStatement);
+        printBalanceSheet(financialStatements.balanceSheet());
         return 0;
     }
 

@@ -6,7 +6,9 @@ import com.github.freva.asciitable.ColumnData;
 import io.github.rxue.investment.adapter.Account;
 import io.github.rxue.investment.adapter.CSVTransactionLoader;
 import io.github.rxue.investment.portfolio.holdings.HoldingMetric;
+import io.github.rxue.investment.portfolio.holdings.Holdings;
 import io.github.rxue.investment.portfolio.holdings.MetricValuesBuildersDirector;
+import io.github.rxue.investment.portfolio.holdings.Summary;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import io.github.rxue.investmentutility.marketquote.yahoofinance.YahooFinanceQuoteFetcher;
 import io.github.rxue.investmentutility.vo.Metric;
@@ -26,6 +28,8 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+
+import static io.github.rxue.investment.Util.toBaseUnit;
 
 
 @Command(name = "holdings", description = "Fetch holdings from a given csv file or directory storing csv files",
@@ -60,8 +64,10 @@ public class HoldingsCommand implements Callable<Integer> {
                 .build();
         MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceQuoteFetcher(httpClient,"EUR"), trades);
         SequencedSet<Metric> metrics = getMetrics(metricNames);
-        List<MetricValues> metricValuesList = director.construct(metrics);
+        Holdings holdings = director.construct(metrics);
+        List<MetricValues> metricValuesList = holdings.rows();
         printMetricValues(metrics, metricValuesList);
+        printSummary(holdings.summary());
         return 0;
     }
     private static void printMetricValues(SequencedSet<Metric> metrics, List<MetricValues> values) {
@@ -69,9 +75,19 @@ public class HoldingsCommand implements Callable<Integer> {
         columns.add(new Column().header("Ticker Symbol").with(MetricValues::securityId));
         for (Metric metric : metrics) {
             columns.add(new Column().header(metric.label())
-                    .with(mv -> String.valueOf(mv.get(metric))));
+                    .with(mv -> {
+                        var value = mv.get(metric);
+                        if (value instanceof Long valueIncent)
+                            return String.valueOf(toBaseUnit(valueIncent));
+                        return String.valueOf(mv.get(metric));
+                    }));
         }
         System.out.println(AsciiTable.getTable(values, columns));
+    }
+    private static void printSummary(Summary summary) {
+        System.out.println("Total cost in report currency: " + summary.totalCost());
+        System.out.println("Total market value in report currency: " + summary.totalMarketValue());
+
     }
 
     private static SequencedSet<Metric> getMetrics(String metricNames) {

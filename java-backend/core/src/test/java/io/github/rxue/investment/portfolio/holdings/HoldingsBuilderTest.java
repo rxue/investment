@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HoldingsBuilderTest {
-    @Test
+/*    @Test
     public void apply_existing() {
         HoldingsBuilder builder = new HoldingsBuilder()
                 .apply(new Trade(LocalDate.of(2025,5,1), BUY, "PFE", 10, 16000));
@@ -25,5 +25,5 @@ public class HoldingsBuilderTest {
                 .apply(new Trade(LocalDate.of(2025,5,1), BUY, "PFE", 10, 16000));
         builder.apply(new Trade(LocalDate.of(2025, 6, 1), SELL, "PFE", 10, 17000));
         assertTrue(builder.build().isEmpty());
-    }
+    }*/
 }

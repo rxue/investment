@@ -3,7 +3,6 @@ package io.github.rxue.investment.financialstatement;
 
 import io.github.rxue.investmentutility.vo.bankaccount.transaction.Transaction;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,9 +12,6 @@ public class Util {
         return transactions.stream()
                 .mapToLong(Transaction::cents)
                 .sum();
-    }
-    public static BigDecimal toBaseUnit(long cents) {
-        return BigDecimal.valueOf(cents, 2);
     }
     public static List<? extends Transaction> before(List<? extends Transaction> transactions, LocalDate exclusiveDate) {
         return transactions.stream()

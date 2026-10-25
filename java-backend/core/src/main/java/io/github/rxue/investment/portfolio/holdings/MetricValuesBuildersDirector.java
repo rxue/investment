@@ -9,7 +9,6 @@ import io.github.rxue.investmentutility.vo.MetricValuesList;
 import io.github.rxue.investmentutility.vo.QuotePrice;
 import io.github.rxue.investmentutility.vo.bankaccount.transaction.Trade;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class MetricValuesBuildersDirector {
         this.metricValuesBuilders = new HashMap<>();
 
     }
-    public List<MetricValues> construct(SequencedSet<Metric> metrics) {
+    public Holdings construct(SequencedSet<Metric> metrics) {
         final Set<QuoteMetric> allQuoteMetrics = new HoldingMetrics(metrics)
                 .allQuoteMetrics();
         final Set<String> securityIds = holdings.keySet();
@@ -43,17 +42,20 @@ public class MetricValuesBuildersDirector {
                 metricValuesBuilder.add(metric, getMetricValue(securityId, metric));
             });
         }
-        return metricValuesBuilders.values().stream()
+        List<MetricValues> metricValues = metricValuesBuilders.values().stream()
                 .map(MetricValues.Builder::build)
                 .toList();
+        return new Holdings(metricValues);
     }
     private Comparable<?> getMetricValue(String securityId, Metric metric) {
-        final int position = holdings.get(securityId).position();
+        Holding holding = holdings.get(securityId);
+        final int position = holding.position();
         return switch(metric) {
             case HoldingMetric.POSITION -> Integer.valueOf(position);
+            case HoldingMetric.COST -> holding.costInCent();
             case HoldingMetric.LATEST_MARKET_VALUE_IN_REPORT_CURRENCY -> {
                 QuotePrice latestPriceInReportCurrency = quoteMetricValuesList.getMetricValue(securityId, LATEST_MARKET_PRICE_IN_REPORT_CURRENCY, QuotePrice.class);
-                yield latestPriceInReportCurrency.value().multiply(BigDecimal.valueOf(position));
+                yield latestPriceInReportCurrency.valueInCent() * position;
             }
             case QuoteMetric quoteMetric -> quoteMetricValuesList.getMetricValue(securityId, quoteMetric, Comparable.class);
             default -> throw new IllegalStateException("Unexpected value: " + metric);
