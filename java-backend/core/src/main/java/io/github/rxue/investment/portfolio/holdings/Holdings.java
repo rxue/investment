@@ -11,15 +11,18 @@ import static io.github.rxue.investment.portfolio.holdings.HoldingMetric.COST;
 import static io.github.rxue.investment.portfolio.holdings.HoldingMetric.LATEST_MARKET_VALUE_IN_REPORT_CURRENCY;
 
 public record Holdings(List<MetricValues> rows) {
+    public List<Metric> metrics() {
+        return rows.get(0).metricList();
+    }
     private BigDecimal totalCost() {
-        if (!has(COST)) throw new UnsupportedOperationException();
+        if (!has(COST)) return null;
         long totalCostInCent = rows.stream()
                 .mapToLong(metricValues -> (Long) metricValues.get(COST))
                 .sum();
         return toBaseUnit(totalCostInCent);
     }
     private BigDecimal totalMarketValue() {
-        if (!has(LATEST_MARKET_VALUE_IN_REPORT_CURRENCY)) throw new UnsupportedOperationException();
+        if (!has(LATEST_MARKET_VALUE_IN_REPORT_CURRENCY)) return null;
         long totalCostInCent = rows.stream()
                 .mapToLong(metricValues -> (Long) metricValues.get(LATEST_MARKET_VALUE_IN_REPORT_CURRENCY))
                 .sum();

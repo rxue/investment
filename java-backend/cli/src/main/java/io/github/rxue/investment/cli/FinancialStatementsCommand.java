@@ -5,12 +5,14 @@ import io.github.rxue.investment.financialstatement.FinancialStatements;
 import io.github.rxue.investment.financialstatement.balancesheet.Assets;
 import io.github.rxue.investment.financialstatement.balancesheet.BalanceSheet;
 import io.github.rxue.investment.financialstatement.balancesheet.Equity;
-import io.github.rxue.investment.pdfgeneration.BalanceSheetGenerator;
+import io.github.rxue.investment.financialstatement.notes.Notes;
+import io.github.rxue.investment.portfolio.holdings.Holdings;
+import io.github.rxue.investmentutility.vo.Metric;
+import io.github.rxue.investmentutility.vo.MetricValues;
 import io.github.rxue.investmentutility.vo.bankaccount.transaction.Period;
 import io.github.rxue.investment.financialstatement.IncomeStatement;
 import io.github.rxue.investment.adapter.Account;
 import io.github.rxue.investment.adapter.CSVTransactionLoader;
-import io.github.rxue.investment.pdfgeneration.IncomeStatementGenerator;
 import io.github.rxue.investmentutility.vo.bankaccount.transaction.TransactionList;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.ITypeConverter;
@@ -21,11 +23,18 @@ import picocli.CommandLine.TypeConversionException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.concurrent.Callable;
+
+import static io.github.rxue.investment.Util.toBaseUnit;
+import static io.github.rxue.investmentutility.marketquote.QuoteMetric.COMPANY_NAME;
+import static java.util.stream.Collectors.joining;
 
 @Command(name = "financial-statements", description = "Generate a financial statement from a directory storing csv files",
         mixinStandardHelpOptions = true)
 public class FinancialStatementsCommand implements Callable<Integer> {
+    // left-aligned, padded to 10 chars
+    private static final String CELL_FORMAT = "%-10s";
 
     @Parameters(index = "0", converter = PeriodConverter.class,
             description = "The period in format startDate:endDate, both dates included, e.g. 2025-07-21:2025-12-31")
@@ -47,6 +56,7 @@ public class FinancialStatementsCommand implements Callable<Integer> {
         IncomeStatement incomeStatement = financialStatements.incomeStatement();
         printIncomeStatement(incomeStatement);
         printBalanceSheet(financialStatements.balanceSheet());
+        printNotes(financialStatements.notes());
         return 0;
     }
 
@@ -87,6 +97,36 @@ public class FinancialStatementsCommand implements Callable<Integer> {
         System.out.println(AsciiTable.getTable(EquityHeader, equityRows));
     }
 
+    private static void printNotes(Notes notes) {
+        var out = System.out;
+        out.println();
+        out.println("Notes");
+        out.println("\tInvestment");
+        Holdings holdings = notes.investment()
+                .holdings();
+        List<Metric> metrics = holdings.metrics();
+        String header = metrics.stream().map(Metric::label).map(s -> String.format(CELL_FORMAT, s))
+                .collect(joining());
+        out.println(header);
+        List<String> rows = holdings.rows().stream()
+                .map(FinancialStatementsCommand::toHoldingRow)
+                .toList();
+        rows.forEach(out::println);
+
+    }
+    private static String toHoldingRow(MetricValues metricValues) {
+        return metricValues.metricList().stream()
+                .map(metric -> {
+                    Comparable<?> value = metricValues.get(metric);
+                    if (metric == COMPANY_NAME)
+                        return String.format("%-32s", value);
+                    else if (value instanceof Long centValue) {
+                        return String.format(CELL_FORMAT, toBaseUnit(centValue));
+                    }
+                    return String.format(CELL_FORMAT, value);
+                })
+                .collect(joining());
+    }
     static class PeriodConverter implements ITypeConverter<Period> {
         @Override
         public Period convert(String value) {

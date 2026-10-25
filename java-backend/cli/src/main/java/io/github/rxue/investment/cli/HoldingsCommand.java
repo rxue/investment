@@ -9,6 +9,8 @@ import io.github.rxue.investment.portfolio.holdings.HoldingMetric;
 import io.github.rxue.investment.portfolio.holdings.Holdings;
 import io.github.rxue.investment.portfolio.holdings.MetricValuesBuildersDirector;
 import io.github.rxue.investment.portfolio.holdings.Summary;
+import io.github.rxue.investmentutility.lotsmatching.OpenLots;
+import io.github.rxue.investmentutility.lotsmatching.TradeMatcher;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import io.github.rxue.investmentutility.marketquote.yahoofinance.YahooFinanceQuoteFetcher;
 import io.github.rxue.investmentutility.vo.Metric;
@@ -20,6 +22,7 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Spec;
 
+import java.math.BigDecimal;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.http.HttpClient;
@@ -36,11 +39,11 @@ import static io.github.rxue.investment.Util.toBaseUnit;
         mixinStandardHelpOptions = true)
 public class HoldingsCommand implements Callable<Integer> {
 
-    @Parameters(index = "0", description = "The portfolio bank account, possible values include OP, NORDNET atm")
-    private String accountName;
-
-    @Parameters(index = "1", description = "metrics (delimited by comma) needed to be listed")
+    @Parameters(index = "0", description = "metrics (delimited by comma) needed to be listed")
     private String metricNames;
+
+    @Parameters(index = "1", description = "The portfolio bank account, possible values include OP, NORDNET atm")
+    private String accountName;
 
     @Parameters(index = "2", description = "The Path of the CSV file or directory")
     private String csvFileOrDirectoryPath;
@@ -62,9 +65,12 @@ public class HoldingsCommand implements Callable<Integer> {
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
-        MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceQuoteFetcher(httpClient,"EUR"), trades);
+        MetricValuesBuildersDirector director = new MetricValuesBuildersDirector(new YahooFinanceQuoteFetcher(httpClient,"EUR"));
         SequencedSet<Metric> metrics = getMetrics(metricNames);
-        Holdings holdings = director.construct(metrics);
+        List<OpenLots> openLotsList = new TradeMatcher()
+                .matchInFIFO(trades)
+                .openLotsList();
+        Holdings holdings = director.construct(metrics, openLotsList);
         List<MetricValues> metricValuesList = holdings.rows();
         printMetricValues(metrics, metricValuesList);
         printSummary(holdings.summary());
@@ -85,8 +91,12 @@ public class HoldingsCommand implements Callable<Integer> {
         System.out.println(AsciiTable.getTable(values, columns));
     }
     private static void printSummary(Summary summary) {
-        System.out.println("Total cost in report currency: " + summary.totalCost());
-        System.out.println("Total market value in report currency: " + summary.totalMarketValue());
+        BigDecimal totalCost = summary.totalCost();
+        if (totalCost != null)
+            System.out.println("Total cost in report currency: " + totalCost);
+        BigDecimal totalMarketValue = summary.totalMarketValue();
+        if (totalMarketValue != null)
+            System.out.println("Total market value in report currency: " + totalMarketValue);
 
     }
 

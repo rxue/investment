@@ -6,7 +6,7 @@ import io.github.rxue.investmentutility.lotsmatching.OpenLots;
 import java.util.AbstractMap;
 import java.util.Map;
 
-public record Holding(String securityId, int position, long costInCent) {
+record Holding(String securityId, int position, long costInCent) {
     static Holding of(OpenLots openLots) {
         return new Holding(openLots.securityId(), openLots.shareAmount(), openLots.costInCent());
     }

@@ -1,10 +1,14 @@
 package io.github.rxue.investment.financialstatement;
 
 import io.github.rxue.investment.financialstatement.balancesheet.BalanceSheet;
+import io.github.rxue.investment.financialstatement.notes.Notes;
+import io.github.rxue.investmentutility.lotsmatching.OpenLots;
 import io.github.rxue.investmentutility.lotsmatching.TradeMatchResult;
 import io.github.rxue.investmentutility.lotsmatching.TradeMatcher;
 import io.github.rxue.investmentutility.vo.bankaccount.transaction.Period;
 import io.github.rxue.investmentutility.vo.bankaccount.transaction.TransactionList;
+
+import java.util.List;
 
 public record FinancialStatements(BalanceSheet balanceSheet, IncomeStatement incomeStatement, Notes notes) {
     public static FinancialStatements generate(Period period, TransactionList transactionList) {
@@ -16,7 +20,10 @@ public record FinancialStatements(BalanceSheet balanceSheet, IncomeStatement inc
                 transactionListWithinPeriod.dividends(),
                 transactionListWithinPeriod.expenses(),
                 tradeMatchResult.sellMatches().since(period.startDate()));
-        return new FinancialStatements(new BalanceSheet(period.endDate(), transactionListByPeriodEnd), incomeStatement, null);
+        return new FinancialStatements(new BalanceSheet(period.endDate(), transactionListByPeriodEnd), incomeStatement, generateNotes(tradeMatchResult.openLotsList()));
+    }
+    private static Notes generateNotes(List<OpenLots> openLotsList) {
+        return new Notes(openLotsList);
     }
 }
 
