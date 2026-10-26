@@ -7,4 +7,15 @@
 
 **OWN TAKEAWAY**
 So `Record` is not `Comparable` by default
+# Chapter 9: Collections
+## 9.5 Copies and Views
+### 9.5.1 Small Collections (20261026)
+
+**OWN TAKEAWAY**
+
+`List.of(...)` returns an *immutable* list containing n elements
+
+Reference: https://docs.oracle.com/javase//9/docs/api/java/util/List.html#of--
+
+
 
