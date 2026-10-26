@@ -1,4 +1,4 @@
-package io.github.rxue.investment.api;
+package io.github.rxue.investment.rest.api;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

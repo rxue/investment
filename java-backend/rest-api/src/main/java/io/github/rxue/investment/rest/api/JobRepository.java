@@ -1,4 +1,4 @@
-package io.github.rxue.investment.api;
+package io.github.rxue.investment.rest.api;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -10,9 +10,9 @@ import org.springframework.scheduling.annotation.Async;
 import java.time.Duration;
 import java.util.*;
 
-import static io.github.rxue.investment.api.QuoteJob.Status.DONE;
-import static io.github.rxue.investment.api.QuoteJob.Status.FAILED;
-import static io.github.rxue.investment.api.QuoteJob.Status.RUNNING;
+import static io.github.rxue.investment.rest.api.QuoteJob.Status.DONE;
+import static io.github.rxue.investment.rest.api.QuoteJob.Status.FAILED;
+import static io.github.rxue.investment.rest.api.QuoteJob.Status.RUNNING;
 
 public class JobRepository {
     private final Cache<UUID,QuoteJob> jobs = Caffeine.newBuilder()

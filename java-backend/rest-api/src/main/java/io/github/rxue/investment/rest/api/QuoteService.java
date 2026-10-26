@@ -1,4 +1,4 @@
-package io.github.rxue.investment.api;
+package io.github.rxue.investment.rest.api;
 
 import io.github.rxue.investmentutility.marketquote.QuoteFetcher;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
@@ -10,11 +10,11 @@ import java.util.UUID;
 
 @Service
 public class QuoteService {
-    private final QuoteFetcher marketQuoteRepository;
+    private final QuoteFetcher marketQuoteFetcher;
     private final JobRepository jobRepository;
 
-    public QuoteService(QuoteFetcher marketQuoteRepository, JobRepository jobRepository) {
-        this.marketQuoteRepository = marketQuoteRepository;
+    public QuoteService(QuoteFetcher marketQuoteFetcher, JobRepository jobRepository) {
+        this.marketQuoteFetcher = marketQuoteFetcher;
         this.jobRepository = jobRepository;
     }
     public UUID createQueryJob(Set<String> securityIds, Set<QuoteMetric> quoteMetrics) {
@@ -25,8 +25,9 @@ public class QuoteService {
     public QuoteJob findJob(UUID jobId) {
         return jobRepository.find(jobId);
     }
+
     public Map<QuoteMetric,Comparable<?>> getQuote(String securityId, Set<QuoteMetric> quoteMetrics) {
-        return marketQuoteRepository.fetch(securityId, quoteMetrics);
+        return marketQuoteFetcher.fetch(securityId, quoteMetrics);
     }
 
 }

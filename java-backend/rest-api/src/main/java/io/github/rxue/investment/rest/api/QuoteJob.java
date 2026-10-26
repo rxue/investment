@@ -1,4 +1,4 @@
-package io.github.rxue.investment.api;
+package io.github.rxue.investment.rest.api;
 
 
 import io.github.rxue.investmentutility.vo.MetricValues;
