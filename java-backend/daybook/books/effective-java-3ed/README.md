@@ -1,5 +1,6 @@
 # Chapter 1 Creating and Destroying Objects
 ## Item 5: Prefer dependency injection to hardwiring resources
+* in the `SpellChecker` class, the `Lexicon` is a *hardwired resource* in that it is directly assigned in the field initialization line, thus lost flexibility to change and testability, e.g. difficult to mock it in such way
 * normal ways of dependency injection: *constructor*, *setter*, *static factories*
 * `Supplier` is a perfect fit of factories pattern
 * DI can clutter up large project with thousands of dependencies => use *dependency injection framework* such as *Spring*
