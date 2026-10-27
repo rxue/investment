@@ -1,3 +1,12 @@
+# Chapter 1 Creating and Destroying Objects
+## Item 5: Prefer dependency injection to hardwiring resources
+* normal ways of dependency injection: *constructor*, *setter*, *static factories*
+* `Supplier` is a perfect fit of factories pattern
+* DI can clutter up large project with thousands of dependencies => use *dependency injection framework* such as *Spring*
+
+**OWN COMMNT**
+In Spring's official documentation, it was written that Spring is an *IoC (inversion of control)* frame work, and DI is a form of *IoC*
+
 # Chapter 2
 ## Item 6: Avoid creating unnecessary objects
 * avoid by using *static factory methods*, e.g. `Boolean.valueOf(String)` instead of `new Boolean`
