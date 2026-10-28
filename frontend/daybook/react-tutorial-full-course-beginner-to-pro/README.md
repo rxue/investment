@@ -5,6 +5,8 @@
 ## [`create-vite`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14352s) help us set up a new React project
 ### [npx create-vite](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14400s)
 #### [`npm install`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14637s)
+#### [project directory structure explained](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14740s)
+* [*.jsx*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14766s) is the React code developers need to write
 
 **OWN COMMENT**
 `npx create-vite@latest .` to initialize a new project in the current dir
