@@ -1,3 +1,8 @@
+# Lesson 2: *Components*, *Props*, Start the Charbot
+## [*Component*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2675s) - a piece of the web-site
+### demo: create the first component
+#### [use `function` to create the component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2727s)
+
 # Lesson 4: CSS with React, Hook, Finish Chatbot Project
 ## [Hooks: a key feature of React](https://www.youtube.com/watch?v=TtPXvEcE11E&t=12916s) - insert React features into our component
 ### `useEffect()` run some code when the component is created or updated
