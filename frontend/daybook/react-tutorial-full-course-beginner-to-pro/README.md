@@ -1,5 +1,8 @@
 # Lesson 4: CSS with React, Hook, Finish Chatbot Project
-## [Hooks - a key feature of React](https://www.youtube.com/watch?v=TtPXvEcE11E&t=12916s)
+## [Hooks: a key feature of React](https://www.youtube.com/watch?v=TtPXvEcE11E&t=12916s) - insert React features into our component
+### `useEffect()` run some code when the component is created or updated
+# Lesson 5:
+## [`create-vite`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14352s) help us set up a new React project
 
 # Lesson 7: React with Backend, Data Fetching, Load Ecommerce Project Data
 ## [Data Fetching (from the backend)](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13513s)
