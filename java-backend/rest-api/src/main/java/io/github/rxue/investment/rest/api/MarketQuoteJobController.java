@@ -1,5 +1,6 @@
 package io.github.rxue.investment.rest.api;
 
+import io.github.rxue.investment.rest.application.QuoteService;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping("/marketquote-jobs")
+@RequestMapping("/marketquotes-jobs")
 public class MarketQuoteJobController {
     private final QuoteService quoteService;
     public MarketQuoteJobController(QuoteService quoteService) {

@@ -1,6 +1,9 @@
 package io.github.rxue.investment.rest.api;
 
+import io.github.rxue.investment.rest.application.QuoteService;
+import io.github.rxue.investmentutility.marketquote.QuoteFetchException;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
+import io.github.rxue.investmentutility.vo.Metric;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +21,11 @@ public class MarketQuotesController {
     public MarketQuotesController(QuoteService quoteService) {
         this.quoteService = quoteService;
     }
-
-    @GetMapping("/{securityId}")
-    public Map<QuoteMetric,Comparable<?>> getMetricValues(@PathVariable("securityId") String securityId,
-                                                          @RequestParam(name = "metrics") Set<QuoteMetric> metrics) {
-        return quoteService.getQuote(securityId, metrics);
+    @GetMapping("")
+    public Map<String,Map<Metric,Comparable<?>>> getMetricValues(@RequestParam("securityIds") Set<String> securityIds,
+                                                                  @RequestParam(name = "metrics") Set<QuoteMetric> metrics) {
+        return quoteService.getQuoteMetricValuesList(securityIds, metrics)
+                .fullMap();
     }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException e) {
@@ -31,5 +34,10 @@ public class MarketQuotesController {
             detail += "; allowed values: " + Arrays.toString(QuoteMetric.values());
         }
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+    }
+
+    @ExceptionHandler(QuoteFetchException.class)
+    public ProblemDetail handleQuoteFetchException(QuoteFetchException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.resolve(e.statusCode().getAsInt()), e.getMessage());
     }
 }
