@@ -4,6 +4,10 @@
 # Lesson 5:
 ## [`create-vite`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14352s) help us set up a new React project
 ### [npx create-vite](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14400s)
+#### [`npm install`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14637s)
+
+**OWN COMMENT**
+`npx create-vite@latest .` to initialize a new project in the current dir
 
 # Lesson 7: React with Backend, Data Fetching, Load Ecommerce Project Data
 ## [Data Fetching (from the backend)](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13513s)
