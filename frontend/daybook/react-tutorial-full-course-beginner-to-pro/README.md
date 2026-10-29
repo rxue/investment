@@ -6,7 +6,8 @@
 - [`{}`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2970s) to insert component
 - [Equivalent React syntax to insert component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=3051s)
     - Main idea of React: make your own HTML element
-##### [*Fragment*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=3240s)
+##### [*Fragment*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=3240s) to avoid insert extra `div`
+##### [*Props*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4055s) in relation to *attribute*
 
 
 # Lesson 4: CSS with React, Hook, Finish Chatbot Project
