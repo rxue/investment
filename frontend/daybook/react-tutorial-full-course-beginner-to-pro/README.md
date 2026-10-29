@@ -3,7 +3,11 @@
 ### demo: create the first component
 #### [use `function` to create the component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2727s)
 #### Insert component
-* [`{}`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2970s) to insert component
+- [`{}`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2970s) to insert component
+- [Equivalent React syntax to insert component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=3051s)
+    - Main idea of React: make your own HTML element
+##### [*Fragment*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=3240s)
+
 
 # Lesson 4: CSS with React, Hook, Finish Chatbot Project
 ## [Hooks: a key feature of React](https://www.youtube.com/watch?v=TtPXvEcE11E&t=12916s) - insert React features into our component
