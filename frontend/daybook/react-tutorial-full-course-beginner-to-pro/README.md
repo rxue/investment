@@ -2,6 +2,8 @@
 ## [*Component*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2675s) - a piece of the web-site
 ### demo: create the first component
 #### [use `function` to create the component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2727s)
+#### Insert component
+* [`{}`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2970s) to insert component
 
 # Lesson 4: CSS with React, Hook, Finish Chatbot Project
 ## [Hooks: a key feature of React](https://www.youtube.com/watch?v=TtPXvEcE11E&t=12916s) - insert React features into our component
