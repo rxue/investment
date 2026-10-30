@@ -4,14 +4,17 @@ import io.github.rxue.investment.rest.application.QuoteService;
 import io.github.rxue.investmentutility.marketquote.QuoteFetchException;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import io.github.rxue.investmentutility.vo.Metric;
+import io.github.rxue.investmentutility.vo.QuotePrice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 
 @RestController
@@ -21,11 +24,16 @@ public class MarketQuotesController {
     public MarketQuotesController(QuoteService quoteService) {
         this.quoteService = quoteService;
     }
-    @GetMapping("")
-    public Map<String,Map<Metric,Comparable<?>>> getMetricValues(@RequestParam("securityIds") Set<String> securityIds,
-                                                                  @RequestParam(name = "metrics") Set<QuoteMetric> metrics) {
-        return quoteService.getQuoteMetricValuesList(securityIds, metrics)
-                .fullMap();
+    @GetMapping()
+    public List<MetricValuesDTO> getMetricValues(@RequestParam("securityIds") Set<String> securityIds,
+                                                 @RequestParam(name = "metrics") Set<QuoteMetric> metrics) {
+        return quoteService.getQuoteMetricValuesList(securityIds, metrics).fullMap()
+                .entrySet().stream()
+                .map(MarketQuotesController::toMetricValuesDTO)
+                .toList();
+    }
+    private static MetricValuesDTO toMetricValuesDTO(Map.Entry<String,Map<Metric,Comparable<?>>> entry) {
+        return new MetricValuesDTO(entry.getKey(), entry.getValue());
     }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException e) {
