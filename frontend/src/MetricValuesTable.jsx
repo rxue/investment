@@ -1,9 +1,7 @@
 
 
-export default function MetricValuesTable(Props) {
-    const metricData = Props.values;
+export default function MetricValuesTable({metricData}) {
     const metricNames = Object.keys(Object.values(metricData)[0]);
-
     return (
         <table>
             <thead>
