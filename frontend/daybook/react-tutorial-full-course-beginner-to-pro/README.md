@@ -8,7 +8,10 @@
     - Main idea of React: make your own HTML element
 ##### [*Fragment*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=3240s) to avoid insert extra `div`
 ##### [*Props*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4055s) in relation to *attribute*
-
+#### Syntax short cut
+* [*shortcut* for getting attribute from `props` - *destructuring*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4788s)
+* [`if` inside jsx](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4995s&pp=0gcJCTEAlc8ueATH)
+# Lesson 3: State, Event Handlers, Chatbot Project Features
 
 # Lesson 4: CSS with React, Hook, Finish Chatbot Project
 ## [Hooks: a key feature of React](https://www.youtube.com/watch?v=TtPXvEcE11E&t=12916s) - insert React features into our component
