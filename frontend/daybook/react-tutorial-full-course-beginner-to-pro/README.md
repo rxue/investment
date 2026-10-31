@@ -32,3 +32,6 @@
 * [`fetch` returns a `Promise`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=23260s)
 * [`response.json()`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=23385s&pp=0gcJCTEAlc8ueATH)
 ### [`axios` library](https://www.youtube.com/watch?v=TtPXvEcE11E&t=23568s) to make the syntax cleaner
+# Lesson 10: Deploy React to the Internet, Intro to AWS
+## Deploy frontend (20261031)
+* [browser does not understand `.jsx` code](https://www.youtube.com/watch?v=TtPXvEcE11E&t=36337s) => need to convert these .jsx code into normal Javascript code => [`npm run build`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=36371s) - shortcut for `vite build`. js code generated to `dist` directory by default
