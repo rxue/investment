@@ -23,8 +23,4 @@ public class RepositoryConfig {
                 .build();
         return new YahooFinanceQuoteFetcher(httpClient, "EUR");
     }
-    @Bean
-    public JobRepository jobRepository() {
-        return new JobRepository(marketQuoteRepository());
-    }
 }

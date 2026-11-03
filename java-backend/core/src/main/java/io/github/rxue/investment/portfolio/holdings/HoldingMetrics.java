@@ -3,10 +3,7 @@ package io.github.rxue.investment.portfolio.holdings;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import io.github.rxue.investmentutility.vo.Metric;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -16,7 +13,7 @@ record HoldingMetrics(Collection<Metric> metrics) {
      *
      * @return
      */
-    Set<QuoteMetric> allQuoteMetrics() {
+    SequencedSet<QuoteMetric> allQuoteMetrics() {
         Set<QuoteMetric> directQuoteMetrics = metrics.stream()
                 .filter(QuoteMetric.class::isInstance)
                 .map(QuoteMetric.class::cast)
@@ -27,8 +24,8 @@ record HoldingMetrics(Collection<Metric> metrics) {
                 .map(HoldingMetric::dependentQuoteMetrics)
                 .flatMap(Set::stream)
                 .collect(toSet());
-        Set<QuoteMetric> allQuoteMetrics = new HashSet<>(directQuoteMetrics);
+        SequencedSet<QuoteMetric> allQuoteMetrics = new LinkedHashSet<>(directQuoteMetrics);
         allQuoteMetrics.addAll(dependentQuoteMetrics);
-        return Collections.unmodifiableSet(allQuoteMetrics);
+        return Collections.unmodifiableSequencedSet(allQuoteMetrics);
     }
 }

@@ -34,7 +34,7 @@ public class MetricValuesBuildersDirector {
         holdings = openLotsList.stream()
                 .map(Holding::of)
                 .collect(toMap(Holding::securityId, Function.identity()));
-        final Set<QuoteMetric> allQuoteMetrics = new HoldingMetrics(metrics)
+        final SequencedSet<QuoteMetric> allQuoteMetrics = new HoldingMetrics(metrics)
                 .allQuoteMetrics();
         final Set<String> securityIds = holdings.keySet();
         quoteMetricValuesList = allQuoteMetrics.isEmpty()

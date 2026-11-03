@@ -78,7 +78,7 @@ public class HoldingsCommand implements Callable<Integer> {
     }
     private static void printMetricValues(SequencedSet<Metric> metrics, List<MetricValues> values) {
         List<ColumnData<MetricValues>> columns = new ArrayList<>();
-        columns.add(new Column().header("Ticker Symbol").with(MetricValues::securityId));
+        columns.add(new Column().header("Ticker Symbol").with(MetricValues::getSecurityId));
         for (Metric metric : metrics) {
             columns.add(new Column().header(metric.label())
                     .with(mv -> {
