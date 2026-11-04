@@ -1,4 +1,4 @@
-package io.github.rxue.investment.rest.api;
+package io.github.rxue.investment.rest;
 
 import io.github.rxue.investmentutility.marketquote.QuoteFetcher;
 import io.github.rxue.investmentutility.marketquote.yahoofinance.YahooFinanceQuoteFetcher;
@@ -12,7 +12,7 @@ import java.time.Duration;
 
 
 @Configuration
-public class RepositoryConfig {
+public class FetcherConfig {
 
     @Bean
     public QuoteFetcher marketQuoteRepository() {
