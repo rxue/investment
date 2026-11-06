@@ -82,10 +82,10 @@ public class HoldingsCommand implements Callable<Integer> {
         for (Metric metric : metrics) {
             columns.add(new Column().header(metric.label())
                     .with(mv -> {
-                        var value = mv.get(metric);
+                        var value = mv.valueOf(metric);
                         if (value instanceof Long valueIncent)
                             return String.valueOf(toBaseUnit(valueIncent));
-                        return String.valueOf(mv.get(metric));
+                        return String.valueOf(mv.valueOf(metric));
                     }));
         }
         System.out.println(AsciiTable.getTable(values, columns));

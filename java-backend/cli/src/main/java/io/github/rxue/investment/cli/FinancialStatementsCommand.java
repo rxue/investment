@@ -35,6 +35,7 @@ import static java.util.stream.Collectors.joining;
 public class FinancialStatementsCommand implements Callable<Integer> {
     // left-aligned, padded to 10 chars
     private static final String CELL_FORMAT = "%-10s";
+    private static final String COMPANY_NAME_CELL_FORMAT = "%-32s";
 
     @Parameters(index = "0", converter = PeriodConverter.class,
             description = "The period in format startDate:endDate, both dates included, e.g. 2025-07-21:2025-12-31")
@@ -105,7 +106,8 @@ public class FinancialStatementsCommand implements Callable<Integer> {
         Holdings holdings = notes.investment()
                 .holdings();
         List<Metric> metrics = holdings.metrics();
-        String header = metrics.stream().map(Metric::label).map(s -> String.format(CELL_FORMAT, s))
+        String header = metrics.stream()
+                .map(metric -> String.format(cellFormatOf(metric), metric.label()))
                 .collect(joining());
         out.println(header);
         List<String> rows = holdings.rows().stream()
@@ -117,15 +119,14 @@ public class FinancialStatementsCommand implements Callable<Integer> {
     private static String toHoldingRow(MetricValues metricValues) {
         return metricValues.metricList().stream()
                 .map(metric -> {
-                    Comparable<?> value = metricValues.get(metric);
-                    if (metric == COMPANY_NAME)
-                        return String.format("%-32s", value);
-                    else if (value instanceof Long centValue) {
-                        return String.format(CELL_FORMAT, toBaseUnit(centValue));
-                    }
-                    return String.format(CELL_FORMAT, value);
+                    Comparable<?> value = metricValues.valueOf(metric);
+                    Object displayValue = value instanceof Long centValue ? toBaseUnit(centValue) : value;
+                    return String.format(cellFormatOf(metric), displayValue);
                 })
                 .collect(joining());
+    }
+    private static String cellFormatOf(Metric metric) {
+        return metric == COMPANY_NAME ? COMPANY_NAME_CELL_FORMAT : CELL_FORMAT;
     }
     static class PeriodConverter implements ITypeConverter<Period> {
         @Override
