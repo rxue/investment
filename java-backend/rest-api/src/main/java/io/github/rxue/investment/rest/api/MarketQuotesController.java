@@ -46,8 +46,8 @@ public class MarketQuotesController {
     }
 
     @ExceptionHandler(WatchListNotFoundException.class)
-    public ProblemDetail handleWatchListNotFoundException(QuoteFetchException e) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.resolve(e.statusCode().getAsInt()), e.getMessage());
+    public ProblemDetail handleWatchListNotFoundException(WatchListNotFoundException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(QuoteFetchException.class)
