@@ -22,9 +22,9 @@ public class QuoteService {
         return marketQuoteFetcher.fetchAll(securityIds, quoteMetrics);
     }
 
-    public List<MetricValues> getQuoteMetricValuesByWatchList(Long watchListId) throws WatchListNotFoundException {
+    public List<MetricValues> getQuoteMetricValuesByWatchList(Long watchListId) throws NoSuchElementException {
         WatchList watchList = watchListRepository.findById(watchListId)
-                .orElseThrow(() -> new WatchListNotFoundException("Watch List not found"));
+                .orElseThrow(() -> new NoSuchElementException("Watch List with id " + watchListId + " not found"));
         SequencedSet<String> securityIds = new LinkedHashSet<>(watchList.getSecurityIds());
         SequencedSet<QuoteMetric> quoteMetrics = new LinkedHashSet<>(watchList.getQuoteMetrics());
         return getQuoteMetricValuesList(securityIds, quoteMetrics);
