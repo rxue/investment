@@ -1,7 +1,7 @@
 package io.github.rxue.investment.rest.api;
 
-import io.github.rxue.investment.rest.application.MetricValuesDTO;
 import io.github.rxue.investment.rest.application.QuoteService;
+import io.github.rxue.investment.rest.application.WatchListNotFoundException;
 import io.github.rxue.investmentutility.marketquote.QuoteFetchException;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import io.github.rxue.investmentutility.vo.MetricValues;
@@ -31,6 +31,11 @@ public class MarketQuotesController {
                                               @RequestHeader HttpHeaders httpHeaders) {
         return quoteService.getQuoteMetricValuesList(securityIds, metrics);
     }
+    @GetMapping("/watchlist/{id}")
+    public List<MetricValues> getMetricValuesByWatchList(@PathVariable("id") Long watchListId) throws WatchListNotFoundException {
+        return quoteService.getQuoteMetricValuesByWatchList(watchListId);
+    }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException e) {
         String detail = "invalid value '" + e.getValue() + "' for parameter '" + e.getName() + "'";
@@ -38,6 +43,11 @@ public class MarketQuotesController {
             detail += "; allowed values: " + Arrays.toString(QuoteMetric.values());
         }
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+    }
+
+    @ExceptionHandler(WatchListNotFoundException.class)
+    public ProblemDetail handleWatchListNotFoundException(QuoteFetchException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.resolve(e.statusCode().getAsInt()), e.getMessage());
     }
 
     @ExceptionHandler(QuoteFetchException.class)

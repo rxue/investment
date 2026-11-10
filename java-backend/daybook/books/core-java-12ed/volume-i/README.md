@@ -7,6 +7,11 @@
 > every `record` has three methods defined automatically: `toString`,`equals` and `hashCode`
 
 **OWN TAKEAWAY**
+* the `record` itself is *not immutable* but its *state*
+* so if you intend to use `record` as immutable, don't use immutable types for fields
+
+
+**OWN TAKEAWAY**
 So `Record` is not `Comparable` by default
 # Chapter 9: Collections
 ## 9.5 Copies and Views

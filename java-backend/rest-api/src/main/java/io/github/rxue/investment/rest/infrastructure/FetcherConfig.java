@@ -1,4 +1,4 @@
-package io.github.rxue.investment.rest;
+package io.github.rxue.investment.rest.infrastructure;
 
 import io.github.rxue.investmentutility.marketquote.QuoteFetcher;
 import io.github.rxue.investmentutility.marketquote.yahoofinance.YahooFinanceQuoteFetcher;

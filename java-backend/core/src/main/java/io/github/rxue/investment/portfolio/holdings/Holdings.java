@@ -17,14 +17,14 @@ public record Holdings(List<MetricValues> rows) {
     private BigDecimal totalCost() {
         if (!has(COST)) return null;
         long totalCostInCent = rows.stream()
-                .mapToLong(metricValues -> (Long) metricValues.get(COST))
+                .mapToLong(metricValues -> (Long) metricValues.valueOf(COST))
                 .sum();
         return toBaseUnit(totalCostInCent);
     }
     private BigDecimal totalMarketValue() {
         if (!has(LATEST_MARKET_VALUE_IN_REPORT_CURRENCY)) return null;
         long totalCostInCent = rows.stream()
-                .mapToLong(metricValues -> (Long) metricValues.get(LATEST_MARKET_VALUE_IN_REPORT_CURRENCY))
+                .mapToLong(metricValues -> (Long) metricValues.valueOf(LATEST_MARKET_VALUE_IN_REPORT_CURRENCY))
                 .sum();
         return toBaseUnit(totalCostInCent);
     }
