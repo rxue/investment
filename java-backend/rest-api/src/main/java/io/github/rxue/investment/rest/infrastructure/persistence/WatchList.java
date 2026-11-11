@@ -1,14 +1,7 @@
 package io.github.rxue.investment.rest.infrastructure.persistence;
 
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +19,12 @@ public class WatchList {
 
     @Column(name = "security_ids", nullable = false)
     private List<String> securityIds = new ArrayList<>();
-
+    
+    @Enumerated(EnumType.STRING)
     private List<QuoteMetric> quoteMetrics;
 
     protected WatchList() {
         // for JPA
-    }
-
-    public WatchList(String name, List<String> securityIds) {
-        this.name = name;
-        this.securityIds.addAll(securityIds);
     }
 
     public String getName() {
