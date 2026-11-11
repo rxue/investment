@@ -4,13 +4,10 @@ import io.github.rxue.investment.rest.application.QuoteService;
 import io.github.rxue.investment.rest.application.WatchListService;
 import io.github.rxue.investment.rest.infrastructure.persistence.WatchList;
 import io.github.rxue.investmentutility.marketquote.QuoteFetchException;
-import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import io.github.rxue.investmentutility.vo.MetricValues;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.*;
 
@@ -31,7 +28,7 @@ public class WatchListController {
     }
     @GetMapping("/{id}/marketquotes")
     public List<MetricValues> getMetricValuesByWatchList(@PathVariable("id") Long watchListId) {
-        return quoteService.getQuoteMetricValuesByWatchList(watchListId);
+        return quoteService.fetchAllByWatchList(watchListId);
     }
 
     @ExceptionHandler(NoSuchElementException.class)

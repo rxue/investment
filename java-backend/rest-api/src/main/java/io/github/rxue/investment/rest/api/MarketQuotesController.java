@@ -24,7 +24,7 @@ public class MarketQuotesController {
     public List<MetricValues> getMetricValues(@RequestParam("securityIds") List<String> securityIds,
                                               @RequestParam(name = "metrics") SequencedSet<QuoteMetric> metrics,
                                               @RequestHeader HttpHeaders httpHeaders) {
-        return quoteService.getQuoteMetricValuesList(new LinkedHashSet<>(securityIds), metrics);
+        return quoteService.fetchAll(new LinkedHashSet<>(securityIds), metrics);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
