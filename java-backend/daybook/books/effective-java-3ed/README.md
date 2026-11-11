@@ -16,6 +16,8 @@ In Spring's official documentation, it was written that Spring is an *IoC (inver
 ## Item 13: Override clone judiciously
 > **A better approach to object copying is to provide a *copy constructor* or *copy factory***.
 
+> For example, by convention all general-purpose collection implementations provide a constructor whose argument is of type Collection or Map. Interface-based copy constructors and factories, more properly known as *conversion constructors* and *conversion factories*, allow the client to choose the implementation type of the copy rather than forcing the client to accept the implementation type of the original. For example, suppose you have a HashSet, s, and you want to copy it as a TreeSet. The clone method can’t offer this functionality, but it’s easy with a conversion constructor: new TreeSet<>(s)
+
 # Chapter 11 Concurrency
 ## Item 80 Prefer executors, tasks, and streams to threads
 **Key takeaways**
