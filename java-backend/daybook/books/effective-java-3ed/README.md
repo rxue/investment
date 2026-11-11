@@ -12,6 +12,10 @@ In Spring's official documentation, it was written that Spring is an *IoC (inver
 ## Item 6: Avoid creating unnecessary objects
 * avoid by using *static factory methods*, e.g. `Boolean.valueOf(String)` instead of `new Boolean`
 * in the code example, `String.matches` is not suitable when this is called repeatedly over thousands of times or even more since the `matches` method creates `new Pattern` each time it is called. I made this mistake and fixed it in this commit: https://github.com/rxue/investment/issues/25
+# Chapter 3 Methods Common to All Objects
+## Item 13: Override clone judiciously
+> **A better approach to object copying is to provide a *copy constructor* or *copy factory***.
+
 # Chapter 11 Concurrency
 ## Item 80 Prefer executors, tasks, and streams to threads
 **Key takeaways**
