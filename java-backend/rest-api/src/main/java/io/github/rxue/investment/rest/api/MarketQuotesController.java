@@ -21,10 +21,10 @@ public class MarketQuotesController {
         this.quoteService = quoteService;
     }
     @GetMapping()
-    public List<MetricValues> getMetricValues(@RequestParam("securityIds") Set<String> securityIds,
+    public List<MetricValues> getMetricValues(@RequestParam("securityIds") List<String> securityIds,
                                               @RequestParam(name = "metrics") SequencedSet<QuoteMetric> metrics,
                                               @RequestHeader HttpHeaders httpHeaders) {
-        return quoteService.getQuoteMetricValuesList(securityIds, metrics);
+        return quoteService.getQuoteMetricValuesList(new LinkedHashSet<>(securityIds), metrics);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

@@ -19,7 +19,7 @@ public class WatchList {
 
     @Column(name = "security_ids", nullable = false)
     private List<String> securityIds = new ArrayList<>();
-    
+
     @Enumerated(EnumType.STRING)
     private List<QuoteMetric> quoteMetrics;
 

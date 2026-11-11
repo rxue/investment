@@ -8,35 +8,37 @@ import io.github.rxue.investmentutility.vo.Metric;
 import io.github.rxue.investmentutility.vo.MetricValues;
 import io.github.rxue.investmentutility.vo.QuotePrice;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SequencedMap;
 import java.util.SequencedSet;
-import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static io.github.rxue.investmentutility.marketquote.QuoteMetric.LATEST_MARKET_PRICE_IN_REPORT_CURRENCY;
+import static io.github.rxue.investmentutility.marketquote.QuoteMetric.REGULAR_MARKET_PRICE_IN_REPORT_CURRENCY;
 import static java.util.stream.Collectors.toMap;
 
 
 public class MetricValuesBuildersDirector {
     private final QuoteFetcher marketQuoteSearchService;
-    private Map<String,Holding> holdings;
-    private final Map<String, MetricValues.Builder> metricValuesBuilders;
+    private SequencedMap<String,Holding> holdings;
+    private final SequencedMap<String, MetricValues.Builder> metricValuesBuilders;
     private List<MetricValues> quoteMetricValuesList;
     public MetricValuesBuildersDirector(QuoteFetcher marketQuoteSearchService) {
         this.marketQuoteSearchService = marketQuoteSearchService;
-        this.metricValuesBuilders = new HashMap<>();
+        this.metricValuesBuilders = new LinkedHashMap<>();
 
     }
     public Holdings construct(SequencedSet<Metric> metrics, List<OpenLots> openLotsList) {
         holdings = openLotsList.stream()
                 .map(Holding::of)
-                .collect(toMap(Holding::securityId, Function.identity()));
+                .collect(toMap(Holding::securityId,
+                        Function.identity(),
+                        (h1, h2) -> { throw new IllegalStateException("Duplicate securityId: " + h1.securityId()); },
+                        LinkedHashMap::new));
         final SequencedSet<QuoteMetric> allQuoteMetrics = new HoldingMetrics(metrics)
                 .allQuoteMetrics();
-        final Set<String> securityIds = holdings.keySet();
+        final SequencedSet<String> securityIds = holdings.sequencedKeySet();
         quoteMetricValuesList = allQuoteMetrics.isEmpty()
                 ? List.of() : marketQuoteSearchService.fetchAll(securityIds, allQuoteMetrics);
         for (Metric metric : metrics) {
@@ -59,7 +61,7 @@ public class MetricValuesBuildersDirector {
             case HoldingMetric.POSITION -> Integer.valueOf(position);
             case HoldingMetric.COST -> holding.costInCent();
             case HoldingMetric.LATEST_MARKET_VALUE_IN_REPORT_CURRENCY -> {
-                QuotePrice latestPriceInReportCurrency = (QuotePrice) metricValusBySecurityId.get(securityId).valueOf(LATEST_MARKET_PRICE_IN_REPORT_CURRENCY);
+                QuotePrice latestPriceInReportCurrency = (QuotePrice) metricValusBySecurityId.get(securityId).valueOf(REGULAR_MARKET_PRICE_IN_REPORT_CURRENCY);
                 yield latestPriceInReportCurrency.valueInCent() * position;
             }
             case QuoteMetric quoteMetric -> metricValusBySecurityId.get(securityId).valueOf(quoteMetric);

@@ -6,7 +6,6 @@ import io.github.rxue.investmentutility.marketquote.QuoteFetcher;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import io.github.rxue.investmentutility.vo.Metric;
 import io.github.rxue.investmentutility.vo.MetricValues;
-import io.github.rxue.investmentutility.vo.MetricValuesList;
 import io.github.rxue.investmentutility.vo.bankaccount.transaction.Trade;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class MetricValuesBuildersDirectorTest {
     private static final QuoteFetcher FAILING_QUOTE_FETCHER = new QuoteFetcher() {
         @Override
-        public MetricValuesList fetchAll(Set<String> securityIds, SequencedSet<QuoteMetric> quoteMetrics) {
+        public List<MetricValues> fetchAll(SequencedSet<String> securityIds, SequencedSet<QuoteMetric> quoteMetrics) {
             return fail("fetchAll should not be invoked");
         }
         @Override
@@ -47,7 +46,7 @@ public class MetricValuesBuildersDirectorTest {
         MetricValues pfe = holdings.rows().get(0);
         assertEquals("PFE", pfe.getSecurityId());
         assertEquals(List.of(POSITION, COST), pfe.metricList());
-        assertEquals(10, pfe.get(POSITION));
-        assertEquals(openLotsList.get(0).costInCent(), pfe.get(COST));
+        assertEquals(10, pfe.valueOf(POSITION));
+        assertEquals(openLotsList.get(0).costInCent(), pfe.valueOf(COST));
     }
 }

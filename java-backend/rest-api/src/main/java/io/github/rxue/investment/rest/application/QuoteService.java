@@ -18,7 +18,7 @@ public class QuoteService {
         this.watchListRepository = watchListRepository;
     }
 
-    public List<MetricValues> getQuoteMetricValuesList(Set<String> securityIds, SequencedSet<QuoteMetric> quoteMetrics) {
+    public List<MetricValues> getQuoteMetricValuesList(SequencedSet<String> securityIds, SequencedSet<QuoteMetric> quoteMetrics) {
         return marketQuoteFetcher.fetchAll(securityIds, quoteMetrics);
     }
 
