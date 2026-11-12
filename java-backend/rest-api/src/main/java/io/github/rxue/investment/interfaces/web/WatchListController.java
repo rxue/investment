@@ -1,8 +1,9 @@
-package io.github.rxue.investment.rest.api;
+package io.github.rxue.investment.interfaces;
 
-import io.github.rxue.investment.rest.application.QuoteService;
-import io.github.rxue.investment.rest.application.WatchListService;
-import io.github.rxue.investment.rest.infrastructure.persistence.WatchList;
+import io.github.rxue.investment.application.NotFoundException;
+import io.github.rxue.investment.application.QuoteService;
+import io.github.rxue.investment.application.WatchListService;
+import io.github.rxue.investment.infrastructure.persistence.WatchList;
 import io.github.rxue.investmentutility.marketquote.QuoteFetchException;
 import io.github.rxue.investmentutility.vo.MetricValues;
 import org.springframework.http.HttpStatus;
@@ -29,15 +30,5 @@ public class WatchListController {
     @GetMapping("/{id}/marketquotes")
     public List<MetricValues> getMetricValuesByWatchList(@PathVariable("id") Long watchListId) {
         return quoteService.fetchAllByWatchList(watchListId);
-    }
-
-    @ExceptionHandler(NoSuchElementException.class)
-    public ProblemDetail handleWatchListNotFoundException(NoSuchElementException e) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
-    }
-
-    @ExceptionHandler(QuoteFetchException.class)
-    public ProblemDetail handleQuoteFetchException(QuoteFetchException e) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.resolve(e.statusCode().getAsInt()), e.getMessage());
     }
 }

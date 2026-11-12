@@ -1,6 +1,6 @@
-package io.github.rxue.investment.rest.api;
+package io.github.rxue.investment.interfaces;
 
-import io.github.rxue.investment.rest.application.QuoteService;
+import io.github.rxue.investment.application.QuoteService;
 import io.github.rxue.investmentutility.marketquote.QuoteFetchException;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import io.github.rxue.investmentutility.vo.MetricValues;
@@ -25,19 +25,5 @@ public class MarketQuotesController {
                                               @RequestParam(name = "metrics") SequencedSet<QuoteMetric> metrics,
                                               @RequestHeader HttpHeaders httpHeaders) {
         return quoteService.fetchAll(new LinkedHashSet<>(securityIds), metrics);
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException e) {
-        String detail = "invalid value '" + e.getValue() + "' for parameter '" + e.getName() + "'";
-        if (e.getRequiredType() == QuoteMetric.class) {
-            detail += "; allowed values: " + Arrays.toString(QuoteMetric.values());
-        }
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
-    }
-
-    @ExceptionHandler(QuoteFetchException.class)
-    public ProblemDetail handleQuoteFetchException(QuoteFetchException e) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.resolve(e.statusCode().getAsInt()), e.getMessage());
     }
 }

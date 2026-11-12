@@ -4,7 +4,6 @@ import io.github.rxue.investment.rest.infrastructure.WatchListRepository;
 import io.github.rxue.investment.rest.infrastructure.persistence.WatchList;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
 @Service
 public class WatchListService {
     private final WatchListRepository watchListRepository;
@@ -15,6 +14,6 @@ public class WatchListService {
 
     public WatchList findWatchList(Long id) {
         return watchListRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Watch List with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException("Watch List with id " + id + " not found"));
     }
 }
