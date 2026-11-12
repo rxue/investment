@@ -24,6 +24,10 @@ In Spring's official documentation, it was written that Spring is an *IoC (inver
 * Throwing exception is expensive (because the entire stacktrace is captured when the exception is created)
 * return `null` has to be handled carefully to avoid *NPE*
 
+# Chapter 10 Exceptions
+## Item 73: Throw exceptions appropriate to the abstraction (20261112)
+> higher layers should catch lower-level exceptions and, in their place, throw exceptions that can be explained in terms of the higher-level abstraction
+
 # Chapter 11 Concurrency
 ## Item 80 Prefer executors, tasks, and streams to threads
 **Key takeaways**
