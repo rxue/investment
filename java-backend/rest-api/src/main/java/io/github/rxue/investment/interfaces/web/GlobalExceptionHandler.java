@@ -23,13 +23,14 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
     }
 
-    @ExceptionHandler(QuoteFetchException.class)
-    public ProblemDetail handleQuoteFetchException(QuoteFetchException e) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.resolve(e.statusCode().getAsInt()), e.getMessage());
-    }
-
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleWatchListNotFoundException(NotFoundException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(QuoteFetchException.class)
+    public ProblemDetail handleWatchListNotFoundException(QuoteFetchException e) {
+        HttpStatus quoteErrorStatus = HttpStatus.resolve(e.statusCode().getAsInt());
+        return ProblemDetail.forStatusAndDetail(quoteErrorStatus, e.getMessage());
     }
 }
