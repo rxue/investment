@@ -1,6 +1,6 @@
-package io.github.rxue.investment.rest.application;
+package io.github.rxue.investment.application;
 
-import io.github.rxue.investment.rest.infrastructure.persistence.WatchList;
+import io.github.rxue.investment.infrastructure.persistence.WatchList;
 import io.github.rxue.investmentutility.marketquote.BatchQuoteFetcher;
 import io.github.rxue.investmentutility.marketquote.QuoteFetcher;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;

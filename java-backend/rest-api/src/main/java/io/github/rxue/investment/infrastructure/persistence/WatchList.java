@@ -1,4 +1,4 @@
-package io.github.rxue.investment.rest.infrastructure.persistence;
+package io.github.rxue.investment.infrastructure.persistence;
 
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import jakarta.persistence.*;

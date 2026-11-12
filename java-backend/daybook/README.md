@@ -26,4 +26,5 @@ Collectors.toMap and toUnmodifiableMap does not accept neither null key nor null
 ## OAuth2
 I asked: is OAuth2 3rd-party authentication?
 Answer: no, it is not 3rd-party authentication but 3rd-party authorization (delegated access)
-## 20261112 *upstream provider* for the quote fetch is Yahoo Finance RESTful API
+## 20261112 
+* *upstream provider* for the quote fetch is Yahoo Finance RESTful API

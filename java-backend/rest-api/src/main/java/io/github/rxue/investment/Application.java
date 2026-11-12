@@ -1,4 +1,4 @@
-package io.github.rxue.investment.rest;
+package io.github.rxue.investment;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,14 +1,10 @@
-package io.github.rxue.investment.interfaces;
+package io.github.rxue.investment.interfaces.web;
 
 import io.github.rxue.investment.application.QuoteService;
-import io.github.rxue.investmentutility.marketquote.QuoteFetchException;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import io.github.rxue.investmentutility.vo.MetricValues;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.*;
 

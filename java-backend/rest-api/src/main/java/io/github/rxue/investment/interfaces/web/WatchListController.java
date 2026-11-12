@@ -1,13 +1,9 @@
-package io.github.rxue.investment.interfaces;
+package io.github.rxue.investment.interfaces.web;
 
-import io.github.rxue.investment.application.NotFoundException;
 import io.github.rxue.investment.application.QuoteService;
 import io.github.rxue.investment.application.WatchListService;
 import io.github.rxue.investment.infrastructure.persistence.WatchList;
-import io.github.rxue.investmentutility.marketquote.QuoteFetchException;
 import io.github.rxue.investmentutility.vo.MetricValues;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
