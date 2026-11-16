@@ -2,9 +2,13 @@
 ## I: Fundamentals
 ### Chapter 5 Building Blocks
 #### 5.4 Blocking and interruptible methods (20261115)
+> Interruption is a *coorporative* mechanism. One thread cannot force another to stop what it is doing and do something else; when thread A interrupts thread B, A is merely requesting that B stop what it is doing when it gets to a convenient stopping point - if it feels like it. While there is nothing in the API or language specification that demands any specific application-level semantics for interruption, **the most sensible use for interruption is to cancel an activity.** Blocking methods that are responsive to interruption make it easier to cancel long-running activities on a timely basis.
+
 > When a method can throw `InterruptedException`, it is telling you that it is a *blocking method*, and further that it is *interrupted*, it will make an effort to stop blocking early.
 
-> Interruption is a *coorporative* mechanism. One thread cannot force another to stop what it is doing and do something else; when thread A interrupts thread B, A is merely requesting that B stop what it is doing when it gets to a convenient stopping point - if it feels like it. While there is nothing in the API or language specification that demands any specific application-level semantics for interruption, **the most sensible use for interruption is to cancel an activity.** Blocking methods that are responsive to interruption make it easier to cancel long-running activities on a timely basis.
+**OWN TAKEAWAY**
+- `InterruptedException handling` handling 
+    - one thing you should not do: never swallow it, i.e. catch it and do nothing in response
 
 ## II: Structuring Concurrent Applications
 ### Chapter 8 Applying Thread Pools
