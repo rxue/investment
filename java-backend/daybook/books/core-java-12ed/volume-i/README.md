@@ -13,9 +13,22 @@
 
 **OWN TAKEAWAY**
 So `Record` is not `Comparable` by default
-# Chapter 9: Collections
-## 9.5 Copies and Views
-### 9.5.1 Small Collections (20261026)
+## Chapter 5: Inheritance
+### 5.8 Sealed Classes (20261116)
+**OWN TAKEAWAY**
+
+real use cases:
+
+When fetching the the price series of a list of stocks within a period. Different error cases needs to be handled differently:
+* network error, i.e. `IOException`: the whole fetch should be stopped, meaning any on-going or ready not started fetch of a certain stock should be canceled
+* interrupted, i.e. `InterruptedException`: this is the signal to the running thread that task should be canceled
+* error response, e.g. a nonexistent period or nonexistent security: this should return as different error but it should not terminate the whole fetch processes
+
+Result should be polymorphic and it should sealed in one java file so that it does not confused other developers
+
+## Chapter 9: Collections
+### 9.5 Copies and Views
+#### 9.5.1 Small Collections (20261026)
 
 **OWN TAKEAWAY**
 
@@ -23,8 +36,6 @@ So `Record` is not `Comparable` by default
 
 Reference: https://docs.oracle.com/javase//9/docs/api/java/util/List.html#of--
 
-## Chapter 9: Collections
-### 9.5 Copies and Views
 #### 9.5.2 Unmodifiable Copies and Views (20261103)
 > The Collections class has methods that produce unmodiﬁable *views* of collections. These views add a runtime check to an existing collection. If an attempt to modify the unmodiﬁable collection is detected, an exception is thrown.
 
