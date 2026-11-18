@@ -7,6 +7,11 @@
 Comment: the *immutable objects* is thread-safe
 
 # Practical Tips
+## Mistakes
+### 20261118
+When trying to form the fx rate array, I need to use `ChronoUnit.DAYS.between` to know the amount of days between the period, but got problem since I mistakenly consider the 2nd end date argument as inclusive.
+The cause of this mistake is I did not know the *half-open interval* design principle
+
 ## Java
 ### `BigDecimal` over `double` in case of money value calculation, e.g. the foreign exchange rate
 Reasoning from *Claude Code*:
@@ -28,3 +33,6 @@ I asked: is OAuth2 3rd-party authentication?
 Answer: no, it is not 3rd-party authentication but 3rd-party authorization (delegated access)
 ## 20261112 
 * *upstream provider* for the quote fetch is Yahoo Finance RESTful API
+## Relevant learning point on https://github.com/rxue/investment-utility/issues/39
+## Yahoo Finance API 20261117
+The timestamps of stock price series is the open time in eposecond, i.e. UTC, of the corresponding stock exchange, then the question is: on base of a given `LocalDate` how to get the timestamp in the `DataSet.Result` so that price is retrieved
