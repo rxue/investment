@@ -12,6 +12,17 @@ Comment: the *immutable objects* is thread-safe
 When trying to form the fx rate array, I need to use `ChronoUnit.DAYS.between` to know the amount of days between the period, but got problem since I mistakenly consider the 2nd end date argument as inclusive.
 The cause of this mistake is I did not know the *half-open interval* design principle
 
+### 20261119
+I added an array field to `record`, which is against the original intention of the `record`
+
+```
+public record DateIndex(int firstEpochDay, BigDecimal[] values) {
+    BigDecimal get(LocalDate date) {
+        throw new UnsupportedOperationException();
+    }
+}
+```
+
 ## Java
 ### `BigDecimal` over `double` in case of money value calculation, e.g. the foreign exchange rate
 Reasoning from *Claude Code*:
