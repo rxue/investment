@@ -13,6 +13,7 @@ When trying to form the fx rate array, I need to use `ChronoUnit.DAYS.between` t
 The cause of this mistake is I did not know the *half-open interval* design principle
 
 ### 20261119
+#### misuse of `record`
 I added an array field to `record`, which is against the original intention of the `record`
 
 ```
@@ -22,6 +23,8 @@ public record DateIndex(int firstEpochDay, BigDecimal[] values) {
     }
 }
 ```
+#### lack of understanding on *value object*
+reference to read: IDDD > Chapter 6 Value Characteristics > Value Equality
 
 ## Java
 ### `BigDecimal` over `double` in case of money value calculation, e.g. the foreign exchange rate
