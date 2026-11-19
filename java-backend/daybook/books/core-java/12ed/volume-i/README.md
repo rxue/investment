@@ -14,6 +14,8 @@
 **OWN TAKEAWAY**
 So `Record` is not `Comparable` by default
 ## Chapter 5: Inheritance
+### 5.1 Classes, Superclasses, Subclasses
+
 ### 5.8 Sealed Classes (20261116)
 **OWN TAKEAWAY**
 
