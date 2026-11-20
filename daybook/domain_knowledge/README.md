@@ -3,6 +3,13 @@
 * financial income is the gross income before operating expense deduction
 
 # Return (part of CFA)
+## tutorial: https://www.youtube.com/watch?v=Of0do4rpbKw 20261120
+- return 
+    - gross return = (selling price - purchase price)/purchase price * 100% , i.e. expressed in percentage
+    - net return = [(selling price - purchase price)/purchase price - 1] * 100%, i.e. expressed in percentage
+- total return = dividend yield + capital gain
+- holding period return
+
 ## Time-Weighted Rate of Return
 ### CFA Training tutorial from Undamy:
 #### 3 step-process of calculation
@@ -46,3 +53,5 @@ True daily-valuation TWR requires knowing your exact portfolio value right befor
 ## Question: How to benchmark my own portfolio again an index or an ETF such as VOO
 ### Essence
 The market value plots of my portfolio can be calculated, whereas ETF has price plot directly. They are different things.
+
+
