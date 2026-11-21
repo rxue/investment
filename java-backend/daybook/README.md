@@ -48,5 +48,7 @@ Answer: no, it is not 3rd-party authentication but 3rd-party authorization (dele
 ## 20261112 
 * *upstream provider* for the quote fetch is Yahoo Finance RESTful API
 ## Relevant learning point on https://github.com/rxue/investment-utility/issues/39
-## Yahoo Finance API 20261117
-The timestamps of stock price series is the open time in eposecond, i.e. UTC, of the corresponding stock exchange, then the question is: on base of a given `LocalDate` how to get the timestamp in the `DataSet.Result` so that price is retrieved
+# Work notes
+## 20261120
+`originalPrice.divide(fxRateSeries.get(date)` encounters `ArithmeticException`
+

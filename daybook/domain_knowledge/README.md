@@ -5,10 +5,14 @@
 # Return (part of CFA)
 ## tutorial: https://www.youtube.com/watch?v=Of0do4rpbKw 20261120
 - return 
-    - gross return = (selling price - purchase price)/purchase price * 100% , i.e. expressed in percentage
-    - net return = [(selling price - purchase price)/purchase price - 1] * 100%, i.e. expressed in percentage
+    - gross return = selling price/purchase price * 100% , i.e. expressed in percentage
+    - net return = selling price/purchase price - 1] * 100%, i.e. expressed in percentage
 - total return = dividend yield + capital gain
 - holding period return
+
+### Real Use Case
+When benchmarking on 2 or more stocks during a period. We should assume that we spend 100 EUR (or other currency) to buy shares on each of the stock, and then generate the *net return* daily series then visual them as curves in one pic. Note that this benchmarking needs the *adjusted close prices* other than the *close price*
+
 
 ## Time-Weighted Rate of Return
 ### CFA Training tutorial from Undamy:
@@ -47,6 +51,16 @@ The textbook example is frictionless. Your real TWR should specify gross-of-fees
 True daily-valuation TWR requires knowing your exact portfolio value right before every single flow — which brokerages can compute internally (they know intraday), but you as an individual often only have periodic statements (monthly, say). In that case, people use an approximation like the *Modified Dietz method*, which weights each cash flow by the fraction of the period it was invested, rather than breaking into a true sub-period at every flow. It converges to true TWR but isn't identical.
 
 
+## Yahoo Finance API 20261117
+The timestamps of stock price series is the open time in eposecond, i.e. UTC, of the corresponding stock exchange, then the question is: on base of a given `LocalDate` how to get the timestamp in the `DataSet.Result` so that price is retrieved
+### Adjusted price 20261121
+```
+Yahoo's "Adj Close" column, and the historical data its API returns, rewrite past prices to account for splits and dividends, so returns over time stay comparable.
+Real close on that day:         22.50
+Later dividends/splits → factor: 0.954791...
+Adjusted close:                 22.50 × 0.954791 = 21.4828
+Each new dividend changes the factor and rewrites the entire history again. So adjusted values for past dates change over time. Don't store them as permanent facts.
+``
 
 
 # Benchmark
