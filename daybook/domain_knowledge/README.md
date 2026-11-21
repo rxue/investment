@@ -60,8 +60,10 @@ Real close on that day:         22.50
 Later dividends/splits → factor: 0.954791...
 Adjusted close:                 22.50 × 0.954791 = 21.4828
 Each new dividend changes the factor and rewrites the entire history again. So adjusted values for past dates change over time. Don't store them as permanent facts.
-``
-
+```
+**Key takeaways**
+* close price usually has 2 decimal digits, and it is used to calculate returns and costs => need accuracy
+* adjusted close price usually has 4 to even more digits, and it is used to calculate only return series => no need accuracy
 
 # Benchmark
 ## Question: How to benchmark my own portfolio again an index or an ETF such as VOO
