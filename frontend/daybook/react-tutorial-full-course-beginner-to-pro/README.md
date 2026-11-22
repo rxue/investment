@@ -25,6 +25,11 @@ Typically used to implement the auto-scrolling feature of the Chatbot
 - practical tip: put the hooks at the top of the component, and it should not be inside anything!
 - the 1st parameter: [React will run the hook function inside `useEffect` after the component creation and everytime when the component is updated](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13022s)
 - the second parameter: *dependency array*, which controls when the `useEffect` run
+- [best practice](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13180s): Give `useEffect` a *dependency array* to avoid running too often
+#### Last step of implementation: after the chat message is updated, we want to scroll the chat box to the bottom - use of [`useRef`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13180s)
+- how: get the `chat-message-container` into the `useEffect`'s lambda function
+- [`ref` is a container with special React features](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13277s&pp=0gcJCTIAlc8ueATH)
+- [**how to access the HTML elements saved inside the `ref` - `chatMessagesRef.current` inside the useEffect lambda**](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13377s)
 
 # Lesson 5:
 ## [`create-vite`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14352s) help us set up a new React project
