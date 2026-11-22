@@ -23,7 +23,9 @@ Typically used to implement the auto-scrolling feature of the Chatbot
 **OWN TAKEAWAY**
 - In the demo, the execution of the code for scrolling automatically to the bottom is triggered by the update of chat history data. `useEffect()` is used as this trigger
 - practical tip: put the hooks at the top of the component, and it should not be inside anything!
-- [React will run the hook function inside `useEffect` after the component creation and everytime when the component is updated](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13022s)
+- the 1st parameter: [React will run the hook function inside `useEffect` after the component creation and everytime when the component is updated](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13022s)
+- the second parameter: *dependency array*, which controls when the `useEffect` run
+
 # Lesson 5:
 ## [`create-vite`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14352s) help us set up a new React project
 ### [npx create-vite](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14400s)
