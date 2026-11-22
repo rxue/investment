@@ -30,7 +30,7 @@ Typically used to implement the auto-scrolling feature of the Chatbot
 - how: get the `chat-message-container` into the `useEffect`'s lambda function
 - [`ref` is a container with special React features](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13277s&pp=0gcJCTIAlc8ueATH)
 - [**how to access the HTML elements saved inside the `ref` - `chatMessagesRef.current` inside the useEffect lambda**](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13377s)
-
+    - key part to make the scroll automatic - https://www.youtube.com/watch?v=TtPXvEcE11E&t=13460s
 # Lesson 5:
 ## [`create-vite`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14352s) help us set up a new React project
 ### [npx create-vite](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14400s)
