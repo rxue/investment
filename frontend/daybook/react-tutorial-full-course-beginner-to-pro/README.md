@@ -27,7 +27,11 @@
 `npx create-vite@latest .` to initialize a new project in the current dir
 
 # lesson 6: React Router, `git`, Start with E-commerce Project
-## [Routing](https://www.youtube.com/watch?v=TtPXvEcE11E&t=36636s)
+## [Routing](https://www.youtube.com/watch?v=TtPXvEcE11E&t=36636s) - create multiple pages
+* [install `react-router`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=19851s)
+* [load the *rounter* when rendering the `App` component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=19944s)
+* [add `Routes` component to the `App`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=20035s)
+
 
 # Lesson 7: React with Backend, Data Fetching, Load Ecommerce Project Data
 ## [Data Fetching (from the backend)](https://www.youtube.com/watch?v=TtPXvEcE11E&t=13513s)
