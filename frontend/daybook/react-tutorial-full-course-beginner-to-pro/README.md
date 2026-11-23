@@ -35,6 +35,9 @@ Typically used to implement the auto-scrolling feature of the Chatbot
 ## [`create-vite`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14352s) help us set up a new React project
 ### [npx create-vite](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14400s)
 #### [`npm install`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14637s)
+**OWN TAKEWAY**
+this did not go into detail!
+
 #### [project directory structure explained](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14740s)
 * [*.jsx*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=14766s) is the React code developers need to write
 
