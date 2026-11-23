@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { createChart, LineSeries } from 'lightweight-charts'
 
 function generateChart(container, prices) {
+    console.log("Prices: "+ prices);
     const chart = createChart(container, { width: 1000, height: 500 });
     const series = chart.addSeries(LineSeries);
     series.setData(prices);
@@ -16,7 +17,7 @@ export default function Benchmark() {
     // 1. fetch data -> state
     useEffect(() => {
         const controller = new AbortController();
-        fetch("/api/benchmark?securityId=PFE&benchmarkSecurityId=VOO", { signal: controller.signal })
+        fetch("/api/benchmark?securityId=PFE&benchmarkSecurityId=VOO&inclusiveStartDate=2025-01-01&inclusiveEndDate=2026-11-22", { signal: controller.signal })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return response.json();
