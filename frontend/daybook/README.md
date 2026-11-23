@@ -10,3 +10,7 @@
 ### Question left: when using `lightweight-chart` to render the stock price/return curves, the last statement inside the `useEffect` is `return () => chart.remove();`, I don't fully understand it yet
 ### What is the mechanism of `npm run dev`
 `dev` is a script defined in `package.json`
+### Meaning the *mount* in React context
+*mount* - get added to the screen
+
+reference: https://react.dev/reference/react/Component
