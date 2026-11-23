@@ -1,6 +1,7 @@
 package io.github.rxue.investment.interfaces.web;
 
 import io.github.rxue.investment.application.NotFoundException;
+import io.github.rxue.investment.application.PriceSeriesFetchException;
 import io.github.rxue.investmentutility.marketquote.QuoteFetchException;
 import io.github.rxue.investmentutility.marketquote.QuoteMetric;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleWatchListNotFoundException(NotFoundException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(PriceSeriesFetchException.class)
+    public ProblemDetail handlePriceSeriesFetchException(PriceSeriesFetchException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, e.getMessage());
     }
 
     @ExceptionHandler(QuoteFetchException.class)

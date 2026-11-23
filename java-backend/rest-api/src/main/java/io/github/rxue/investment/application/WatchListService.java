@@ -1,6 +1,6 @@
 package io.github.rxue.investment.application;
 
-import io.github.rxue.investment.infrastructure.WatchListRepository;
+import io.github.rxue.investment.infrastructure.persistence.WatchListRepository;
 import io.github.rxue.investment.infrastructure.persistence.WatchList;
 import org.springframework.stereotype.Service;
 

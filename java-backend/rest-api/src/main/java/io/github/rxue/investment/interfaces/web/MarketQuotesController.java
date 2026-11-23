@@ -22,4 +22,5 @@ public class MarketQuotesController {
                                               @RequestHeader HttpHeaders httpHeaders) {
         return quoteService.fetchAll(new LinkedHashSet<>(securityIds), metrics);
     }
+
 }

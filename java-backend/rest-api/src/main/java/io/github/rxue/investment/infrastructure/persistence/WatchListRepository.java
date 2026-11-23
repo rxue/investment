@@ -1,7 +1,6 @@
-package io.github.rxue.investment.infrastructure;
+package io.github.rxue.investment.infrastructure.persistence;
 
 
-import io.github.rxue.investment.infrastructure.persistence.WatchList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
