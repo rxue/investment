@@ -14,3 +14,11 @@
 *mount* - get added to the screen
 
 reference: https://react.dev/reference/react/Component
+### Problem: I was confused on how to test the React app together with the RESTful API in the dev
+cause: I was confused on the server proxy config in vite.config.js
+
+So note that
+> Unless noted, the options in this section are only applied to dev
+official reference: https://vite.dev/config/server-options
+
+Solution: config only in vite.config.js is enough
