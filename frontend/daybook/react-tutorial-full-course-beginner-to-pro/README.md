@@ -2,17 +2,20 @@
 ## [*Component*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2675s) - a piece of the web-site
 ### demo: create the first component
 #### [use `function` to create the component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2727s) 20261124
-component function returns block with parenthesis! (but not explained why in the tutorial) (20261124)
+* [*Component* name must start with capital letter (in PascalCase) in React](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2775s&pp=0gcJCTIAlc8ueATH)
+* component function returns block with parenthesis! (but not explained why in the tutorial) (20261124)
 
 #### Insert component
 - [`{}`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2970s) to insert component
 - [Equivalent React syntax to insert component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=3051s)
     - Main idea of React: make your own HTML element
-##### [*Fragment*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=3240s) to avoid insert extra `div`
+##### [*Fragment*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=3240s) (`<>`) to avoid insert extra `div` (20261124)
 ##### [*Props*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4055s) in relation to *attribute*
-#### Syntax short cut
-* [*shortcut* for getting attribute from `props` - *destructuring*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4788s)
-* [`if` inside jsx](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4995s&pp=0gcJCTEAlc8ueATH)
+* *Props*, short for *properties*, make our component reusable since it passes attributes to components
+
+###### [*shortcut* for getting attribute from `props`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4788s)
+####### a further [*destructuring* shortcut](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4910s 20261124)
+##### [`if` inside jsx](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4995s&pp=0gcJCTEAlc8ueATH)
 
 # Lesson 3: State, Event Handlers, Chatbot Project Features
 
