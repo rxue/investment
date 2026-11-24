@@ -1,11 +1,11 @@
-package io.github.rxue.investment;
+package io.github.rxue.investment.returns;
 
 
 import io.github.rxue.investmentutility.v2.util.DailyValue;
 
 import java.util.List;
 
-public class CumulativeReturnCalculator {
+public class ReturnCalculator {
 
     /**
      * Calculates the cumulative return of each day relative to the earliest day in the series,

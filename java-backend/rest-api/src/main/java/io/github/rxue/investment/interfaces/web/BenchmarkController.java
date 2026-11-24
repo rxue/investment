@@ -1,6 +1,7 @@
 package io.github.rxue.investment.interfaces.web;
 
-import io.github.rxue.investment.application.CumulativeReturnService;
+import io.github.rxue.investment.application.BenchmarkingService;
+import io.github.rxue.investment.domain.benchmark.BenchmarkComparison;
 import io.github.rxue.investmentutility.v2.vo.InclusiveDateRange;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,16 +11,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/benchmark")
 public class BenchmarkController {
-    private final CumulativeReturnService cumulativeReturnService;
-    public BenchmarkController(CumulativeReturnService cumulativeReturnService) {
-        this.cumulativeReturnService = cumulativeReturnService;
+    private final BenchmarkingService benchmarkingService;
+    public BenchmarkController(BenchmarkingService benchmarkingService) {
+        this.benchmarkingService = benchmarkingService;
     }
 
     @GetMapping()
-    public List<ReturnValue> getBenchmarketReturns(@RequestParam("securityId") String securityId, @RequestParam("benchmarkSecurityId") String benchmarkSecurityId,
-                                                          @RequestParam("inclusiveStartDate") LocalDate inclusiveStartDate,
-                                                          @RequestParam("inclusiveEndDate") LocalDate inclusiveEndDate) {
+    public BenchmarkComparison getBenchmarketReturns(@RequestParam("benchmarkSecurityId") String benchmarkSecurityId, @RequestParam("securityId") List<String> securityIds,
+                                                     @RequestParam("inclusiveStartDate") LocalDate inclusiveStartDate,
+                                                     @RequestParam("inclusiveEndDate") LocalDate inclusiveEndDate) {
         InclusiveDateRange dateRange = new InclusiveDateRange(inclusiveStartDate, inclusiveEndDate);
-        return cumulativeReturnService.calculate(securityId, dateRange);
+
+        return benchmarkingService.calculate(benchmarkSecurityId, dateRange, securityIds);
     }
 }

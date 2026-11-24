@@ -1,6 +1,6 @@
 package io.github.rxue.investment.infrastructure;
 
-import io.github.rxue.investment.CumulativeReturnCalculator;
+import io.github.rxue.investment.returns.ReturnCalculator;
 import io.github.rxue.investmentutility.marketquote.QuoteFetcher;
 import io.github.rxue.investmentutility.marketquote.yahoofinance.YahooFinanceQuoteFetcher;
 import io.github.rxue.investmentutility.v2.marketquote.PriceSeriesFetcher;
@@ -38,7 +38,7 @@ public class BeanConfig {
     }
 
     @Bean
-    public CumulativeReturnCalculator cumulativeReturnCalculator() {
-        return new CumulativeReturnCalculator();
+    public ReturnCalculator cumulativeReturnCalculator() {
+        return new ReturnCalculator();
     }
 }
