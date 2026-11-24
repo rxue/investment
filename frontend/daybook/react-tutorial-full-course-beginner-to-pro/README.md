@@ -1,7 +1,9 @@
 # Lesson 2: *Components*, *Props*, Start the Charbot
 ## [*Component*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2675s) - a piece of the web-site
 ### demo: create the first component
-#### [use `function` to create the component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2727s)
+#### [use `function` to create the component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2727s) 20261124
+component function returns block with parenthesis! (but not explained why in the tutorial) (20261124)
+
 #### Insert component
 - [`{}`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2970s) to insert component
 - [Equivalent React syntax to insert component](https://www.youtube.com/watch?v=TtPXvEcE11E&t=3051s)
@@ -11,6 +13,7 @@
 #### Syntax short cut
 * [*shortcut* for getting attribute from `props` - *destructuring*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4788s)
 * [`if` inside jsx](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4995s&pp=0gcJCTEAlc8ueATH)
+
 # Lesson 3: State, Event Handlers, Chatbot Project Features
 
 # Lesson 4: CSS with React, Hook, Finish Chatbot Project (20261122)
