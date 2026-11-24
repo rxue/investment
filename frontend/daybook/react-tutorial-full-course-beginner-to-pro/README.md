@@ -1,3 +1,7 @@
+# Lesson 1: React Basics, JSX
+## [How React makes develop wesite easier](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2167s)
+### [insert JavaScript code inside curly bracket](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2232s)
+
 # Lesson 2: *Components*, *Props*, Start the Charbot
 ## [*Component*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2675s) - a piece of the web-site
 ### demo: create the first component
