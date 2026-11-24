@@ -1,11 +1,13 @@
 import { useEffect, useState, useRef } from 'react'
 import { createChart, LineSeries } from 'lightweight-charts'
 
-function generateChart(container, prices) {
-    console.log("Prices: "+ prices);
+function generateChart(container, benchmarkData) {
     const chart = createChart(container, { width: 1000, height: 500 });
-    const series = chart.addSeries(LineSeries);
-    series.setData(prices);
+    const benchmarkReturns = benchmarkData.benchmark;
+    const benchmarkSeries = chart.addSeries(LineSeries, { color: 'gray' });
+    benchmarkSeries.setData(benchmarkReturns.valueSeries);
+    const comparedSeries = chart.addSeries(LineSeries);
+    comparedSeries.setData(benchmarkData.compared[0].valueSeries);
     chart.timeScale().fitContent();
     return chart;
 }
