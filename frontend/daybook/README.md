@@ -22,3 +22,15 @@ So note that
 official reference: https://vite.dev/config/server-options
 
 Solution: config only in vite.config.js is enough
+## 20261125
+### Problems & Questions
+#### problem: return statement cannot be converted to Javascript
+```
+return (
+            <SearchBox />
+            {returnsData && <BenchmarkChart benchmarkReturnsData={returnsData} />}
+    );
+```
+Explain:
+
+#### question: how to pass data from input element of one component to another component, which needs that data

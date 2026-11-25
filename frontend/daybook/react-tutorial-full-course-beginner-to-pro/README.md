@@ -44,7 +44,7 @@ solution: `onChange` event from React
 #### [lift state up](https://www.youtube.com/watch?v=TtPXvEcE11E&t=8559s) (component tree visualization) IMPORTANT!
 ##### [share the state between components with *props*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=8694s)
 #### [demo: remove text after clicking the send button](https://www.youtube.com/watch?v=TtPXvEcE11E&t=9024s)
-
+##### [controlled inputs](https://www.youtube.com/watch?v=TtPXvEcE11E&t=9035s)
 # Lesson 4: CSS with React, Hook, Finish Chatbot Project (20261122)
 ## [Demo: Auto Scrolling feature implementation](https://www.youtube.com/watch?v=TtPXvEcE11E&t=12876s)
 ### [Hooks: a key feature of React](https://www.youtube.com/watch?v=TtPXvEcE11E&t=12916s) - insert React features into our component

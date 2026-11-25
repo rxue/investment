@@ -4,6 +4,15 @@ import { createChart, LineSeries } from 'lightweight-charts'
 const chartSize = { width: 1200, height: 500 };
 const colors = { benchmark: "red", compared: "blue" };
 
+function SearchBox({setSecurityId}) {
+    const [val, setVal] = useState(null);
+    return (
+        <div>
+            <input onChange={e => setVal(e.target.value)}/>
+            <button onClick={() => setSecurityId(val)}>Benchmark</button>
+        </div>
+    );
+}
 
 function generateChart(container, benchmarkData, colors) {
     const chart = createChart(container, chartSize);
@@ -36,12 +45,14 @@ function BenchmarkChart({ benchmarkReturnsData }) {
             );
 }
 export default function Benchmark() {
+    const [securityId, setSecurityId] = useState(null);
     const [returnsData, setReturnsData] = useState(null);
 
     // 1. fetch data -> state
     useEffect(() => {
+        if (!securityId) return;
         const controller = new AbortController();
-        fetch("/api/benchmark?benchmarkSecurityId=VOO&securityId=PFE&inclusiveStartDate=2023-01-01&inclusiveEndDate=2026-11-22", { signal: controller.signal })
+        fetch(`/api/benchmark?benchmarkSecurityId=VOO&securityId=${encodeURIComponent(securityId)}&inclusiveStartDate=2023-01-01&inclusiveEndDate=2026-11-22`, { signal: controller.signal })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return response.json();
@@ -52,8 +63,13 @@ export default function Benchmark() {
                 if (error.name !== 'AbortError') console.error(error);
             });
         return () => controller.abort();
-    }, []);
+    }, [securityId]);
 
     // 2. state -> chart
-    return returnsData && <BenchmarkChart benchmarkReturnsData={returnsData} />;
+    return (
+        <>
+            <SearchBox setSecurityId={setSecurityId} />
+            {returnsData && <BenchmarkChart benchmarkReturnsData={returnsData} />}
+        </>
+    );
 }
