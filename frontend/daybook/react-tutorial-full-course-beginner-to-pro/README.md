@@ -1,4 +1,16 @@
 # Lesson 1: React Basics, JSX
+## What React is
+### React is an *external library*
+[What is *external library*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=480s)
+### [2 external libraries of React](https://www.youtube.com/watch?v=TtPXvEcE11E&t=1000s)
+#### `react`
+#### [`react-dom`](https://www.youtube.com/watch?v=TtPXvEcE11E&t=1026s) - features specific to websites
+## [How to use React](https://www.youtube.com/watch?v=TtPXvEcE11E&t=1075s)
+## Babel
+### [example React code, i.e. jsx](https://www.youtube.com/watch?v=TtPXvEcE11E&t=1585s&pp=0gcJCTIAlc8ueATH)
+equivalent JavaScript code: https://www.youtube.com/watch?v=TtPXvEcE11E&t=1627s
+### [What does Babel do](https://www.youtube.com/watch?v=TtPXvEcE11E&t=1627s)
+
 ## [How React makes develop wesite easier](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2167s)
 ### [insert JavaScript code inside curly bracket](https://www.youtube.com/watch?v=TtPXvEcE11E&t=2232s)
 
@@ -21,7 +33,17 @@
 ####### a further [*destructuring* shortcut](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4910s 20261124)
 ##### [`if` inside jsx](https://www.youtube.com/watch?v=TtPXvEcE11E&t=4995s&pp=0gcJCTEAlc8ueATH)
 
-# Lesson 3: State, Event Handlers, Chatbot Project Features
+# Lesson 3: State, Event Handlers, Chatbot Project Features 20261125
+## [Event handler](https://www.youtube.com/watch?v=TtPXvEcE11E&t=6896s) - run function when we interact with the website
+simple [`onClick` event handling example](https://www.youtube.com/watch?v=TtPXvEcE11E&t=6951s)
+### [details about event handler](https://www.youtube.com/watch?v=TtPXvEcE11E&t=7043s)
+## [*state*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=7288s)
+## [How to get the text in a text box](https://www.youtube.com/watch?v=TtPXvEcE11E&t=8039s)
+Best practice in React: do not use DOM manually
+solution: `onChange` event from React
+#### [lift state up](https://www.youtube.com/watch?v=TtPXvEcE11E&t=8559s) (component tree visualization) IMPORTANT!
+##### [share the state between components with *props*](https://www.youtube.com/watch?v=TtPXvEcE11E&t=8694s)
+#### [demo: remove text after clicking the send button](https://www.youtube.com/watch?v=TtPXvEcE11E&t=9024s)
 
 # Lesson 4: CSS with React, Hook, Finish Chatbot Project (20261122)
 ## [Demo: Auto Scrolling feature implementation](https://www.youtube.com/watch?v=TtPXvEcE11E&t=12876s)
